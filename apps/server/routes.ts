@@ -1,10 +1,20 @@
 import type { Express } from 'express';
 import { createServer, type Server } from 'http';
 import { storage } from './storage';
-import { generateTextCompletion } from './gemini';
+import { generateTextCompletion, testApiKey } from './gemini';
 import { textCompletionRequestSchema } from '@shared/schema';
 
 export function registerRoutes(app: Express): Express {
+  app.get('/api/status', async (req, res) => {
+    try {
+      const isWorking = await testApiKey();
+      res.json({ status: isWorking ? 'ok' : 'error' });
+    } catch (error) {
+      console.error('Status check error:', error);
+      res.status(500).json({ status: 'error' });
+    }
+  });
+
   app.post('/api/complete', async (req, res) => {
     try {
       const { text, mode, style } = textCompletionRequestSchema.parse(req.body);
