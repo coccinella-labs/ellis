@@ -104,7 +104,7 @@ export function TextEditor({
           <div className="absolute top-0 left-0 pointer-events-none whitespace-pre-wrap text-base leading-relaxed p-0">
             <span className="invisible">{text}</span>
             <span
-              className="text-ai-suggestion italic opacity-60"
+              className="text-ai-suggestion italic opacity-75"
               data-testid="text-suggestion"
             >
               {suggestion}
