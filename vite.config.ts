@@ -14,17 +14,16 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': path.resolve(import.meta.dirname, 'apps/client', 'src'),
-      '@shared': path.resolve(import.meta.dirname, 'packages/shared'),
-      '@assets': path.resolve(import.meta.dirname, 'attached_assets'),
+      '@': path.resolve(__dirname, 'apps/client/src'),
+      '@shared': path.resolve(__dirname, 'packages/shared'),
+      '@assets': path.resolve(__dirname, 'attached_assets'),
     },
   },
-  root: path.resolve(import.meta.dirname, 'apps/client'),
-  publicDir: path.resolve(import.meta.dirname, 'apps/client/public'),
+  publicDir: 'apps/client/public',
   build: {
-    outDir: '../../dist',
+    outDir: 'dist',
     rollupOptions: {
-      input: 'index.html',
+      input: 'apps/client/index.html',
     },
   },
   server: {
