@@ -4,8 +4,11 @@
   "installCommand": "npm install",
   "framework": "vite",
   "functions": {
-    "api/index.js": {
+    "api/complete.ts": {
       "maxDuration": 30
+    },
+    "api/status.ts": {
+      "maxDuration": 10
     }
   }
 }
