@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { StatusBar } from '@/components/StatusBar';
 import { TopBar } from '@/components/TopBar';
 import { TextEditor } from '@/components/TextEditor';
 import { BottomBar } from '@/components/BottomBar';
@@ -65,6 +66,7 @@ export default function Editor() {
 
   return (
     <div className="flex flex-col h-screen bg-background">
+      <StatusBar />
       <TopBar
         documentTitle={documentTitle}
         onTitleChange={setDocumentTitle}

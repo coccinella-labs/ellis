@@ -2,6 +2,24 @@ import { GoogleGenAI } from '@google/genai';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 
+export async function testApiKey(): Promise<boolean> {
+  try {
+    if (!process.env.GEMINI_API_KEY) return false;
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      config: {
+        systemInstruction: 'Respond with "ok"',
+        temperature: 0,
+        maxOutputTokens: 5,
+      },
+      contents: 'test',
+    });
+    return !!response.text?.trim();
+  } catch {
+    return false;
+  }
+}
+
 export async function generateTextCompletion(
   currentText: string,
   mode: 'word' | 'sentence' | 'paragraph' = 'sentence',
