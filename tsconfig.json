@@ -1,0 +1,32 @@
+{
+  "include": [
+    "apps/client/src/**/*",
+    "packages/shared/**/*",
+    "apps/server/**/*"
+  ],
+  "exclude": ["node_modules", "build", "dist"],
+  "compilerOptions": {
+    "incremental": true,
+    "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",
+    "noEmit": true,
+    "module": "ESNext",
+    "strict": true,
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "types": [
+      "node",
+      "vite/client",
+      "vitest/globals",
+      "@types/testing-library__jest-dom"
+    ],
+    "paths": {
+      "@/*": ["./apps/client/src/*"],
+      "@shared/*": ["./packages/shared/*"]
+    }
+  }
+}

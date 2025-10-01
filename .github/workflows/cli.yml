@@ -1,0 +1,43 @@
+name: CLI
+
+on:
+  push:
+    branches: [main, master]
+    paths: [apps/cli/**, packages/shared/**]
+  pull_request:
+    branches: [main, master]
+    paths: [apps/cli/**, packages/shared/**]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build CLI
+        run: cd apps/cli && npm run build
+
+      - name: Test CLI
+        run: |
+          cd apps/cli
+          echo -e "test input\n.exit" | timeout 10s node dist/index.js new --output test.txt || true
+          if [ -f test.txt ]; then echo "CLI test passed"; else echo "CLI test failed"; exit 1; fi
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cli-test-results
+          path: apps/cli/test.txt
+          retention-days: 7
