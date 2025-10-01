@@ -46,7 +46,6 @@ configuredApp.use(
     const message = err.message || 'Internal Server Error';
 
     res.status(status).json({ message });
-    throw err;
   }
 );
 

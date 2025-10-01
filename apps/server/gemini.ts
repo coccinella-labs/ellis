@@ -7,6 +7,7 @@ export async function generateTextCompletion(
   mode: 'word' | 'sentence' | 'paragraph' = 'sentence',
   style: 'casual' | 'formal' | 'creative' | 'technical' = 'casual'
 ): Promise<string> {
+  console.log('Generating text completion for:', { currentText, mode, style });
   try {
     let systemPrompt = '';
 
@@ -47,7 +48,7 @@ export async function generateTextCompletion(
       " Do NOT repeat the user's text. Only provide the continuation. Keep it brief and natural.";
 
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.0-flash',
       config: {
         systemInstruction: systemPrompt,
         temperature: 0.7,
@@ -66,6 +67,7 @@ export async function generateTextCompletion(
       return suggestion;
     }
 
+    console.log('Generated suggestion:', suggestion);
     return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
   } catch (error) {
     console.error('Generation error:', error);
