@@ -11,6 +11,7 @@ async function generateTextCompletion(
   mode = 'sentence',
   style = 'casual'
 ) {
+  console.log('Generating text completion for:', { currentText, mode, style });
   try {
     let systemPrompt = '';
     switch (mode) {
@@ -62,6 +63,7 @@ async function generateTextCompletion(
     if (mode === 'word' && !currentText.endsWith(' ')) {
       return suggestion;
     }
+    console.log('Generated suggestion:', suggestion);
     return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
   } catch (error) {
     console.error('Generation error:', error);
