@@ -1,5 +1,6 @@
 {
   "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "installCommand": "npm install",
   "framework": null,
   "rewrites": [
@@ -9,7 +10,7 @@
     },
     {
       "source": "/(.*)",
-      "destination": "/dist/$1"
+      "destination": "/index.html"
     }
   ]
 }
