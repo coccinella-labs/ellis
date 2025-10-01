@@ -47,7 +47,7 @@ export async function generateTextCompletion(
       " Do NOT repeat the user's text. Only provide the continuation. Keep it brief and natural.";
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash-exp',
+      model: 'gemini-1.5-flash',
       config: {
         systemInstruction: systemPrompt,
         temperature: 0.7,
