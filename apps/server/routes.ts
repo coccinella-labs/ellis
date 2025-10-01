@@ -4,7 +4,7 @@ import { storage } from './storage';
 import { generateTextCompletion } from './gemini';
 import { textCompletionRequestSchema } from '@shared/schema';
 
-export async function registerRoutes(app: Express): Promise<Server> {
+export function registerRoutes(app: Express): Express {
   app.post('/api/complete', async (req, res) => {
     try {
       const { text, mode, style } = textCompletionRequestSchema.parse(req.body);
@@ -21,7 +21,5 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  const httpServer = createServer(app);
-
-  return httpServer;
+  return app;
 }
