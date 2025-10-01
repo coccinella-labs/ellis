@@ -8,6 +8,7 @@ export function registerRoutes(app: Express): Express {
   app.get('/api/status', async (req, res) => {
     try {
       const isWorking = await testApiKey();
+      console.log('Status check result:', isWorking);
       res.json({ status: isWorking ? 'ok' : 'error' });
     } catch (error) {
       console.error('Status check error:', error);

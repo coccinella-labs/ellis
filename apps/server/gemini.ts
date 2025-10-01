@@ -4,7 +4,11 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 
 export async function testApiKey(): Promise<boolean> {
   try {
-    if (!process.env.GEMINI_API_KEY) return false;
+    console.log('Testing API key...');
+    if (!process.env.GEMINI_API_KEY) {
+      console.log('No API key set');
+      return false;
+    }
     const response = await ai.models.generateContent({
       model: 'gemini-2.0-flash',
       config: {
@@ -14,8 +18,11 @@ export async function testApiKey(): Promise<boolean> {
       },
       contents: 'test',
     });
-    return !!response.text?.trim();
-  } catch {
+    const result = !!response.text?.trim();
+    console.log('Test result:', result);
+    return result;
+  } catch (error) {
+    console.log('Test failed:', error);
     return false;
   }
 }
