@@ -10,13 +10,13 @@ export async function testApiKey(): Promise<boolean> {
       return false;
     }
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-1.5-flash',
       config: {
         systemInstruction: 'Respond with "ok"',
         temperature: 0,
         maxOutputTokens: 5,
       },
-      contents: 'test',
+      contents: 'Hello',
     });
     const result = !!response.text?.trim();
     console.log('Test result:', result);
@@ -73,7 +73,7 @@ export async function generateTextCompletion(
       " Do NOT repeat the user's text. Only provide the continuation. Keep it brief and natural.";
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-1.5-flash',
       config: {
         systemInstruction: systemPrompt,
         temperature: 0.7,
