@@ -38,9 +38,8 @@ test.describe('Text Editor App', () => {
   test('should open keyboard shortcuts modal', async ({ page }) => {
     await page.goto('/');
 
-    // Click the keyboard shortcuts button
-    const shortcutsButton = page.locator('[data-testid="button-shortcuts"]');
-    await shortcutsButton.click();
+    // Press the keyboard shortcut Ctrl+/
+    await page.keyboard.press('Control+/');
 
     // Check that modal is visible
     const shortcutsModal = page.locator('[data-testid="modal-shortcuts"]');
