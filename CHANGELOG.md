@@ -1,3 +1,15 @@
+## [1.0.1](https://github.com/harpertoken/autofix/compare/v1.0.0...v1.0.1) (2025-10-02)
+
+### Reverts
+
+- Revert "Simplify API key test to avoid quota issues" ([ee0c851](https://github.com/harpertoken/autofix/commit/ee0c851edb89c37dac019e107c907100f15483d7))
+
+## [1.0.1](https://github.com/harpertoken/autofix/compare/v1.0.0...v1.0.1) (2025-10-02)
+
+### Reverts
+
+- Revert "Simplify API key test to avoid quota issues" ([ee0c851](https://github.com/harpertoken/autofix/commit/ee0c851edb89c37dac019e107c907100f15483d7))
+
 # 1.0.0 (2025-10-02)
 
 ### Bug Fixes
