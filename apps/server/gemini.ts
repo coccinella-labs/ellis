@@ -3,10 +3,28 @@ import { GoogleGenAI } from '@google/genai';
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 
 export async function testApiKey(): Promise<boolean> {
-  console.log('Checking if API key is set...');
-  const hasKey = !!process.env.GEMINI_API_KEY;
-  console.log('API key present:', hasKey);
-  return hasKey;
+  try {
+    console.log('Testing API key...');
+    if (!process.env.GEMINI_API_KEY) {
+      console.log('No API key set');
+      return false;
+    }
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      config: {
+        systemInstruction: 'Respond with "ok"',
+        temperature: 0,
+        maxOutputTokens: 5,
+      },
+      contents: 'Hello world',
+    });
+    const result = !!response.text?.trim();
+    console.log('Test result:', result);
+    return result;
+  } catch (error) {
+    console.log('Test failed:', error);
+    return false;
+  }
 }
 
 export async function generateTextCompletion(
