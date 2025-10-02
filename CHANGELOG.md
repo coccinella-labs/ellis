@@ -1,3 +1,15 @@
+## [1.2.1](https://github.com/harpertoken/autofix/compare/v1.2.0...v1.2.1) (2025-10-02)
+
+### Bug Fixes
+
+- change CLI package name to avoid scoped package publishing issue ([7fb0dce](https://github.com/harpertoken/autofix/commit/7fb0dce03e1d7606e5b6a50f0e476e4fa1da0c69))
+
+## [1.2.1](https://github.com/harpertoken/autofix/compare/v1.2.0...v1.2.1) (2025-10-02)
+
+### Bug Fixes
+
+- change CLI package name to avoid scoped package publishing issue ([7fb0dce](https://github.com/harpertoken/autofix/commit/7fb0dce03e1d7606e5b6a50f0e476e4fa1da0c69))
+
 # [1.2.0](https://github.com/harpertoken/autofix/compare/v1.1.0...v1.2.0) (2025-10-02)
 
 ### Features
