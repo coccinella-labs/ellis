@@ -1,5 +1,5 @@
 {
-  "name": "autofix-cli",
+  "name": "@harpertoken/autofix-cli",
   "version": "1.0.0",
   "description": "CLI for Harper Autofix - AI-powered text completion editor",
   "main": "dist/index.js",
