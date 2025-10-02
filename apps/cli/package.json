@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "CLI for Harper Autofix - AI-powered text completion editor",
   "main": "dist/index.js",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "bin": {
     "autofix": "./dist/index.js"
   },
