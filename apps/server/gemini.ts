@@ -16,7 +16,7 @@ export async function testApiKey(): Promise<boolean> {
         temperature: 0,
         maxOutputTokens: 5,
       },
-      contents: 'test',
+      contents: 'Hello world',
     });
     const result = !!response.text?.trim();
     console.log('Test result:', result);
