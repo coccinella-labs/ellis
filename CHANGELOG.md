@@ -1,3 +1,25 @@
+# [1.3.0](https://github.com/harpertoken/autofix/compare/v1.2.1...v1.3.0) (2025-10-02)
+
+### Bug Fixes
+
+- publish CLI to GitHub Packages instead of npm ([5c74da4](https://github.com/harpertoken/autofix/commit/5c74da46477aca298357a282dfc96c5f456eb3b1))
+
+### Features
+
+- add publishConfig for public npm access ([6a2bf01](https://github.com/harpertoken/autofix/commit/6a2bf0191182b234ea7af4842bfdc34820ed2507))
+- publish CLI to both npm and GitHub Packages ([02f1a45](https://github.com/harpertoken/autofix/commit/02f1a4501d65b253c5938140237211af71b4cc94))
+
+# [1.3.0](https://github.com/harpertoken/autofix/compare/v1.2.1...v1.3.0) (2025-10-02)
+
+### Bug Fixes
+
+- publish CLI to GitHub Packages instead of npm ([5c74da4](https://github.com/harpertoken/autofix/commit/5c74da46477aca298357a282dfc96c5f456eb3b1))
+
+### Features
+
+- add publishConfig for public npm access ([6a2bf01](https://github.com/harpertoken/autofix/commit/6a2bf0191182b234ea7af4842bfdc34820ed2507))
+- publish CLI to both npm and GitHub Packages ([02f1a45](https://github.com/harpertoken/autofix/commit/02f1a4501d65b253c5938140237211af71b4cc94))
+
 ## [1.2.1](https://github.com/harpertoken/autofix/compare/v1.2.0...v1.2.1) (2025-10-02)
 
 ### Bug Fixes
