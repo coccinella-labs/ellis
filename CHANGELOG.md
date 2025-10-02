@@ -1,3 +1,15 @@
+# [1.2.0](https://github.com/harpertoken/autofix/compare/v1.1.0...v1.2.0) (2025-10-02)
+
+### Features
+
+- minimize shortcuts indicator and add platform detection ([5f0ecd7](https://github.com/harpertoken/autofix/commit/5f0ecd7f5f96c177a16f1066b8d1198c054d3914))
+
+# [1.2.0](https://github.com/harpertoken/autofix/compare/v1.1.0...v1.2.0) (2025-10-02)
+
+### Features
+
+- minimize shortcuts indicator and add platform detection ([5f0ecd7](https://github.com/harpertoken/autofix/commit/5f0ecd7f5f96c177a16f1066b8d1198c054d3914))
+
 # [1.1.0](https://github.com/harpertoken/autofix/compare/v1.0.2...v1.1.0) (2025-10-02)
 
 ### Features
