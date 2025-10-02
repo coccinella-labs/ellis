@@ -1,3 +1,15 @@
+## [1.0.2](https://github.com/harpertoken/autofix/compare/v1.0.1...v1.0.2) (2025-10-02)
+
+### Bug Fixes
+
+- rename package to @harpertoken/autofix-cli to avoid conflict ([084c3b8](https://github.com/harpertoken/autofix/commit/084c3b8207342b5a50f5a43fb9c493accfd3e45c))
+
+## [1.0.2](https://github.com/harpertoken/autofix/compare/v1.0.1...v1.0.2) (2025-10-02)
+
+### Bug Fixes
+
+- rename package to @harpertoken/autofix-cli to avoid conflict ([084c3b8](https://github.com/harpertoken/autofix/commit/084c3b8207342b5a50f5a43fb9c493accfd3e45c))
+
 ## [1.0.1](https://github.com/harpertoken/autofix/compare/v1.0.0...v1.0.1) (2025-10-02)
 
 ### Reverts
