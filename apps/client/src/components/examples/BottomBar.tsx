@@ -9,7 +9,6 @@ export default function BottomBarExample() {
         charCount={645}
         suggestionsAccepted={8}
         aiStatus="ready"
-        onKeyboardShortcutsClick={() => {}}
       />
     </ThemeProvider>
   );

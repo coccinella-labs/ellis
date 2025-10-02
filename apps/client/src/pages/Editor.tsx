@@ -90,7 +90,6 @@ export default function Editor() {
         charCount={charCount}
         suggestionsAccepted={acceptedCount}
         aiStatus={aiStatus}
-        onKeyboardShortcutsClick={() => setShortcutsOpen(true)}
       />
 
       <SettingsPanel
