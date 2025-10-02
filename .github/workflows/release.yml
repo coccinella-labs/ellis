@@ -41,6 +41,12 @@ jobs:
       - name: Build CLI
         run: cd apps/cli && npm ci && npm run build
 
+      - name: Configure Git for release
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/harpertoken/autofix.git
+
       - name: Check bundle sizes
         run: |
           echo "Client bundle sizes:"
