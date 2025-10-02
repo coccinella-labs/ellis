@@ -57,6 +57,8 @@ The project uses semantic-release for automatic versioning and publishing:
 
 Requires `GITHUB_TOKEN` (automatic) and `NPM_TOKEN` secrets in repo settings.
 
+Inspired by [Replit TextPredict](https://replit.com/@harpertoken/TextPredict)
+
 ## License
 
 MIT
