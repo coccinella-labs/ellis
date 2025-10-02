@@ -1,3 +1,15 @@
+# [1.1.0](https://github.com/harpertoken/autofix/compare/v1.0.2...v1.1.0) (2025-10-02)
+
+### Features
+
+- minimize API status indicator and add inspiration credit ([1573f91](https://github.com/harpertoken/autofix/commit/1573f9150eea2967e01d3072007be4439e6465a5))
+
+# [1.1.0](https://github.com/harpertoken/autofix/compare/v1.0.2...v1.1.0) (2025-10-02)
+
+### Features
+
+- minimize API status indicator and add inspiration credit ([1573f91](https://github.com/harpertoken/autofix/commit/1573f9150eea2967e01d3072007be4439e6465a5))
+
 ## [1.0.2](https://github.com/harpertoken/autofix/compare/v1.0.1...v1.0.2) (2025-10-02)
 
 ### Bug Fixes
