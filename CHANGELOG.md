@@ -1,3 +1,15 @@
+## [1.3.6](https://github.com/harpertoken/autofix/compare/v1.3.5...v1.3.6) (2025-10-03)
+
+### Bug Fixes
+
+- test dual publishing with updated tokens ([4a2f550](https://github.com/harpertoken/autofix/commit/4a2f550a77a4b7e972dfee115c51eac4c15d3ab4))
+
+## [1.3.6](https://github.com/harpertoken/autofix/compare/v1.3.5...v1.3.6) (2025-10-03)
+
+### Bug Fixes
+
+- test dual publishing with updated tokens ([4a2f550](https://github.com/harpertoken/autofix/commit/4a2f550a77a4b7e972dfee115c51eac4c15d3ab4))
+
 ## [1.3.5](https://github.com/harpertoken/autofix/compare/v1.3.4...v1.3.5) (2025-10-03)
 
 ### Bug Fixes
