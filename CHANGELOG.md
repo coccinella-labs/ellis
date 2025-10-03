@@ -1,3 +1,19 @@
+## [1.3.2](https://github.com/harpertoken/autofix/compare/v1.3.1...v1.3.2) (2025-10-03)
+
+### Bug Fixes
+
+- add from option to PostCSS config to suppress warning ([04e3b98](https://github.com/harpertoken/autofix/commit/04e3b986928df3cb1d5861e37ced94e3f724268e))
+- include package.json in release commit assets ([a5f6706](https://github.com/harpertoken/autofix/commit/a5f67068b811a6740413abde0a1c42bf95975863))
+- publish to GitHub Packages before npm to avoid missing stage ([9f2d269](https://github.com/harpertoken/autofix/commit/9f2d269da7f0fbd4b5c14142e325b6b8c89f574e))
+
+## [1.3.2](https://github.com/harpertoken/autofix/compare/v1.3.1...v1.3.2) (2025-10-03)
+
+### Bug Fixes
+
+- add from option to PostCSS config to suppress warning ([04e3b98](https://github.com/harpertoken/autofix/commit/04e3b986928df3cb1d5861e37ced94e3f724268e))
+- include package.json in release commit assets ([a5f6706](https://github.com/harpertoken/autofix/commit/a5f67068b811a6740413abde0a1c42bf95975863))
+- publish to GitHub Packages before npm to avoid missing stage ([9f2d269](https://github.com/harpertoken/autofix/commit/9f2d269da7f0fbd4b5c14142e325b6b8c89f574e))
+
 ## [1.3.1](https://github.com/harpertoken/autofix/compare/v1.3.0...v1.3.1) (2025-10-03)
 
 ### Bug Fixes
