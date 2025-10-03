@@ -1,3 +1,17 @@
+## [1.3.5](https://github.com/harpertoken/autofix/compare/v1.3.4...v1.3.5) (2025-10-03)
+
+### Bug Fixes
+
+- test release process ([5337002](https://github.com/harpertoken/autofix/commit/5337002dd476de7e0d555de63364518e8e605759))
+- use correct tokens for each registry ([b61f1b6](https://github.com/harpertoken/autofix/commit/b61f1b6b8c9366f54bd43ae726b4d2e6a1819171))
+
+## [1.3.5](https://github.com/harpertoken/autofix/compare/v1.3.4...v1.3.5) (2025-10-03)
+
+### Bug Fixes
+
+- test release process ([5337002](https://github.com/harpertoken/autofix/commit/5337002dd476de7e0d555de63364518e8e605759))
+- use correct tokens for each registry ([b61f1b6](https://github.com/harpertoken/autofix/commit/b61f1b6b8c9366f54bd43ae726b4d2e6a1819171))
+
 ## [1.3.4](https://github.com/harpertoken/autofix/compare/v1.3.3...v1.3.4) (2025-10-03)
 
 ### Bug Fixes
