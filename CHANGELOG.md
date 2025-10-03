@@ -1,3 +1,17 @@
+## [1.4.1](https://github.com/harpertoken/autofix/compare/v1.4.0...v1.4.1) (2025-10-03)
+
+### Bug Fixes
+
+- adjust publishing config for GitHub Packages ([0049213](https://github.com/harpertoken/autofix/commit/004921392099f979653179fd3d7cffa3b0061270))
+- update README with release info ([d4342e1](https://github.com/harpertoken/autofix/commit/d4342e118430755e1904d92c31f7c5ce3f5d7684))
+
+## [1.4.1](https://github.com/harpertoken/autofix/compare/v1.4.0...v1.4.1) (2025-10-03)
+
+### Bug Fixes
+
+- adjust publishing config for GitHub Packages ([0049213](https://github.com/harpertoken/autofix/commit/004921392099f979653179fd3d7cffa3b0061270))
+- update README with release info ([d4342e1](https://github.com/harpertoken/autofix/commit/d4342e118430755e1904d92c31f7c5ce3f5d7684))
+
 # [1.4.0](https://github.com/harpertoken/autofix/compare/v1.3.6...v1.4.0) (2025-10-03)
 
 ### Bug Fixes
