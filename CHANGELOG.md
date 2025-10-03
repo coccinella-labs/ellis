@@ -1,3 +1,15 @@
+## [1.4.3](https://github.com/harpertoken/autofix/compare/v1.4.2...v1.4.3) (2025-10-03)
+
+### Bug Fixes
+
+- explicitly set registries in plugins ([5296ada](https://github.com/harpertoken/autofix/commit/5296ada7764432a7d8cfe0337d52edeaad6342ec))
+
+## [1.4.3](https://github.com/harpertoken/autofix/compare/v1.4.2...v1.4.3) (2025-10-03)
+
+### Bug Fixes
+
+- explicitly set registries in plugins ([5296ada](https://github.com/harpertoken/autofix/commit/5296ada7764432a7d8cfe0337d52edeaad6342ec))
+
 ## [1.4.2](https://github.com/harpertoken/autofix/compare/v1.4.1...v1.4.2) (2025-10-03)
 
 ### Bug Fixes
