@@ -14,6 +14,8 @@ This is a test commit to trigger the release process.
 
 Updated tokens for dual publishing.
 
+Added version check to prevent duplicates.
+
 ## Installation
 
 1. Clone the repository:
