@@ -1,3 +1,15 @@
+## [1.3.1](https://github.com/harpertoken/autofix/compare/v1.3.0...v1.3.1) (2025-10-03)
+
+### Bug Fixes
+
+- skip release on automated commits to prevent duplicate publishes ([1ead72c](https://github.com/harpertoken/autofix/commit/1ead72c5627cb3d490b709e70259820062e968b8))
+
+## [1.3.1](https://github.com/harpertoken/autofix/compare/v1.3.0...v1.3.1) (2025-10-03)
+
+### Bug Fixes
+
+- skip release on automated commits to prevent duplicate publishes ([1ead72c](https://github.com/harpertoken/autofix/commit/1ead72c5627cb3d490b709e70259820062e968b8))
+
 # [1.3.0](https://github.com/harpertoken/autofix/compare/v1.2.1...v1.3.0) (2025-10-02)
 
 ### Bug Fixes
