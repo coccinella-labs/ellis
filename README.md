@@ -12,6 +12,8 @@ AI-powered text completion editor with CLI, web client, and server.
 
 This is a test commit to trigger the release process.
 
+Updated tokens for dual publishing.
+
 ## Installation
 
 1. Clone the repository:
