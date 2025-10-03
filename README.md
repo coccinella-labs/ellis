@@ -38,7 +38,9 @@ Added version check to prevent duplicates.
 
 3. Set up environment variables: Copy `.env.example` to `.env` and add your Gemini API key.
 
-4. Run the development server:
+4. (Optional) Install the CLI globally: `npm install -g @harpertoken/autofix-cli`
+
+5. Run the development server:
    ```bash
    npm run dev
    ```
