@@ -8,6 +8,10 @@ AI-powered text completion editor with CLI, web client, and server.
 - **Web Client**: React-based editor with real-time text prediction.
 - **Server**: Node.js backend handling API requests and storage.
 
+## Test Release
+
+This is a test commit to trigger the release process.
+
 ## Installation
 
 1. Clone the repository:
