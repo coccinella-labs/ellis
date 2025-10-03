@@ -1,3 +1,27 @@
+# [1.4.0](https://github.com/harpertoken/autofix/compare/v1.3.6...v1.4.0) (2025-10-03)
+
+### Bug Fixes
+
+- add check to skip release if version exists on npm ([76d4fad](https://github.com/harpertoken/autofix/commit/76d4fadbffc1bdc9deda4a43f9c3283a5d3b0e52))
+- correct YAML indentation for workflow ([c211467](https://github.com/harpertoken/autofix/commit/c2114676762c1a40c64e580470eaa553fa297260))
+- remove version check step to fix workflow trigger ([7a47f89](https://github.com/harpertoken/autofix/commit/7a47f89dd9169fd5400cb7c48fda57e502cbdca6))
+
+### Features
+
+- add version check to prevent duplicate publishes ([5420b4a](https://github.com/harpertoken/autofix/commit/5420b4a3167172ffe0c0df8cccdd1558ce858e36))
+
+# [1.4.0](https://github.com/harpertoken/autofix/compare/v1.3.6...v1.4.0) (2025-10-03)
+
+### Bug Fixes
+
+- add check to skip release if version exists on npm ([76d4fad](https://github.com/harpertoken/autofix/commit/76d4fadbffc1bdc9deda4a43f9c3283a5d3b0e52))
+- correct YAML indentation for workflow ([c211467](https://github.com/harpertoken/autofix/commit/c2114676762c1a40c64e580470eaa553fa297260))
+- remove version check step to fix workflow trigger ([7a47f89](https://github.com/harpertoken/autofix/commit/7a47f89dd9169fd5400cb7c48fda57e502cbdca6))
+
+### Features
+
+- add version check to prevent duplicate publishes ([5420b4a](https://github.com/harpertoken/autofix/commit/5420b4a3167172ffe0c0df8cccdd1558ce858e36))
+
 ## [1.3.6](https://github.com/harpertoken/autofix/compare/v1.3.5...v1.3.6) (2025-10-03)
 
 ### Bug Fixes
