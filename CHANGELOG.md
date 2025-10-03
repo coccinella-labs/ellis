@@ -1,3 +1,15 @@
+## [1.3.3](https://github.com/harpertoken/autofix/compare/v1.3.2...v1.3.3) (2025-10-03)
+
+### Bug Fixes
+
+- use GITHUB_TOKEN for GitHub Packages publish ([3847199](https://github.com/harpertoken/autofix/commit/38471999782e41a20e8eb7deadc8300ebd287b74))
+
+## [1.3.3](https://github.com/harpertoken/autofix/compare/v1.3.2...v1.3.3) (2025-10-03)
+
+### Bug Fixes
+
+- use GITHUB_TOKEN for GitHub Packages publish ([3847199](https://github.com/harpertoken/autofix/commit/38471999782e41a20e8eb7deadc8300ebd287b74))
+
 ## [1.3.2](https://github.com/harpertoken/autofix/compare/v1.3.1...v1.3.2) (2025-10-03)
 
 ### Bug Fixes
