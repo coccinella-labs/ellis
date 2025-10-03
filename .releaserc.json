@@ -17,7 +17,7 @@
         "npmPublish": true,
         "registry": "https://npm.pkg.github.com",
         "pkgRoot": "apps/cli",
-        "token": "NPM_TOKEN"
+        "token": "GITHUB_TOKEN"
       }
     ],
     [
