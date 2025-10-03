@@ -4,8 +4,7 @@
   "description": "CLI for Harper Autofix - AI-powered text completion editor",
   "main": "dist/index.js",
   "publishConfig": {
-    "access": "public",
-    "registry": "https://npm.pkg.github.com"
+    "access": "public"
   },
   "bin": {
     "autofix": "./dist/index.js"
