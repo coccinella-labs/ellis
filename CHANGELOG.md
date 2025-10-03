@@ -1,3 +1,15 @@
+## [1.3.4](https://github.com/harpertoken/autofix/compare/v1.3.3...v1.3.4) (2025-10-03)
+
+### Bug Fixes
+
+- use NPM_TOKEN for both publishes ([4a26553](https://github.com/harpertoken/autofix/commit/4a26553445d25892f26143ba20a6181505669f06))
+
+## [1.3.4](https://github.com/harpertoken/autofix/compare/v1.3.3...v1.3.4) (2025-10-03)
+
+### Bug Fixes
+
+- use NPM_TOKEN for both publishes ([4a26553](https://github.com/harpertoken/autofix/commit/4a26553445d25892f26143ba20a6181505669f06))
+
 ## [1.3.3](https://github.com/harpertoken/autofix/compare/v1.3.2...v1.3.3) (2025-10-03)
 
 ### Bug Fixes
