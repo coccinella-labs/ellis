@@ -16,13 +16,15 @@
       {
         "npmPublish": true,
         "registry": "https://npm.pkg.github.com",
-        "pkgRoot": "apps/cli"
+        "pkgRoot": "apps/cli",
+        "token": "GITHUB_TOKEN"
       }
     ],
     [
       "@semantic-release/npm",
       {
-        "npmPublish": true
+        "npmPublish": true,
+        "token": "NPM_TOKEN"
       }
     ],
     "@semantic-release/github",
