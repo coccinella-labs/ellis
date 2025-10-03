@@ -1,3 +1,15 @@
+## [1.4.2](https://github.com/harpertoken/autofix/compare/v1.4.1...v1.4.2) (2025-10-03)
+
+### Bug Fixes
+
+- specify npm registry for public publish ([dc215d0](https://github.com/harpertoken/autofix/commit/dc215d0c7277b9541ce14c6794c6dcce76848b99))
+
+## [1.4.2](https://github.com/harpertoken/autofix/compare/v1.4.1...v1.4.2) (2025-10-03)
+
+### Bug Fixes
+
+- specify npm registry for public publish ([dc215d0](https://github.com/harpertoken/autofix/commit/dc215d0c7277b9541ce14c6794c6dcce76848b99))
+
 ## [1.4.1](https://github.com/harpertoken/autofix/compare/v1.4.0...v1.4.1) (2025-10-03)
 
 ### Bug Fixes
