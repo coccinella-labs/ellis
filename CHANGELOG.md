@@ -1,3 +1,15 @@
+# [1.6.0](https://github.com/harpertoken/autofix/compare/v1.5.0...v1.6.0) (2025-10-03)
+
+### Features
+
+- add optional CLI install step to README ([85f9a60](https://github.com/harpertoken/autofix/commit/85f9a60b1ac3d81838fe62ce38c277d26eddceae))
+
+# [1.6.0](https://github.com/harpertoken/autofix/compare/v1.5.0...v1.6.0) (2025-10-03)
+
+### Features
+
+- add optional CLI install step to README ([85f9a60](https://github.com/harpertoken/autofix/commit/85f9a60b1ac3d81838fe62ce38c277d26eddceae))
+
 # [1.5.0](https://github.com/harpertoken/autofix/compare/v1.4.3...v1.5.0) (2025-10-03)
 
 ### Features
