@@ -28,8 +28,12 @@ Added version check to prevent duplicates.
 2. Install dependencies:
 
    ```bash
+   ./autofix
+   # This runs: npm install, npm run prepare, npm run format
+   # Or manually:
    npm install
    npm run prepare
+   npm run format
    ```
 
 3. Set up environment variables: Copy `.env.example` to `.env` and add your Gemini API key.
