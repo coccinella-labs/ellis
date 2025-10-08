@@ -86,6 +86,8 @@ To validate workflow YAML syntax:
 
 Available workflows: CLI, CodeQL, E2E Tests, Release
 
+- CLI: Triggers on pushes to main with changes in `apps/cli/**` or `packages/shared/**`
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
