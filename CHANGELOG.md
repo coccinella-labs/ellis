@@ -1,3 +1,15 @@
+# [1.5.0](https://github.com/harpertoken/autofix/compare/v1.4.3...v1.5.0) (2025-10-03)
+
+### Features
+
+- add autofix setup script and update README ([7d2dd5e](https://github.com/harpertoken/autofix/commit/7d2dd5e0eaacc8a2c475ef7650346521d2ca3ba7))
+
+# [1.5.0](https://github.com/harpertoken/autofix/compare/v1.4.3...v1.5.0) (2025-10-03)
+
+### Features
+
+- add autofix setup script and update README ([7d2dd5e](https://github.com/harpertoken/autofix/commit/7d2dd5e0eaacc8a2c475ef7650346521d2ca3ba7))
+
 ## [1.4.3](https://github.com/harpertoken/autofix/compare/v1.4.2...v1.4.3) (2025-10-03)
 
 ### Bug Fixes
