@@ -30,11 +30,11 @@ jobs:
       - name: Test CLI
         if: github.actor != 'dependabot[bot]'
         run: |
-           cd apps/cli
-           echo -e "test input\n.exit" | timeout 10s node dist/index.js new --output test.txt || true
-           if [ -f test.txt ]; then echo "CLI test passed"; else echo "CLI test failed"; exit 1; fi
-         env:
-           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          cd apps/cli
+          echo -e "test input\n.exit" | timeout 10s node dist/index.js new --output test.txt || true
+          if [ -f test.txt ]; then echo "CLI test passed"; else echo "CLI test failed"; exit 1; fi
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
       - uses: actions/upload-artifact@v4
         if: always()
