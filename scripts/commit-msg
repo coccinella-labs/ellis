@@ -1,0 +1,22 @@
+#!/bin/bash
+
+commit_msg_file=$1
+commit_msg=$(head -n1 "$commit_msg_file")
+
+# Check length <= 60
+if [ ${#commit_msg} -gt 60 ]; then
+    echo "Commit message first line must be <= 60 characters"
+    exit 1
+fi
+
+# Check lowercase
+if [ "$commit_msg" != "$(echo "$commit_msg" | tr '[:upper:]' '[:lower:]')" ]; then
+    echo "Commit message first line must be lowercase"
+    exit 1
+fi
+
+# Check starts with conventional type
+if ! echo "$commit_msg" | grep -qE '^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: '; then
+    echo "Commit message must start with a conventional commit type (feat:, fix:, etc.)"
+    exit 1
+fi

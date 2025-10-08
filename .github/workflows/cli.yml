@@ -24,10 +24,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build CLI
+       - name: Build CLI
         run: cd apps/cli && npm run build
 
-       - name: Test CLI
+      - name: Test CLI
          if: github.actor != 'dependabot[bot]'
          run: |
            cd apps/cli

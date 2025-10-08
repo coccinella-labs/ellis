@@ -55,6 +55,24 @@ Added version check to prevent duplicates.
 
 Follows conventional commits. Pre-commit hooks format code and check types. Use `npm run preflight` for full checks.
 
+### Conventional Commits Setup
+
+To enforce conventional commit standards:
+
+1. Copy the commit-msg hook: `cp scripts/commit-msg .git/hooks/commit-msg`
+2. Make it executable: `chmod +x .git/hooks/commit-msg`
+
+The hook enforces:
+
+- First line ≤60 characters
+- First line lowercase
+- Starts with conventional types (feat:, fix:, docs:, style:, refactor:, test:, chore:, perf:, ci:, build:, revert:)
+
+To clean up existing commit messages:
+
+- Run `scripts/rewrite_msg.sh` to rewrite history (lowercase + truncate)
+- Force push: `git push --force-with-lease`
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
