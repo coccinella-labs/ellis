@@ -73,6 +73,15 @@ To clean up existing commit messages:
 - Run `scripts/rewrite_msg.sh` to rewrite history (lowercase + truncate)
 - Force push: `git push --force-with-lease`
 
+### Workflows Setup
+
+To enable/disable GitHub Actions workflows:
+
+- Enable: `gh workflow enable "Workflow Name"`
+- Disable: `gh workflow disable "Workflow Name"`
+
+Available workflows: CLI, CodeQL, E2E Tests, Release
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
