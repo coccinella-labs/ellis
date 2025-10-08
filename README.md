@@ -80,6 +80,10 @@ To enable/disable GitHub Actions workflows:
 - Enable: `gh workflow enable "Workflow Name"`
 - Disable: `gh workflow disable "Workflow Name"`
 
+To validate workflow YAML syntax:
+
+- Run: `python3 -c "import yaml; yaml.safe_load(open('.github/workflows/workflow.yml')); print('Valid')"`
+
 Available workflows: CLI, CodeQL, E2E Tests, Release
 
 ## Contributing
