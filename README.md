@@ -91,6 +91,8 @@ Requires `GITHUB_TOKEN` (automatic) and `NPM_TOKEN` secrets in repo settings.
 
 Inspired by [Replit TextPredict](https://replit.com/@harpertoken/TextPredict)
 
+Last updated: 2025-10-08
+
 ## License
 
 MIT
