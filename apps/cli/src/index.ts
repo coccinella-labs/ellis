@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { TextEditor } from './editor';
 import { config } from 'dotenv';
+import { version } from '../package.json';
 
 // Load .env from project root (traverse up from current directory)
 function findEnvFile(startDir: string): string | null {
@@ -30,7 +31,7 @@ const program = new Command();
 program
   .name('autofix')
   .description('AI-powered text completion editor for the command line')
-  .version('1.0.0');
+  .version(version);
 
 program
   .command('new')

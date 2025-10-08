@@ -1,6 +1,6 @@
 # Harper Autofix
 
-AI-powered text completion editor with CLI, web client, and server. Supports automated releases to npm and GitHub Packages.
+AI-powered text completion editor with CLI, web client, and server. Supports automated releases to npm and GitHub Packages. Latest version: 1.6.0
 
 ## Features
 
