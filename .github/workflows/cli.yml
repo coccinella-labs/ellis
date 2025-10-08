@@ -28,8 +28,8 @@ jobs:
         run: cd apps/cli && npm run build
 
       - name: Test CLI
-         if: github.actor != 'dependabot[bot]'
-         run: |
+        if: github.actor != 'dependabot[bot]'
+        run: |
            cd apps/cli
            echo -e "test input\n.exit" | timeout 10s node dist/index.js new --output test.txt || true
            if [ -f test.txt ]; then echo "CLI test passed"; else echo "CLI test failed"; exit 1; fi
