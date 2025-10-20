@@ -10,6 +10,47 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+interface SettingsSelectProps<T extends string> {
+  id: string;
+  label: string;
+  value: T;
+  onValueChange: (value: T) => void;
+  options: Array<{ value: T; label: string }>;
+  testId: string;
+}
+
+function SettingsSelect<T extends string>({
+  id,
+  label,
+  value,
+  onValueChange,
+  options,
+  testId,
+}: SettingsSelectProps<T>) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={id} className="text-sm font-medium">
+        {label}
+      </Label>
+      <Select
+        value={value}
+        onValueChange={(value) => onValueChange(value as T)}
+      >
+        <SelectTrigger id={id} data-testid={testId}>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
 interface SettingsPanelProps {
   isOpen: boolean;
   onClose: () => void;
@@ -76,65 +117,32 @@ export function SettingsPanel({
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label
-                  htmlFor="completion-mode"
-                  className="text-sm font-medium"
-                >
-                  Completion Mode
-                </Label>
-                <Select
-                  value={completionMode}
-                  onValueChange={(value) =>
-                    onCompletionModeChange(
-                      value as 'word' | 'sentence' | 'paragraph'
-                    )
-                  }
-                >
-                  <SelectTrigger
-                    id="completion-mode"
-                    data-testid="select-completion-mode"
-                  >
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="word">Word completion</SelectItem>
-                    <SelectItem value="sentence">
-                      Sentence continuation
-                    </SelectItem>
-                    <SelectItem value="paragraph">
-                      Paragraph expansion
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <SettingsSelect
+                id="completion-mode"
+                label="Completion Mode"
+                value={completionMode}
+                onValueChange={onCompletionModeChange}
+                options={[
+                  { value: 'word', label: 'Word completion' },
+                  { value: 'sentence', label: 'Sentence continuation' },
+                  { value: 'paragraph', label: 'Paragraph expansion' },
+                ]}
+                testId="select-completion-mode"
+              />
 
-              <div className="space-y-2">
-                <Label htmlFor="writing-style" className="text-sm font-medium">
-                  Writing Style
-                </Label>
-                <Select
-                  value={writingStyle}
-                  onValueChange={(value) =>
-                    onWritingStyleChange(
-                      value as 'casual' | 'formal' | 'creative' | 'technical'
-                    )
-                  }
-                >
-                  <SelectTrigger
-                    id="writing-style"
-                    data-testid="select-writing-style"
-                  >
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="casual">Casual</SelectItem>
-                    <SelectItem value="formal">Formal</SelectItem>
-                    <SelectItem value="creative">Creative</SelectItem>
-                    <SelectItem value="technical">Technical</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <SettingsSelect
+                id="writing-style"
+                label="Writing Style"
+                value={writingStyle}
+                onValueChange={onWritingStyleChange}
+                options={[
+                  { value: 'casual', label: 'Casual' },
+                  { value: 'formal', label: 'Formal' },
+                  { value: 'creative', label: 'Creative' },
+                  { value: 'technical', label: 'Technical' },
+                ]}
+                testId="select-writing-style"
+              />
             </div>
 
             <div className="pt-4 border-t">

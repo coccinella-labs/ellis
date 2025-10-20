@@ -1,6 +1,6 @@
 {
   "branches": ["main", "master"],
-  "pkgRoot": "apps/cli",
+  "preRelease": "alpha",
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
@@ -14,26 +14,10 @@
       "@semantic-release/npm",
       {
         "npmPublish": true,
-        "registry": "https://npm.pkg.github.com",
-        "pkgRoot": "apps/cli",
-        "token": "GITHUB_TOKEN"
-      }
-    ],
-    [
-      "@semantic-release/npm",
-      {
-        "npmPublish": true,
         "registry": "https://registry.npmjs.org",
         "token": "NPM_TOKEN"
       }
     ],
-    "@semantic-release/github",
-    [
-      "@semantic-release/git",
-      {
-        "assets": ["CHANGELOG.md", "apps/cli/package.json"],
-        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-      }
-    ]
+    "@semantic-release/github"
   ]
 }
