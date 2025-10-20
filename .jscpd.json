@@ -1,0 +1,22 @@
+{
+  "threshold": 2,
+  "min-lines": 10,
+  "min-tokens": 50,
+  "ignore": [
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.test.tsx",
+    "**/*.spec.tsx",
+    "**/dist/**",
+    "**/node_modules/**",
+    "packages/shared/gemini.ts",
+    "packages/shared/prompts.ts"
+  ],
+  "ignoreSource": [
+    "apps/cli/src/gemini.ts",
+    "packages/shared/gemini.ts",
+    "packages/shared/prompts.ts"
+  ],
+  "format": ["typescript", "javascript", "tsx"],
+  "path": ["apps/client/src/", "apps/server/", "apps/cli/src/"]
+}

@@ -5,6 +5,7 @@ import { TextEditor } from '@/components/TextEditor';
 import { BottomBar } from '@/components/BottomBar';
 import { SettingsPanel } from '@/components/SettingsPanel';
 import { KeyboardShortcutsModal } from '@/components/KeyboardShortcutsModal';
+import { useWritingSettings } from '@/hooks/useWritingSettings';
 
 export default function Editor() {
   const [documentTitle, setDocumentTitle] = useState('Untitled Document');
@@ -18,13 +19,14 @@ export default function Editor() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
 
-  const [autoSave, setAutoSave] = useState(true);
-  const [completionMode, setCompletionMode] = useState<
-    'word' | 'sentence' | 'paragraph'
-  >('sentence');
-  const [writingStyle, setWritingStyle] = useState<
-    'casual' | 'formal' | 'creative' | 'technical'
-  >('casual');
+  const {
+    autoSave,
+    setAutoSave,
+    completionMode,
+    setCompletionMode,
+    writingStyle,
+    setWritingStyle,
+  } = useWritingSettings();
 
   useEffect(() => {
     const words = text.trim().split(/\s+/).filter(Boolean);

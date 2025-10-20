@@ -2,16 +2,18 @@ import { SettingsPanel } from '../SettingsPanel';
 import { ThemeProvider } from '../ThemeProvider';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { useWritingSettings } from '@/hooks/useWritingSettings';
 
 export default function SettingsPanelExample() {
   const [isOpen, setIsOpen] = useState(true);
-  const [autoSave, setAutoSave] = useState(true);
-  const [completionMode, setCompletionMode] = useState<
-    'word' | 'sentence' | 'paragraph'
-  >('sentence');
-  const [writingStyle, setWritingStyle] = useState<
-    'casual' | 'formal' | 'creative' | 'technical'
-  >('casual');
+  const {
+    autoSave,
+    setAutoSave,
+    completionMode,
+    setCompletionMode,
+    writingStyle,
+    setWritingStyle,
+  } = useWritingSettings();
 
   return (
     <ThemeProvider>
