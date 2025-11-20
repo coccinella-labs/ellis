@@ -1,18 +1,18 @@
-# Autofix
+# `Autofix`
 
 [![NPM version](https://img.shields.io/npm/v/@harpertoken/autofix-cli.svg)](https://npmjs.org/package/@harpertoken/autofix-cli)
 
 AI-powered text completion platform with CLI tool, web editor, and Node.js server for seamless writing assistance.
 
-## Installation
+## `Installation`
 
-### CLI Tool (Recommended)
+### `CLI Tool (Recommended)`
 
 ```sh
 npm install -g @harpertoken/autofix-cli
 ```
 
-### Full System (Development)
+### `Full System (Development)`
 
 ```sh
 git clone https://github.com/harpertoken/autofix.git
@@ -21,9 +21,9 @@ npm install
 npm run prepare
 ```
 
-## Quick Start
+## `Quick Start`
 
-### CLI Usage
+### `CLI Usage`
 
 ```sh
 # Basic completion
@@ -33,18 +33,18 @@ autofix "hello this is a"
 autofix "write a function to" --style technical --mode sentence
 ```
 
-### Web Editor
+### `Web Editor`
 
 ```sh
 npm run dev
 # Open http://localhost:3000
 ```
 
-## API Keys Setup
+## `API Keys Setup`
 
 This tool requires AI provider API keys for text completion.
 
-### Required: Google Gemini
+### `Required: Google Gemini`
 
 1. Get a [Google Gemini API key](https://ai.google.dev/)
 2. Set environment variable:
@@ -52,7 +52,7 @@ This tool requires AI provider API keys for text completion.
    export GEMINI_API_KEY=your_api_key_here
    ```
 
-### Optional: SambaNova (Fallback)
+### `Optional: SambaNova (Fallback)`
 
 1. Get a [SambaNova API key](https://sambanova.ai/)
 2. Set environment variable:
@@ -63,9 +63,9 @@ This tool requires AI provider API keys for text completion.
 > [!NOTE]
 > SambaNova provides automatic fallback when Gemini hits rate limits (200 requests/day free tier).
 
-## Features
+## `Features`
 
-### CLI Editor
+### `CLI Editor`
 
 - Real-time AI text completion
 - Multiple completion modes: word, sentence, paragraph
@@ -73,7 +73,7 @@ This tool requires AI provider API keys for text completion.
 - Auto-save functionality
 - Keyboard shortcuts support
 
-### Web Client
+### `Web Client`
 
 - Modern React-based interface
 - Live text completion
@@ -81,7 +81,7 @@ This tool requires AI provider API keys for text completion.
 - Responsive design
 - Welcome modal for new users
 
-### Server & API
+### `Server & API`
 
 - RESTful API endpoints
 - Dual AI provider support
@@ -89,7 +89,7 @@ This tool requires AI provider API keys for text completion.
 - Request/response validation
 - Error handling and logging
 
-### Development
+### `Development`
 
 - TypeScript throughout
 - Pre-commit hooks (Husky)
@@ -97,9 +97,9 @@ This tool requires AI provider API keys for text completion.
 - Code formatting (Prettier)
 - Semantic release automation
 
-## Usage
+## `Usage`
 
-### CLI Commands
+### `CLI Commands`
 
 ```sh
 # Start interactive editor
@@ -115,7 +115,7 @@ autofix edit myfile.txt
 autofix new
 ```
 
-### CLI Options
+### `CLI Options`
 
 ```sh
 -m, --mode <mode>     Completion mode: word, sentence, paragraph
@@ -125,7 +125,7 @@ autofix new
 -v, --version         Show version
 ```
 
-### Web API
+### `Web API`
 
 The server provides REST endpoints for text completion:
 
@@ -143,7 +143,7 @@ The server provides REST endpoints for text completion:
 }
 ```
 
-### Status Endpoint
+### `Status Endpoint`
 
 ```typescript
 // GET /api/status
@@ -156,7 +156,7 @@ The server provides REST endpoints for text completion:
 }
 ```
 
-## AI Provider Fallback
+## `AI Provider Fallback`
 
 Autofix uses a smart fallback system for maximum reliability:
 
@@ -165,7 +165,7 @@ Autofix uses a smart fallback system for maximum reliability:
 
 The system automatically detects rate limits and switches providers seamlessly.
 
-### Rate Limit Handling
+### `Rate Limit Handling`
 
 ```typescript
 // Automatic fallback on 429 errors
@@ -174,20 +174,20 @@ if (geminiError.status === 429) {
 }
 ```
 
-## Requirements
+## `Requirements`
 
 - **Node.js**: 20 LTS or later
 - **npm**: 9+
 - **AI API Keys**: At least one provider key required
 
-### Supported Runtimes
+### `Supported Runtimes`
 
 - Node.js 20+
 - Modern web browsers
 - Vercel (deployment)
 - Local development
 
-### Development Tools
+### `Development Tools`
 
 - **Playwright**: E2E testing
 - **Vitest**: Unit testing
@@ -195,7 +195,7 @@ if (geminiError.status === 429) {
 - **Prettier**: Code formatting
 - **Husky**: Git hooks
 
-## Development
+## `Development`
 
 ### Setup
 
@@ -206,7 +206,7 @@ npm install
 npm run prepare
 ```
 
-### Available Scripts
+### `Available Scripts`
 
 ```sh
 npm run dev          # Start development server
@@ -218,7 +218,7 @@ npm run format       # Format code with Prettier
 npm run preflight    # Run all checks (format, check, test, build)
 ```
 
-### Project Structure
+### `Project Structure`
 
 ```
 autofix/
@@ -232,7 +232,7 @@ autofix/
 └── scripts/          # Build and utility scripts
 ```
 
-### Contributing
+### `Contributing`
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/your-feature`
@@ -241,7 +241,7 @@ autofix/
 5. Commit with conventional format: `git commit -m "feat: add new feature"`
 6. Push and open a PR
 
-### Commit Convention
+### `Commit Convention`
 
 This project uses [Conventional Commits](https://conventionalcommits.org/):
 
@@ -253,7 +253,7 @@ This project uses [Conventional Commits](https://conventionalcommits.org/):
 - `test:` - Testing
 - `chore:` - Maintenance
 
-### Release Process
+### `Release Process`
 
 Releases are automated using semantic-release:
 
@@ -262,9 +262,9 @@ Releases are automated using semantic-release:
 - NPM publishing for CLI package
 - GitHub releases with changelogs
 
-## Troubleshooting
+## `Troubleshooting`
 
-### Common Issues
+### `Common Issues`
 
 | Problem                   | Solution                                                |
 | ------------------------- | ------------------------------------------------------- |
@@ -274,7 +274,7 @@ Releases are automated using semantic-release:
 | Web app not loading       | Check `npm run dev` output                              |
 | Build failures            | Run `npm run preflight` to check all issues             |
 
-### Debug Mode
+### `Debug Mode`
 
 Enable verbose logging:
 
@@ -282,11 +282,11 @@ Enable verbose logging:
 DEBUG=autofix:* npm run dev
 ```
 
-## License
+## `License`
 
 MIT - See [LICENSE](LICENSE) file for details.
 
-## Related Projects
+## `Related Projects`
 
 - [Google Gemini](https://ai.google.dev/) - Primary AI provider
 - [SambaNova](https://sambanova.ai/) - Fallback AI provider
