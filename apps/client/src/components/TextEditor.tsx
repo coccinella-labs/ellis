@@ -6,6 +6,7 @@ interface TextEditorProps {
   onSuggestionAccept?: () => void;
   completionMode?: 'word' | 'sentence' | 'paragraph';
   writingStyle?: 'casual' | 'formal' | 'creative' | 'technical';
+  aiProvider?: 'auto' | 'gemini' | 'sambanova';
 }
 
 export function TextEditor({
@@ -13,6 +14,7 @@ export function TextEditor({
   onSuggestionAccept,
   completionMode = 'sentence',
   writingStyle = 'casual',
+  aiProvider = 'auto',
 }: TextEditorProps) {
   const [text, setText] = useState('');
   const [suggestion, setSuggestion] = useState('');
@@ -44,6 +46,7 @@ export function TextEditor({
           text: currentText,
           mode: completionMode,
           style: writingStyle,
+          provider: aiProvider,
         }),
       });
 

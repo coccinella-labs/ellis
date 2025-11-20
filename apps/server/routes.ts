@@ -35,13 +35,20 @@ export function registerRoutes(app: Express): Express {
 
   app.post('/api/complete', async (req, res) => {
     try {
-      const { text, mode, style } = textCompletionRequestSchema.parse(req.body);
+      const { text, mode, style, provider } = textCompletionRequestSchema.parse(
+        req.body
+      );
 
       if (!text || text.length < 10) {
         return res.json({ suggestion: '' });
       }
 
-      const suggestion = await generateTextCompletion(text, mode, style);
+      const suggestion = await generateTextCompletion(
+        text,
+        mode,
+        style,
+        provider
+      );
       res.json({ suggestion });
     } catch (error) {
       console.error('API error:', error);

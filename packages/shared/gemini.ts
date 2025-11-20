@@ -8,13 +8,72 @@ export async function generateTextCompletion(
   currentText: string,
   mode: 'word' | 'sentence' | 'paragraph' = 'sentence',
   style: 'casual' | 'formal' | 'creative' | 'technical' = 'casual',
-  model: string = 'gemini-3-pro-preview'
+  provider: 'auto' | 'gemini' | 'sambanova' = 'auto'
 ): Promise<string> {
-  console.log('Generating text completion for:', { currentText, mode, style });
+  console.log('Generating text completion for:', {
+    currentText,
+    mode,
+    style,
+    provider,
+  });
 
-  // Try Gemini first
+  if (provider === 'sambanova') {
+    // Only try SambaNova
+    try {
+      const suggestion = await generateTextCompletionSambaNova(
+        currentText,
+        mode,
+        style
+      );
+      if (suggestion) {
+        console.log('Generated SambaNova suggestion:', suggestion);
+        return suggestion;
+      }
+    } catch (error) {
+      console.error('SambaNova generation error:', error);
+    }
+    return '';
+  }
+
+  if (provider === 'gemini') {
+    // Only try Gemini
+    try {
+      const systemPrompt = buildSystemPrompt(mode, style);
+      const model = 'gemini-3-pro-preview';
+
+      const response = await ai.models.generateContent({
+        model,
+        config: {
+          systemInstruction: systemPrompt,
+          temperature: 0.7,
+          maxOutputTokens:
+            mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
+        },
+        contents: currentText,
+      });
+
+      const suggestion = response.text?.trim() || '';
+
+      if (!suggestion) {
+        return '';
+      }
+
+      if (mode === 'word' && !currentText.endsWith(' ')) {
+        return suggestion;
+      }
+
+      console.log('Generated Gemini suggestion:', suggestion);
+      return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
+    } catch (error: any) {
+      console.error('Gemini generation error:', error);
+      return '';
+    }
+  }
+
+  // provider === 'auto' - try Gemini first, then fallback
   try {
     const systemPrompt = buildSystemPrompt(mode, style);
+    const model = 'gemini-3-pro-preview';
 
     const response = await ai.models.generateContent({
       model,

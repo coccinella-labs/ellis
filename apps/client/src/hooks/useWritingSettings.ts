@@ -8,6 +8,9 @@ export function useWritingSettings() {
   const [writingStyle, setWritingStyle] = useState<
     'casual' | 'formal' | 'creative' | 'technical'
   >('casual');
+  const [aiProvider, setAiProvider] = useState<'auto' | 'gemini' | 'sambanova'>(
+    'auto'
+  );
 
   return {
     autoSave,
@@ -16,5 +19,7 @@ export function useWritingSettings() {
     setCompletionMode,
     writingStyle,
     setWritingStyle,
+    aiProvider,
+    setAiProvider,
   };
 }
