@@ -1,0 +1,183 @@
+# CircleCI configuration for Autofix CI/CD pipeline
+version: 2.1
+
+# Import orbs
+orbs:
+  node: circleci/node@5.2.0
+  browser-tools: circleci/browser-tools@1.4.8
+  codecov: codecov/codecov@4.0.1
+
+# Define reusable commands
+commands:
+  setup_node:
+    description: "Setup Node.js environment"
+    steps:
+      - checkout
+      - node/install:
+          node-version: "22"
+      - run:
+          name: "Install dependencies"
+          command: npm ci
+
+# Define jobs
+jobs:
+  lint_and_test:
+    docker:
+      - image: cimg/node:22
+    steps:
+      - setup_node
+      - run:
+          name: "Run preflight checks"
+          command: npm run preflight
+      # The lint_and_test job runs unit tests twice. The npm run preflight script, executed in the preceding step, already includes the npm run test:coverage command. This separate Run unit tests step is therefore redundant, increasing CI job duration and cost unnecessarily. Please remove this duplicate step.
+      # Piping the output of curl directly into bash (curl ... | bash) is a significant security risk, as it executes a remote script without verification. If the script source is compromised, it could expose your CI environment and secrets. A safer and more robust approach is to use the official Codecov orb. Additionally, || true masks any potential upload failures, making it hard to debug when coverage reports are not being sent correctly.
+      - codecov/upload:
+          file: coverage/coverage-final.json
+
+  build_and_test_cli:
+    docker:
+      - image: cimg/node:22
+    steps:
+      - setup_node
+      - run:
+          name: "Build CLI"
+          command: |
+            cd apps/cli
+            npm run build
+      - run:
+          name: "Test CLI build"
+          command: |
+            cd apps/cli
+            if [ -z "$GEMINI_API_KEY" ]; then
+              echo "Skipping CLI functional test: GEMINI_API_KEY not set"
+            else
+              echo -e "test input\n.exit" | timeout 10s node dist/index.js new --output test.txt
+              # The current implementation of the CLI build test does not correctly fail the job upon test failure. The expression ... || echo "CLI test failed" causes the step to always succeed because the echo command itself returns a success exit code (0). This can lead to broken CLI functionality being merged without detection. The script should be modified to explicitly exit 1 on failure.
+              if test -f test.txt; then
+                echo "CLI test passed"
+              else
+                echo "CLI test failed"
+                exit 1
+              fi
+            fi
+    environment:
+      GEMINI_API_KEY: $GEMINI_API_KEY
+
+  build_web_app:
+    docker:
+      - image: cimg/node:22
+    steps:
+      - setup_node
+      - run:
+          name: "Build web application"
+          command: npm run build
+      - run:
+          name: "Verify build output"
+          command: |
+            test -d dist && echo "Build output exists" || exit 1
+            test -f dist/index.html && echo "HTML file exists" || exit 1
+
+  e2e_tests:
+    docker:
+      - image: cimg/node:22-browsers
+    steps:
+      - setup_node
+      - browser-tools/install-browser-tools
+      - run:
+          name: "Install Playwright browsers"
+          command: npx playwright install --with-deps
+      - run:
+          name: "Run E2E tests"
+          command: npm run test:e2e
+          environment:
+            GEMINI_API_KEY: $GEMINI_API_KEY
+    environment:
+      GEMINI_API_KEY: $GEMINI_API_KEY
+
+  security_scan:
+    docker:
+      - image: cimg/node:22
+    steps:
+      - setup_node
+      # The security_scan job contains two npm audit commands that create redundant and confusing logic. The first command, npm audit --audit-level moderate, will fail the entire job if a moderate (or higher) vulnerability is found. This means the second, more specific check for high severity vulnerabilities might never run. To make the intent clear and the logic robust, you should use a single, decisive npm audit command. If the goal is to fail only on high severity issues, the first command should be removed.
+      - run:
+          name: "Run security audit"
+          command: |
+            if npm audit --audit-level high; then
+              echo "No high severity vulnerabilities found"
+            else
+              echo "High severity vulnerabilities detected. Failing build."
+              exit 1
+            fi
+
+# The filters block for branch matching is duplicated across every job in the ci_pipeline and pr_checks workflows. This leads to a verbose configuration that is difficult to maintain, as any change to the branch logic must be replicated in many places.
+# To improve maintainability and adhere to the DRY (Don't Repeat Yourself) principle, you can use YAML anchors to define these filters once and reuse them.
+# Here is an example of how you could refactor this:
+# .filters_ci: &filters_ci
+#   filters:
+#     branches:
+#       only:
+#         - main
+#         - circleci-project-setup
+# .filters_pr: &filters_pr
+#   filters:
+#     branches:
+#       ignore:
+#         - main
+#         - circleci-project-setup
+# In your workflows
+# workflows:
+#   version: 2
+#   ci_pipeline:
+#     jobs:
+#       - lint_and_test:
+#           <<: *filters_ci
+#       - build_and_test_cli:
+#           requires: [lint_and_test]
+#           <<: *filters_ci
+#       # ... etc.
+#   pr_checks:
+#     jobs:
+#       - lint_and_test:
+#           <<: *filters_pr
+#       # ... etc.
+
+# Define workflows
+workflows:
+  version: 2
+
+  # Run on every push to main and pull requests
+  ci_pipeline:
+    jobs:
+      - lint_and_test:
+          filters: &filters_ci
+            branches:
+              only:
+                - main
+                - circleci-project-setup
+      - build_and_test_cli:
+          requires:
+            - lint_and_test
+          filters: *filters_ci
+      - build_web_app:
+          requires:
+            - lint_and_test
+          filters: *filters_ci
+      - e2e_tests:
+          requires:
+            - build_web_app
+          filters: *filters_ci
+      - security_scan:
+          filters: *filters_ci
+
+  # Run on pull requests only
+  pr_checks:
+    jobs:
+      - lint_and_test:
+          filters: &filters_pr
+            branches:
+              ignore:
+                - main
+                - circleci-project-setup
+      - security_scan:
+          filters: *filters_pr
