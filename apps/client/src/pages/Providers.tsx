@@ -50,6 +50,17 @@ export function ProvidersPage({ isOpen, onOpenChange }: ProvidersPageProps) {
 
             <div>
               <h4 className="font-medium text-sm uppercase tracking-wide mb-3">
+                API Keys
+              </h4>
+              <div className="space-y-2 text-sm">
+                <p>Enter your own keys in Settings.</p>
+                <p>Upgrade to paid plans for higher limits.</p>
+                <p>Keys are stored locally and securely.</p>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-medium text-sm uppercase tracking-wide mb-3">
                 How It Works
               </h4>
               <div className="space-y-2 text-sm">
