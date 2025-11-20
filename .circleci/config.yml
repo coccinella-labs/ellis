@@ -54,14 +54,15 @@ jobs:
             if [ -z "$GEMINI_API_KEY" ]; then
               echo "Skipping CLI functional test: GEMINI_API_KEY not set"
             else
+              apt-get update && apt-get install -y jq
               echo -e "test input\n.exit" | timeout 10s node dist/index.js new --output test.txt
-              # The current implementation of the CLI build test does not correctly fail the job upon test failure. The expression ... || echo "CLI test failed" causes the step to always succeed because the echo command itself returns a success exit code (0). This can lead to broken CLI functionality being merged without detection. The script should be modified to explicitly exit 1 on failure.
               if test -f test.txt; then
                 echo "CLI test passed"
               else
                 echo "CLI test failed"
                 exit 1
               fi
+            fi
             fi
     environment:
       GEMINI_API_KEY: $GEMINI_API_KEY
