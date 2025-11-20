@@ -2,6 +2,9 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Text Editor App', () => {
   test('should load the editor page', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('hasVisited', 'true');
+    });
     await page.goto('/');
 
     // Check that the page title is visible
@@ -13,6 +16,9 @@ test.describe('Text Editor App', () => {
   });
 
   test('should allow typing in the editor', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('hasVisited', 'true');
+    });
     await page.goto('/');
 
     const editor = page.locator('[data-testid="input-editor"]');
@@ -24,6 +30,9 @@ test.describe('Text Editor App', () => {
   });
 
   test('should open settings panel', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('hasVisited', 'true');
+    });
     await page.goto('/');
 
     // Click the settings button
@@ -36,6 +45,9 @@ test.describe('Text Editor App', () => {
   });
 
   test('should open keyboard shortcuts modal', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('hasVisited', 'true');
+    });
     await page.goto('/');
 
     // Press the keyboard shortcut Ctrl+/
@@ -47,6 +59,9 @@ test.describe('Text Editor App', () => {
   });
 
   test('should update word count', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('hasVisited', 'true');
+    });
     await page.goto('/');
 
     const editor = page.locator('[data-testid="input-editor"]');
