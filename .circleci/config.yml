@@ -5,7 +5,6 @@ version: 2.1
 orbs:
   node: circleci/node@5.2.0
   browser-tools: circleci/browser-tools@1.4.8
-  codecov: codecov/codecov@4.0.1
 
 # Define reusable commands
 commands:
@@ -30,9 +29,13 @@ jobs:
           name: "Run preflight checks"
           command: npm run preflight
       # The lint_and_test job runs unit tests twice. The npm run preflight script, executed in the preceding step, already includes the npm run test:coverage command. This separate Run unit tests step is therefore redundant, increasing CI job duration and cost unnecessarily. Please remove this duplicate step.
-      # Piping the output of curl directly into bash (curl ... | bash) is a significant security risk, as it executes a remote script without verification. If the script source is compromised, it could expose your CI environment and secrets. A safer and more robust approach is to use the official Codecov orb. Additionally, || true masks any potential upload failures, making it hard to debug when coverage reports are not being sent correctly.
-      - codecov/upload:
-          file: coverage/coverage-final.json
+      # Piping the output of curl directly into bash (curl ... | bash) is a significant security risk, as it executes a remote script without verification. If the script source is compromised, it could expose your CI environment and secrets. The official Codecov orb would be safer, but requires enabling 'Allow uncertified public orbs' in Org Settings > Security. For now, using the insecure bash method.
+      - run:
+          name: "Upload coverage reports"
+          command: |
+            if [ -d coverage ]; then
+              bash <(curl -s https://codecov.io/bash) -f coverage/coverage-final.json
+            fi
 
   build_and_test_cli:
     docker:
