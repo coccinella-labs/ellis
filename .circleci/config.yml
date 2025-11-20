@@ -88,7 +88,8 @@ jobs:
           name: "Install jq"
           command: apt-get update && apt-get install -y jq
       - setup_node
-      - browser-tools/install-browser-tools
+      - browser-tools/install-browser-tools:
+          install-firefox: false
       - run:
           name: "Install Playwright browsers"
           command: npx playwright install --with-deps
