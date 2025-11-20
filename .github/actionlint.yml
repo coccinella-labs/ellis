@@ -1,0 +1,9 @@
+# Actionlint configuration
+# https://github.com/rhysd/actionlint/blob/main/docs/config.md
+
+# Allow missing env context in expressions
+shellcheck: false
+
+# Ignore certain rules if needed
+# ignores:
+#   - 'property "cache" is not allowed'
