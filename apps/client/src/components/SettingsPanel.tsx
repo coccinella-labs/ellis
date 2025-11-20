@@ -138,18 +138,58 @@ export function SettingsPanel({
                   Craft
                 </h3>
                 <div className="space-y-4">
-                  <SettingsSelect
-                    id="ai-provider"
-                    label="AI provider"
-                    value={aiProvider}
-                    onValueChange={onAiProviderChange}
-                    options={[
-                      { value: 'auto', label: 'auto (fallback)' },
-                      { value: 'gemini', label: 'Gemini only' },
-                      { value: 'sambanova', label: 'SambaNova only' },
-                    ]}
-                    testId="select-ai-provider"
-                  />
+                  <div className="space-y-3">
+                    <label
+                      htmlFor="completion-mode"
+                      className="text-sm font-medium"
+                    >
+                      completion
+                    </label>
+                    <select
+                      id="completion-mode"
+                      value={completionMode}
+                      onChange={(e) =>
+                        onCompletionModeChange(
+                          e.target.value as 'word' | 'sentence' | 'paragraph'
+                        )
+                      }
+                      className="h-10 w-full border rounded px-3"
+                      data-testid="select-completion-mode"
+                    >
+                      <option value="word">word</option>
+                      <option value="sentence">sentence</option>
+                      <option value="paragraph">paragraph</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-3">
+                    <label
+                      htmlFor="writing-style"
+                      className="text-sm font-medium"
+                    >
+                      style
+                    </label>
+                    <select
+                      id="writing-style"
+                      value={writingStyle}
+                      onChange={(e) =>
+                        onWritingStyleChange(
+                          e.target.value as
+                            | 'casual'
+                            | 'formal'
+                            | 'creative'
+                            | 'technical'
+                        )
+                      }
+                      className="h-10 w-full border rounded px-3"
+                      data-testid="select-writing-style"
+                    >
+                      <option value="casual">casual</option>
+                      <option value="formal">formal</option>
+                      <option value="creative">creative</option>
+                      <option value="technical">technical</option>
+                    </select>
+                  </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="gemini-key" className="text-sm font-medium">
