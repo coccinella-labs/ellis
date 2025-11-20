@@ -66,6 +66,32 @@ test.describe('Text Editor App', () => {
     await expect(shortcutsModal).toBeVisible();
   });
 
+  test('should open providers modal from settings', async ({ page }) => {
+    await page.goto('/');
+
+    // Prevent welcome modal from opening
+    await page.evaluate(() => localStorage.setItem('hasVisited', 'true'));
+    await page.reload();
+    await page.waitForLoadState('domcontentloaded');
+
+    // Open settings panel
+    const settingsButton = page.locator('[data-testid="button-settings"]');
+    await settingsButton.click();
+
+    // Click the "Learn more" link
+    const learnMoreLink = page.locator('text=Learn more');
+    await learnMoreLink.click();
+
+    // Check that providers modal is visible
+    const providersModal = page.locator('[data-testid="modal-providers"]');
+    await expect(providersModal).toBeVisible();
+
+    // Check modal content
+    await expect(providersModal).toContainText('AI Providers');
+    await expect(providersModal).toContainText('Google Gemini 3.0 Pro Preview');
+    await expect(providersModal).toContainText('SambaNova GPT-OSS-120B');
+  });
+
   test('should update word count', async ({ page }) => {
     await page.goto('/');
 
