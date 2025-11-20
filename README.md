@@ -1,261 +1,292 @@
 # Autofix
 
-AI-powered text completion platform featuring a command-line tool, modern web editor, and Node.js server — all built for seamless writing assistance and automated publishing workflows.
+[![NPM version](https://img.shields.io/npm/v/@harpertoken/autofix-cli.svg)](https://npmjs.org/package/@harpertoken/autofix-cli)
 
-| Component                                       | Package                    | Current Version | Distribution                        |
-| ----------------------------------------------- | -------------------------- | --------------- | ----------------------------------- |
-| **CLI Tool**                                    | `@harpertoken/autofix-cli` | **1.0.0**       | Published on npm                    |
-| **Full Autofix System** (Web + Server + Shared) | Monorepo version           | **1.0.0**       | GitHub source + internal publishing |
-
----
-
-## ⚠️ Important Notes
-
-1. **Gemini API Required** — This tool depends on a valid **Google Gemini API key** for prediction features.
-2. **Experimental AI Output** — Generated text may be inaccurate or biased. Always review before publishing.
-3. **Release Automation Enabled** — Every valid commit to `main` may trigger a release deployment.
-
----
-
-## Features
-
-- **CLI Editor** — Instant AI fixes and completions from your terminal
-- **Web Client** — React-based UI with real-time suggestions
-- **Server + API** — Handles processing, storage, and authentication
-- **Automated Releases** — Semantic-release to npm + GitHub Packages
-- **Clean Dev Workflow** — Pre-commit formatting, types, and tests
-
----
-
-## Requirements
-
-- **Node.js**: v20+
-- **npm**: v9+
-- **Gemini API Key**: Required for predictions
-
-### Optional Development Tools
-
-- **Playwright** — for E2E testing
-- **GitHub CLI (`gh`)** — to manage workflows easily
-
----
+AI-powered text completion platform with CLI tool, web editor, and Node.js server for seamless writing assistance.
 
 ## Installation
 
-1. Clone the repository:
+### CLI Tool (Recommended)
 
-   ```bash
-    git clone https://github.com/harpertoken/autofix.git
-   cd autofix
+```sh
+npm install -g @harpertoken/autofix-cli
+```
+
+### Full System (Development)
+
+```sh
+git clone https://github.com/harpertoken/autofix.git
+cd autofix
+npm install
+npm run prepare
+```
+
+## Quick Start
+
+### CLI Usage
+
+```sh
+# Basic completion
+autofix "hello this is a"
+
+# With custom style and mode
+autofix "write a function to" --style technical --mode sentence
+```
+
+### Web Editor
+
+```sh
+npm run dev
+# Open http://localhost:3000
+```
+
+## API Keys Setup
+
+This tool requires AI provider API keys for text completion.
+
+### Required: Google Gemini
+
+1. Get a [Google Gemini API key](https://ai.google.dev/)
+2. Set environment variable:
+   ```sh
+   export GEMINI_API_KEY=your_api_key_here
    ```
 
-2. Install dependencies:
+### Optional: SambaNova (Fallback)
 
-   ```bash
-   ./autofix
-   # or:
-   npm install
-   npm run prepare
-   npm run format
+1. Get a [SambaNova API key](https://sambanova.ai/)
+2. Set environment variable:
+   ```sh
+   export SAMBANOVA_API_KEY=your_api_key_here
    ```
 
-3. Configure environment variables:
+> [!NOTE]
+> SambaNova provides automatic fallback when Gemini hits rate limits (200 requests/day free tier).
 
-   ```bash
-   cp .env.example .env
-   # then add your Gemini API key
-   ```
+## Features
 
-4. (Optional) Install CLI globally:
+### CLI Editor
 
-   ```bash
-   npm install -g @harpertoken/autofix-cli
-   ```
+- Real-time AI text completion
+- Multiple completion modes: word, sentence, paragraph
+- Writing styles: casual, formal, creative, technical
+- Auto-save functionality
+- Keyboard shortcuts support
 
-5. Start development:
+### Web Client
 
-   ```bash
-   npm run dev
-   ```
+- Modern React-based interface
+- Live text completion
+- Settings panel with craft options
+- Responsive design
+- Welcome modal for new users
 
----
+### Server & API
+
+- RESTful API endpoints
+- Dual AI provider support
+- Automatic fallback system
+- Request/response validation
+- Error handling and logging
+
+### Development
+
+- TypeScript throughout
+- Pre-commit hooks (Husky)
+- Automated testing (Vitest + Playwright)
+- Code formatting (Prettier)
+- Semantic release automation
 
 ## Usage
 
-### Full App
+### CLI Commands
 
-Runs server + web editor:
+```sh
+# Start interactive editor
+autofix
 
-```bash
-npm run dev
+# Complete specific text
+autofix "hello world this is"
+
+# Edit existing file
+autofix edit myfile.txt
+
+# Create new file
+autofix new
 ```
 
-### CLI
+### CLI Options
 
-See complete usage in:
-**`apps/cli/README.md`**
-
-Example:
-
-```bash
-autofix "hello wrld"
+```sh
+-m, --mode <mode>     Completion mode: word, sentence, paragraph
+-s, --style <style>   Writing style: casual, formal, creative, technical
+-o, --output <file>   Output file path
+-h, --help           Show help
+-v, --version        Show version
 ```
 
-### Testing
+### Web API
 
-```bash
-npm run test:e2e
-npm run test:report
+The server provides REST endpoints for text completion:
+
+```typescript
+// POST /api/complete
+{
+  "text": "hello this is a",
+  "mode": "sentence",
+  "style": "casual"
+}
+
+// Response
+{
+  "suggestion": " test of the AI completion system."
+}
 ```
 
----
+### Status Endpoint
 
-## Command Line Interface
-
-Example CLI help output:
-
-```
-Usage: autofix [options] <text>
-
-Options:
-  -h, --help        Show help
-  -v, --version     Show version
-  --model <name>    Select Gemini model
-  --dry-run         Preview changes without applying
+```typescript
+// GET /api/status
+{
+  "status": "ok",
+  "providers": {
+    "gemini": true,
+    "sambanova": true
+  }
+}
 ```
 
----
+## AI Provider Fallback
+
+Autofix uses a smart fallback system for maximum reliability:
+
+1. **Primary**: Google Gemini 3.0 Pro Preview (latest model)
+2. **Fallback**: SambaNova GPT-OSS-120B (when Gemini rate limited)
+
+The system automatically detects rate limits and switches providers seamlessly.
+
+### Rate Limit Handling
+
+```typescript
+// Automatic fallback on 429 errors
+if (geminiError.status === 429) {
+  return await sambaNovaFallback(text, mode, style);
+}
+```
+
+## Requirements
+
+- **Node.js**: 20 LTS or later
+- **npm**: 9+
+- **AI API Keys**: At least one provider key required
+
+### Supported Runtimes
+
+- Node.js 20+
+- Modern web browsers
+- Vercel (deployment)
+- Local development
+
+### Development Tools
+
+- **Playwright**: E2E testing
+- **Vitest**: Unit testing
+- **TypeScript**: Type checking
+- **Prettier**: Code formatting
+- **Husky**: Git hooks
 
 ## Development
 
-Follows **Conventional Commits** and strict pre-flight checks.
+### Setup
 
-### Commit Standards
-
-Types supported:
-
-- feat:, fix:, docs:, style:, refactor:, test:, chore:, perf:, ci:, build:, revert:
-
-**Validation Hook**
-
-```bash
-cp scripts/commit-msg .git/hooks/commit-msg
-chmod +x .git/hooks/commit-msg
+```sh
+git clone https://github.com/harpertoken/autofix.git
+cd autofix
+npm install
+npm run prepare
 ```
 
-**Rewrite history to comply**
+### Available Scripts
 
-```bash
-scripts/rewrite_msg.sh
-git push --force-with-lease
+```sh
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run check        # TypeScript type checking
+npm run test         # Run unit tests
+npm run test:e2e     # Run E2E tests
+npm run format       # Format code with Prettier
+npm run preflight    # Run all checks (format, check, test, build)
 ```
 
----
-
-## CI / Workflows
-
-Manage GitHub Actions:
-
-```bash
-gh workflow enable "CLI"
-gh workflow disable "E2E Tests"
-```
-
-For comprehensive linting of GitHub Actions workflows, install [actionlint](https://github.com/rhysd/actionlint):
-
-```bash
-# On macOS
-brew install actionlint
-
-# Or download from releases
-```
-
-Then run:
-
-```bash
-actionlint .github/workflows/*.yml
-```
-
-Enabled Workflows:
-
-- **CLI**
-- **CodeQL**
-- **E2E Tests**
-- **Release Automation**
-
----
-
-## Release Process
-
-Semantic-release automatically:
-
-- **Bumps versions**
-- Publishes to **npm** + **GitHub Packages**
-- Generates **CHANGELOG.md**
-- Creates **GitHub Release**
-
-Requires:
-
-- `GITHUB_TOKEN`
-- `NPM_TOKEN`
-
-Trigger:
-
-- Push to `main` with `feat:` or `fix:` commits
-
----
-
-## Project Structure
+### Project Structure
 
 ```
 autofix/
 ├── apps/
-│   ├── cli/          # CLI tool
-│   ├── client/       # Web editor
+│   ├── cli/          # Command-line interface
+│   ├── client/       # React web application
+│   └── server/       # Node.js API server
 ├── packages/
-│   ├── server/       # Node.js backend
-│   └── shared/       # Shared logic
-├── scripts/          # Tooling
-└── .github/workflows # CI/CD
+│   └── shared/       # Shared utilities and types
+├── tests/            # Test files
+└── scripts/          # Build and utility scripts
 ```
 
----
+### Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature`
+3. Make your changes with tests
+4. Run preflight: `npm run preflight`
+5. Commit with conventional format: `git commit -m "feat: add new feature"`
+6. Push and open a PR
+
+### Commit Convention
+
+This project uses [Conventional Commits](https://conventionalcommits.org/):
+
+- `feat:` - New features
+- `fix:` - Bug fixes
+- `docs:` - Documentation
+- `style:` - Code style changes
+- `refactor:` - Code refactoring
+- `test:` - Testing
+- `chore:` - Maintenance
+
+### Release Process
+
+Releases are automated using semantic-release:
+
+- Push to `main` triggers release
+- Version bumps based on commit messages
+- NPM publishing for CLI package
+- GitHub releases with changelogs
 
 ## Troubleshooting
 
-| Problem                   | Fix                                       |
-| ------------------------- | ----------------------------------------- |
-| Gemini errors             | Check `.env` and API key permissions      |
-| Release not triggered     | Ensure commit follows conventional format |
-| Web client fails to start | Run `npm run prepare` first               |
-| CLI missing after install | Reinstall globally with `-g`              |
+### Common Issues
 
----
+| Problem                   | Solution                                                |
+| ------------------------- | ------------------------------------------------------- |
+| `GEMINI_API_KEY` required | Get key from [Google AI Studio](https://ai.google.dev/) |
+| Rate limit errors         | Add `SAMBANOVA_API_KEY` for fallback                    |
+| CLI not found             | Run `npm install -g @harpertoken/autofix-cli`           |
+| Web app not loading       | Check `npm run dev` output                              |
+| Build failures            | Run `npm run preflight` to check all issues             |
 
-## Contributing
+### Debug Mode
 
-1. Fork
-2. Create branch
-3. Write code + tests
-4. Commit using conventional format
-5. Open PR with clear summary
+Enable verbose logging:
 
-Example:
-
-```bash
-git checkout -b feat/new-ui
-git commit -m "feat(ui): improve prediction panel layout"
+```sh
+DEBUG=autofix:* npm run dev
 ```
-
----
-
-## Related Projects
-
-- Replit TextPredict (inspiration)
-- Gemini Developer Documentation
-
----
 
 ## License
 
-MIT — Free to modify, commercial use permitted.
+MIT - See [LICENSE](LICENSE) file for details.
+
+## Related Projects
+
+- [Google Gemini](https://ai.google.dev/) - Primary AI provider
+- [SambaNova](https://sambanova.ai/) - Fallback AI provider
