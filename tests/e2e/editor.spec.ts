@@ -7,6 +7,7 @@ test.describe('Text Editor App', () => {
     // Prevent welcome modal from opening
     await page.evaluate(() => localStorage.setItem('hasVisited', 'true'));
     await page.reload();
+    await page.waitForLoadState('domcontentloaded');
 
     // Check that the page title is visible
     await expect(page).toHaveTitle(/Harper Autofix/);
@@ -22,6 +23,7 @@ test.describe('Text Editor App', () => {
     // Prevent welcome modal from opening
     await page.evaluate(() => localStorage.setItem('hasVisited', 'true'));
     await page.reload();
+    await page.waitForLoadState('domcontentloaded');
 
     const editor = page.locator('[data-testid="input-editor"]');
     await editor.click();
@@ -37,6 +39,7 @@ test.describe('Text Editor App', () => {
     // Prevent welcome modal from opening
     await page.evaluate(() => localStorage.setItem('hasVisited', 'true'));
     await page.reload();
+    await page.waitForLoadState('domcontentloaded');
 
     // Click the settings button
     const settingsButton = page.locator('[data-testid="button-settings"]');
@@ -53,6 +56,7 @@ test.describe('Text Editor App', () => {
     // Prevent welcome modal from opening
     await page.evaluate(() => localStorage.setItem('hasVisited', 'true'));
     await page.reload();
+    await page.waitForLoadState('domcontentloaded');
 
     // Press the keyboard shortcut Ctrl+/
     await page.keyboard.press('Control+/');
@@ -68,6 +72,7 @@ test.describe('Text Editor App', () => {
     // Prevent welcome modal from opening
     await page.evaluate(() => localStorage.setItem('hasVisited', 'true'));
     await page.reload();
+    await page.waitForLoadState('domcontentloaded');
 
     const editor = page.locator('[data-testid="input-editor"]');
     await editor.click();
