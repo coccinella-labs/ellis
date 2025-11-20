@@ -5,6 +5,7 @@ import { TextEditor } from '@/components/TextEditor';
 import { BottomBar } from '@/components/BottomBar';
 import { SettingsPanel } from '@/components/SettingsPanel';
 import { KeyboardShortcutsModal } from '@/components/KeyboardShortcutsModal';
+import { WelcomeModal } from '@/components/WelcomeModal';
 import { useWritingSettings } from '@/hooks/useWritingSettings';
 
 export default function Editor() {
@@ -18,6 +19,7 @@ export default function Editor() {
   );
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [welcomeOpen, setWelcomeOpen] = useState(false);
 
   const {
     autoSave,
@@ -33,6 +35,13 @@ export default function Editor() {
     setWordCount(words.length);
     setCharCount(text.length);
   }, [text]);
+
+  useEffect(() => {
+    const hasVisited = localStorage.getItem('hasVisited');
+    if (!hasVisited) {
+      setWelcomeOpen(true);
+    }
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -108,6 +117,20 @@ export default function Editor() {
       <KeyboardShortcutsModal
         isOpen={shortcutsOpen}
         onClose={() => setShortcutsOpen(false)}
+      />
+
+      <WelcomeModal
+        isOpen={welcomeOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setWelcomeOpen(false);
+            try {
+              localStorage.setItem('hasVisited', 'true');
+            } catch (error) {
+              console.error('Failed to write to localStorage:', error);
+            }
+          }
+        }}
       />
     </div>
   );

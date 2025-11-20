@@ -33,7 +33,7 @@ export function TopBar({
           data-testid="input-document-title"
         />
 
-        <div className="flex items-center gap-1 opacity-60 hover:opacity-100 transition-opacity">
+        <div className="flex items-center gap-1 opacity-60">
           <Button
             size="icon"
             variant="ghost"
