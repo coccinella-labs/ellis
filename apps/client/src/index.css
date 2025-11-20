@@ -167,15 +167,15 @@
   --elevate-1: rgba(255, 255, 255, 0.04);
   --elevate-2: rgba(255, 255, 255, 0.09);
 
-  --background: 222 15% 8%;
+  --background: 222 15% 12%;
 
-  --foreground: 220 13% 91%;
+  --foreground: 0 0% 100%;
 
   --border: 222 13% 18%;
 
-  --card: 222 13% 11%;
+  --card: 222 13% 15%;
 
-  --card-foreground: 220 13% 91%;
+  --card-foreground: 0 0% 100%;
 
   --card-border: 222 13% 13%;
 
