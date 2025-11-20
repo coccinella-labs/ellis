@@ -1,0 +1,31 @@
+name: Validate Workflows
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - .github/workflows/**
+  pull_request:
+    branches:
+      - main
+      - master
+    paths:
+      - .github/workflows/**
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate GitHub Actions
+        uses: github/super-linter@v5
+        env:
+          VALIDATE_ALL_CODEBASE: true
+          VALIDATE_GITHUB_ACTIONS: true
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
