@@ -1,15 +1,32 @@
 import type { Express } from 'express';
 import { createServer, type Server } from 'http';
 import { storage } from './storage';
-import { generateTextCompletion, testApiKey } from './gemini';
+import {
+  generateTextCompletion,
+  testApiKey,
+  testSambaNovaApiKey,
+} from './gemini';
 import { textCompletionRequestSchema } from '@shared/schema';
 
 export function registerRoutes(app: Express): Express {
   app.get('/api/status', async (req, res) => {
     try {
-      const isWorking = await testApiKey();
-      console.log('Status check result:', isWorking);
-      res.json({ status: isWorking ? 'ok' : 'error' });
+      const geminiWorking = await testApiKey();
+      const sambaNovaWorking = await testSambaNovaApiKey();
+      const isWorking = geminiWorking || sambaNovaWorking; // At least one provider should work
+      console.log(
+        'Status check result - Gemini:',
+        geminiWorking,
+        'SambaNova:',
+        sambaNovaWorking
+      );
+      res.json({
+        status: isWorking ? 'ok' : 'error',
+        providers: {
+          gemini: geminiWorking,
+          sambanova: sambaNovaWorking,
+        },
+      });
     } catch (error) {
       console.error('Status check error:', error);
       res.status(500).json({ status: 'error' });

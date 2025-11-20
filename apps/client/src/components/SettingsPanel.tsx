@@ -2,6 +2,8 @@ import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { useState } from 'react';
+import { ProvidersPage } from '@/pages/Providers';
 import {
   Select,
   SelectContent,
@@ -64,6 +66,17 @@ interface SettingsPanelProps {
   ) => void;
 }
 
+function ProvidersLink({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="text-sm text-primary hover:text-primary/80 transition-colors underline"
+    >
+      Learn more
+    </button>
+  );
+}
+
 export function SettingsPanel({
   isOpen,
   onClose,
@@ -74,6 +87,7 @@ export function SettingsPanel({
   writingStyle,
   onWritingStyleChange,
 }: SettingsPanelProps) {
+  const [showProviders, setShowProviders] = useState(false);
   return (
     <>
       {isOpen && (
@@ -158,9 +172,15 @@ export function SettingsPanel({
               </div>
             </div>
 
-            <div className="pt-6 border-t border-border/50">
+            <div className="pt-6 border-t border-border/50 space-y-4">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">
+                  AI writing assistant with fallback providers
+                </p>
+                <ProvidersLink onClick={() => setShowProviders(true)} />
+              </div>
               <p className="text-sm text-muted-foreground">
-                AI writing assistant. Private and local.{' '}
+                Private and local.{' '}
                 <a
                   href="https://github.com/harpertoken/autofix/issues"
                   target="_blank"
@@ -172,6 +192,11 @@ export function SettingsPanel({
                 .
               </p>
             </div>
+
+            <ProvidersPage
+              isOpen={showProviders}
+              onOpenChange={setShowProviders}
+            />
           </div>
         </div>
       </div>

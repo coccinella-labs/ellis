@@ -121,8 +121,8 @@ autofix new
 -m, --mode <mode>     Completion mode: word, sentence, paragraph
 -s, --style <style>   Writing style: casual, formal, creative, technical
 -o, --output <file>   Output file path
--h, --help           Show help
--v, --version        Show version
+-h, --help            Show help
+-v, --version         Show version
 ```
 
 ### Web API
