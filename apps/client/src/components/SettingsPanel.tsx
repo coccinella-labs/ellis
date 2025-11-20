@@ -64,6 +64,8 @@ interface SettingsPanelProps {
   onWritingStyleChange: (
     style: 'casual' | 'formal' | 'creative' | 'technical'
   ) => void;
+  aiProvider: 'auto' | 'gemini' | 'sambanova';
+  onAiProviderChange: (provider: 'auto' | 'gemini' | 'sambanova') => void;
 }
 
 function ProvidersLink({ onClick }: { onClick: () => void }) {
@@ -86,6 +88,8 @@ export function SettingsPanel({
   onCompletionModeChange,
   writingStyle,
   onWritingStyleChange,
+  aiProvider,
+  onAiProviderChange,
 }: SettingsPanelProps) {
   const [showProviders, setShowProviders] = useState(false);
   return (
@@ -150,6 +154,19 @@ export function SettingsPanel({
                       { value: 'technical', label: 'technical' },
                     ]}
                     testId="select-writing-style"
+                  />
+
+                  <SettingsSelect
+                    id="ai-provider"
+                    label="AI provider"
+                    value={aiProvider}
+                    onValueChange={onAiProviderChange}
+                    options={[
+                      { value: 'auto', label: 'auto (fallback)' },
+                      { value: 'gemini', label: 'Gemini only' },
+                      { value: 'sambanova', label: 'SambaNova only' },
+                    ]}
+                    testId="select-ai-provider"
                   />
                 </div>
               </div>

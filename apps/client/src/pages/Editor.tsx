@@ -28,6 +28,8 @@ export default function Editor() {
     setCompletionMode,
     writingStyle,
     setWritingStyle,
+    aiProvider,
+    setAiProvider,
   } = useWritingSettings();
 
   useEffect(() => {
@@ -92,6 +94,7 @@ export default function Editor() {
             onSuggestionAccept={() => setAcceptedCount((prev) => prev + 1)}
             completionMode={completionMode}
             writingStyle={writingStyle}
+            aiProvider={aiProvider}
           />
         </div>
       </main>
@@ -112,6 +115,8 @@ export default function Editor() {
         onCompletionModeChange={setCompletionMode}
         writingStyle={writingStyle}
         onWritingStyleChange={setWritingStyle}
+        aiProvider={aiProvider}
+        onAiProviderChange={setAiProvider}
       />
 
       <KeyboardShortcutsModal
