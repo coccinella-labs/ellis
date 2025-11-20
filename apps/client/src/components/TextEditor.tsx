@@ -115,7 +115,7 @@ export function TextEditor({
 
       {suggestion && (
         <div
-          className="absolute bottom-0 left-0 right-0 flex items-center justify-center py-2 opacity-50 hover:opacity-100 transition-opacity"
+          className="absolute bottom-0 left-0 right-0 flex items-center justify-center py-2 opacity-50"
           data-testid="panel-suggestion-controls"
         >
           <div className="flex items-center gap-2 px-3 py-1 bg-ai-suggestion-dim/30 rounded-full backdrop-blur-sm">

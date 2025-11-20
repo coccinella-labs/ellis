@@ -28,7 +28,7 @@ function SettingsSelect<T extends string>({
   testId,
 }: SettingsSelectProps<T>) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <Label htmlFor={id} className="text-sm font-medium">
         {label}
       </Label>
@@ -36,7 +36,7 @@ function SettingsSelect<T extends string>({
         value={value}
         onValueChange={(value) => onValueChange(value as T)}
       >
-        <SelectTrigger id={id} data-testid={testId}>
+        <SelectTrigger id={id} data-testid={testId} className="h-10">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -97,59 +97,79 @@ export function SettingsPanel({
               size="icon"
               variant="ghost"
               onClick={onClose}
+              className="hover:bg-transparent"
               data-testid="button-close-settings"
             >
               <X className="w-4 h-4" />
             </Button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="auto-save" className="text-sm font-medium">
-                  Auto-save
-                </Label>
-                <Switch
-                  id="auto-save"
-                  checked={autoSave}
-                  onCheckedChange={onAutoSaveChange}
-                  data-testid="switch-auto-save"
-                />
+          <div className="flex-1 overflow-y-auto p-6 space-y-8">
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-sm font-medium uppercase tracking-wide mb-4 text-muted-foreground">
+                  Craft
+                </h3>
+                <div className="space-y-4">
+                  <SettingsSelect
+                    id="completion-mode"
+                    label="completion"
+                    value={completionMode}
+                    onValueChange={onCompletionModeChange}
+                    options={[
+                      { value: 'word', label: 'word' },
+                      { value: 'sentence', label: 'sentence' },
+                      { value: 'paragraph', label: 'paragraph' },
+                    ]}
+                    testId="select-completion-mode"
+                  />
+
+                  <SettingsSelect
+                    id="writing-style"
+                    label="style"
+                    value={writingStyle}
+                    onValueChange={onWritingStyleChange}
+                    options={[
+                      { value: 'casual', label: 'casual' },
+                      { value: 'formal', label: 'formal' },
+                      { value: 'creative', label: 'creative' },
+                      { value: 'technical', label: 'technical' },
+                    ]}
+                    testId="select-writing-style"
+                  />
+                </div>
               </div>
 
-              <SettingsSelect
-                id="completion-mode"
-                label="Completion Mode"
-                value={completionMode}
-                onValueChange={onCompletionModeChange}
-                options={[
-                  { value: 'word', label: 'Word completion' },
-                  { value: 'sentence', label: 'Sentence continuation' },
-                  { value: 'paragraph', label: 'Paragraph expansion' },
-                ]}
-                testId="select-completion-mode"
-              />
-
-              <SettingsSelect
-                id="writing-style"
-                label="Writing Style"
-                value={writingStyle}
-                onValueChange={onWritingStyleChange}
-                options={[
-                  { value: 'casual', label: 'Casual' },
-                  { value: 'formal', label: 'Formal' },
-                  { value: 'creative', label: 'Creative' },
-                  { value: 'technical', label: 'Technical' },
-                ]}
-                testId="select-writing-style"
-              />
+              <div>
+                <h3 className="text-sm font-medium uppercase tracking-wide mb-4 text-muted-foreground">
+                  Flow
+                </h3>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="auto-save" className="text-sm font-medium">
+                    auto-save
+                  </Label>
+                  <Switch
+                    id="auto-save"
+                    checked={autoSave}
+                    onCheckedChange={onAutoSaveChange}
+                    data-testid="switch-auto-save"
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="pt-4 border-t">
-              <h3 className="text-sm font-medium mb-2">About</h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Harper Autofix helps you write faster with intelligent AI
-                suggestions based on your writing patterns and style.
+            <div className="pt-6 border-t border-border/50">
+              <p className="text-sm text-muted-foreground">
+                AI writing assistant. Private and local.{' '}
+                <a
+                  href="https://github.com/harpertoken/autofix/issues"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-primary"
+                >
+                  Report bugs
+                </a>
+                .
               </p>
             </div>
           </div>
