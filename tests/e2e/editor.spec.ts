@@ -4,11 +4,9 @@ test.describe('Text Editor App', () => {
   test('should load the editor page', async ({ page }) => {
     await page.goto('/');
 
-    // Close welcome modal if open
-    const modal = page.locator('[data-testid="modal-welcome"]');
-    if (await modal.isVisible()) {
-      await page.keyboard.press('Escape');
-    }
+    // Prevent welcome modal from opening
+    await page.evaluate(() => localStorage.setItem('hasVisited', 'true'));
+    await page.reload();
 
     // Check that the page title is visible
     await expect(page).toHaveTitle(/Harper Autofix/);
@@ -21,11 +19,9 @@ test.describe('Text Editor App', () => {
   test('should allow typing in the editor', async ({ page }) => {
     await page.goto('/');
 
-    // Close welcome modal if open
-    const modal = page.locator('[data-testid="modal-welcome"]');
-    if (await modal.isVisible()) {
-      await page.keyboard.press('Escape');
-    }
+    // Prevent welcome modal from opening
+    await page.evaluate(() => localStorage.setItem('hasVisited', 'true'));
+    await page.reload();
 
     const editor = page.locator('[data-testid="input-editor"]');
     await editor.click();
@@ -38,11 +34,9 @@ test.describe('Text Editor App', () => {
   test('should open settings panel', async ({ page }) => {
     await page.goto('/');
 
-    // Close welcome modal if open
-    const modal = page.locator('[data-testid="modal-welcome"]');
-    if (await modal.isVisible()) {
-      await page.keyboard.press('Escape');
-    }
+    // Prevent welcome modal from opening
+    await page.evaluate(() => localStorage.setItem('hasVisited', 'true'));
+    await page.reload();
 
     // Click the settings button
     const settingsButton = page.locator('[data-testid="button-settings"]');
@@ -56,11 +50,9 @@ test.describe('Text Editor App', () => {
   test('should open keyboard shortcuts modal', async ({ page }) => {
     await page.goto('/');
 
-    // Close welcome modal if open
-    const modal = page.locator('[data-testid="modal-welcome"]');
-    if (await modal.isVisible()) {
-      await page.keyboard.press('Escape');
-    }
+    // Prevent welcome modal from opening
+    await page.evaluate(() => localStorage.setItem('hasVisited', 'true'));
+    await page.reload();
 
     // Press the keyboard shortcut Ctrl+/
     await page.keyboard.press('Control+/');
@@ -73,11 +65,9 @@ test.describe('Text Editor App', () => {
   test('should update word count', async ({ page }) => {
     await page.goto('/');
 
-    // Close welcome modal if open
-    const modal = page.locator('[data-testid="modal-welcome"]');
-    if (await modal.isVisible()) {
-      await page.keyboard.press('Escape');
-    }
+    // Prevent welcome modal from opening
+    await page.evaluate(() => localStorage.setItem('hasVisited', 'true'));
+    await page.reload();
 
     const editor = page.locator('[data-testid="input-editor"]');
     await editor.click();
