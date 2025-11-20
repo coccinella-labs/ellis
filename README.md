@@ -1,20 +1,44 @@
-# Harper Autofix
+# Autofix
 
-AI-powered text completion editor with CLI, web client, and server. Supports automated releases to npm and GitHub Packages. Latest version: 1.6.0
+AI-powered text completion platform featuring a command-line tool, modern web editor, and Node.js server — all built for seamless writing assistance and automated publishing workflows.
+
+| Component                                       | Package                    | Current Version | Distribution                        |
+| ----------------------------------------------- | -------------------------- | --------------- | ----------------------------------- |
+| **CLI Tool**                                    | `@harpertoken/autofix-cli` | **1.0.0**       | Published on npm                    |
+| **Full Autofix System** (Web + Server + Shared) | Monorepo version           | **1.0.0**       | GitHub source + internal publishing |
+
+---
+
+## ⚠️ Important Notes
+
+1. **Gemini API Required** — This tool depends on a valid **Google Gemini API key** for prediction features.
+2. **Experimental AI Output** — Generated text may be inaccurate or biased. Always review before publishing.
+3. **Release Automation Enabled** — Every valid commit to `main` may trigger a release deployment.
+
+---
 
 ## Features
 
-- **CLI Tool**: Command-line interface for text prediction using Gemini AI.
-- **Web Client**: React-based editor with real-time text prediction.
-- **Server**: Node.js backend handling API requests and storage.
+- **CLI Editor** — Instant AI fixes and completions from your terminal
+- **Web Client** — React-based UI with real-time suggestions
+- **Server + API** — Handles processing, storage, and authentication
+- **Automated Releases** — Semantic-release to npm + GitHub Packages
+- **Clean Dev Workflow** — Pre-commit formatting, types, and tests
 
-## Test Release
+---
 
-This is a test commit to trigger the release process.
+## Requirements
 
-Updated tokens for dual publishing.
+- **Node.js**: v20+
+- **npm**: v9+
+- **Gemini API Key**: Required for predictions
 
-Added version check to prevent duplicates.
+### Optional Development Tools
+
+- **Playwright** — for E2E testing
+- **GitHub CLI (`gh`)** — to manage workflows easily
+
+---
 
 ## Installation
 
@@ -22,94 +46,216 @@ Added version check to prevent duplicates.
 
    ```bash
     git clone https://github.com/harpertoken/autofix.git
-    cd autofix
+   cd autofix
    ```
 
 2. Install dependencies:
 
    ```bash
    ./autofix
-   # This runs: npm install, npm run prepare, npm run format
-   # Or manually:
+   # or:
    npm install
    npm run prepare
    npm run format
    ```
 
-3. Set up environment variables: Copy `.env.example` to `.env` and add your Gemini API key.
+3. Configure environment variables:
 
-4. (Optional) Install the CLI globally: `npm install -g @harpertoken/autofix-cli`
+   ```bash
+   cp .env.example .env
+   # then add your Gemini API key
+   ```
 
-5. Run the development server:
+4. (Optional) Install CLI globally:
+
+   ```bash
+   npm install -g @harpertoken/autofix-cli
+   ```
+
+5. Start development:
+
    ```bash
    npm run dev
    ```
 
+---
+
 ## Usage
 
-- **Full App**: Run `npm run dev` to start server and web client.
-- **CLI**: See [apps/cli/README.md](apps/cli/README.md) for CLI usage.
-- **E2E Tests**: Run `npm run test:e2e` for end-to-end testing. View reports with `npm run test:report`.
+### Full App
+
+Runs server + web editor:
+
+```bash
+npm run dev
+```
+
+### CLI
+
+See complete usage in:
+**`apps/cli/README.md`**
+
+Example:
+
+```bash
+autofix "hello wrld"
+```
+
+### Testing
+
+```bash
+npm run test:e2e
+npm run test:report
+```
+
+---
+
+## Command Line Interface
+
+Example CLI help output:
+
+```
+Usage: autofix [options] <text>
+
+Options:
+  -h, --help        Show help
+  -v, --version     Show version
+  --model <name>    Select Gemini model
+  --dry-run         Preview changes without applying
+```
+
+---
 
 ## Development
 
-Follows conventional commits. Pre-commit hooks format code and check types. Use `npm run preflight` for full checks.
+Follows **Conventional Commits** and strict pre-flight checks.
 
-### Conventional Commits Setup
+### Commit Standards
 
-To enforce conventional commit standards:
+Types supported:
 
-1. Copy the commit-msg hook: `cp scripts/commit-msg .git/hooks/commit-msg`
-2. Make it executable: `chmod +x .git/hooks/commit-msg`
+- feat:, fix:, docs:, style:, refactor:, test:, chore:, perf:, ci:, build:, revert:
 
-The hook enforces:
+**Validation Hook**
 
-- First line ≤60 characters
-- First line lowercase
-- Starts with conventional types (feat:, fix:, docs:, style:, refactor:, test:, chore:, perf:, ci:, build:, revert:)
+```bash
+cp scripts/commit-msg .git/hooks/commit-msg
+chmod +x .git/hooks/commit-msg
+```
 
-To clean up existing commit messages:
+**Rewrite history to comply**
 
-- Run `scripts/rewrite_msg.sh` to rewrite history (lowercase + truncate)
-- Force push: `git push --force-with-lease`
+```bash
+scripts/rewrite_msg.sh
+git push --force-with-lease
+```
 
-### Workflows Setup
+---
 
-To enable/disable GitHub Actions workflows:
+## CI / Workflows
 
-- Enable: `gh workflow enable "Workflow Name"`
-- Disable: `gh workflow disable "Workflow Name"`
+Manage GitHub Actions:
 
-To validate workflow YAML syntax:
+```bash
+gh workflow enable "CLI"
+gh workflow disable "E2E Tests"
+```
 
-- Run: `python3 -c "import yaml; yaml.safe_load(open('.github/workflows/workflow.yml')); print('Valid')"`
+For comprehensive linting of GitHub Actions workflows, install [actionlint](https://github.com/rhysd/actionlint):
 
-Available workflows: CLI, CodeQL, E2E Tests, Release
+```bash
+# On macOS
+brew install actionlint
 
-- CLI: Triggers on pushes to main with changes in `apps/cli/**` or `packages/shared/**`
+# Or download from releases
+```
+
+Then run:
+
+```bash
+actionlint .github/workflows/*.yml
+```
+
+Enabled Workflows:
+
+- **CLI**
+- **CodeQL**
+- **E2E Tests**
+- **Release Automation**
+
+---
+
+## Release Process
+
+Semantic-release automatically:
+
+- **Bumps versions**
+- Publishes to **npm** + **GitHub Packages**
+- Generates **CHANGELOG.md**
+- Creates **GitHub Release**
+
+Requires:
+
+- `GITHUB_TOKEN`
+- `NPM_TOKEN`
+
+Trigger:
+
+- Push to `main` with `feat:` or `fix:` commits
+
+---
+
+## Project Structure
+
+```
+autofix/
+├── apps/
+│   ├── cli/          # CLI tool
+│   ├── client/       # Web editor
+├── packages/
+│   ├── server/       # Node.js backend
+│   └── shared/       # Shared logic
+├── scripts/          # Tooling
+└── .github/workflows # CI/CD
+```
+
+---
+
+## Troubleshooting
+
+| Problem                   | Fix                                       |
+| ------------------------- | ----------------------------------------- |
+| Gemini errors             | Check `.env` and API key permissions      |
+| Release not triggered     | Ensure commit follows conventional format |
+| Web client fails to start | Run `npm run prepare` first               |
+| CLI missing after install | Reinstall globally with `-g`              |
+
+---
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+1. Fork
+2. Create branch
+3. Write code + tests
+4. Commit using conventional format
+5. Open PR with clear summary
 
-## Releasing
+Example:
 
-The project uses semantic-release for automatic versioning and publishing:
+```bash
+git checkout -b feat/new-ui
+git commit -m "feat(ui): improve prediction panel layout"
+```
 
-- Pushes to `main`/`master` with commits like `feat:` or `fix:` trigger releases
-- Versions are auto-bumped based on commit types
-- GitHub releases are created automatically
-- CLI package is published to npm
-- CHANGELOG.md is updated
+---
 
-Requires `GITHUB_TOKEN` (automatic) and `NPM_TOKEN` secrets in repo settings.
+## Related Projects
 
-Inspired by [Replit TextPredict](https://replit.com/@harpertoken/TextPredict)
+- Replit TextPredict (inspiration)
+- Gemini Developer Documentation
 
-Last updated: 2025-10-08
-
-Test release trigger.
+---
 
 ## License
 
-MIT
+MIT — Free to modify, commercial use permitted.

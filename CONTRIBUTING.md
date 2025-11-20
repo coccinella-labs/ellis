@@ -35,6 +35,25 @@ Or run individual commands:
 - Build: `npm run build`
 - End-to-end tests: `npm run test:e2e`
 
+## GitHub Actions Linting
+
+To lint GitHub Actions workflows locally, install [actionlint](https://github.com/rhysd/actionlint):
+
+```bash
+# On macOS
+brew install actionlint
+
+# Or download from releases
+```
+
+Then run:
+
+```bash
+actionlint .github/workflows/*.yml
+```
+
+This helps catch YAML syntax errors and other issues before CI.
+
 ## Code Style
 
 - Use TypeScript for all new code
