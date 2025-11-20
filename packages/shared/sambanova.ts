@@ -10,13 +10,21 @@ console.log('SambaNova API key loaded:', !!process.env.SAMBANOVA_API_KEY);
 export async function generateTextCompletionSambaNova(
   currentText: string,
   mode: 'word' | 'sentence' | 'paragraph' = 'sentence',
-  style: 'casual' | 'formal' | 'creative' | 'technical' = 'casual'
+  style: 'casual' | 'formal' | 'creative' | 'technical' = 'casual',
+  customKey?: string
 ): Promise<string> {
   console.log('Generating text completion with SambaNova:', {
     currentText,
     mode,
     style,
   });
+
+  const client = customKey
+    ? new OpenAI({
+        apiKey: customKey,
+        baseURL: 'https://api.sambanova.ai/v1',
+      })
+    : sambanova;
 
   try {
     const systemPrompt = buildSystemPrompt(mode, style);
@@ -28,7 +36,7 @@ export async function generateTextCompletionSambaNova(
 
     console.log('Making SambaNova API call with messages:', messages);
 
-    const response = await sambanova.chat.completions.create({
+    const response = await client.chat.completions.create({
       model: 'gpt-oss-120b',
       messages,
       max_tokens: mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,

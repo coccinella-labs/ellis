@@ -28,6 +28,12 @@ export default function Editor() {
     setCompletionMode,
     writingStyle,
     setWritingStyle,
+    aiProvider,
+    setAiProvider,
+    geminiApiKey,
+    setGeminiApiKey,
+    sambaNovaApiKey,
+    setSambaNovaApiKey,
   } = useWritingSettings();
 
   useEffect(() => {
@@ -92,6 +98,9 @@ export default function Editor() {
             onSuggestionAccept={() => setAcceptedCount((prev) => prev + 1)}
             completionMode={completionMode}
             writingStyle={writingStyle}
+            aiProvider={aiProvider}
+            geminiApiKey={geminiApiKey}
+            sambaNovaApiKey={sambaNovaApiKey}
           />
         </div>
       </main>
@@ -112,6 +121,12 @@ export default function Editor() {
         onCompletionModeChange={setCompletionMode}
         writingStyle={writingStyle}
         onWritingStyleChange={setWritingStyle}
+        aiProvider={aiProvider}
+        onAiProviderChange={setAiProvider}
+        geminiApiKey={geminiApiKey}
+        onGeminiApiKeyChange={setGeminiApiKey}
+        sambaNovaApiKey={sambaNovaApiKey}
+        onSambaNovaApiKeyChange={setSambaNovaApiKey}
       />
 
       <KeyboardShortcutsModal

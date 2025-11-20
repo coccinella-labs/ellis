@@ -2,6 +2,7 @@ import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { ProvidersPage } from '@/pages/Providers';
 import {
@@ -64,6 +65,12 @@ interface SettingsPanelProps {
   onWritingStyleChange: (
     style: 'casual' | 'formal' | 'creative' | 'technical'
   ) => void;
+  aiProvider: 'auto' | 'gemini' | 'sambanova';
+  onAiProviderChange: (provider: 'auto' | 'gemini' | 'sambanova') => void;
+  geminiApiKey: string;
+  onGeminiApiKeyChange: (key: string) => void;
+  sambaNovaApiKey: string;
+  onSambaNovaApiKeyChange: (key: string) => void;
 }
 
 function ProvidersLink({ onClick }: { onClick: () => void }) {
@@ -86,6 +93,12 @@ export function SettingsPanel({
   onCompletionModeChange,
   writingStyle,
   onWritingStyleChange,
+  aiProvider,
+  onAiProviderChange,
+  geminiApiKey,
+  onGeminiApiKeyChange,
+  sambaNovaApiKey,
+  onSambaNovaApiKeyChange,
 }: SettingsPanelProps) {
   const [showProviders, setShowProviders] = useState(false);
   return (
@@ -126,31 +139,47 @@ export function SettingsPanel({
                 </h3>
                 <div className="space-y-4">
                   <SettingsSelect
-                    id="completion-mode"
-                    label="completion"
-                    value={completionMode}
-                    onValueChange={onCompletionModeChange}
+                    id="ai-provider"
+                    label="AI provider"
+                    value={aiProvider}
+                    onValueChange={onAiProviderChange}
                     options={[
-                      { value: 'word', label: 'word' },
-                      { value: 'sentence', label: 'sentence' },
-                      { value: 'paragraph', label: 'paragraph' },
+                      { value: 'auto', label: 'auto (fallback)' },
+                      { value: 'gemini', label: 'Gemini only' },
+                      { value: 'sambanova', label: 'SambaNova only' },
                     ]}
-                    testId="select-completion-mode"
+                    testId="select-ai-provider"
                   />
 
-                  <SettingsSelect
-                    id="writing-style"
-                    label="style"
-                    value={writingStyle}
-                    onValueChange={onWritingStyleChange}
-                    options={[
-                      { value: 'casual', label: 'casual' },
-                      { value: 'formal', label: 'formal' },
-                      { value: 'creative', label: 'creative' },
-                      { value: 'technical', label: 'technical' },
-                    ]}
-                    testId="select-writing-style"
-                  />
+                  <div className="space-y-2">
+                    <Label htmlFor="gemini-key" className="text-sm font-medium">
+                      Gemini API Key
+                    </Label>
+                    <Input
+                      id="gemini-key"
+                      type="password"
+                      value={geminiApiKey}
+                      onChange={(e) => onGeminiApiKeyChange(e.target.value)}
+                      placeholder="Enter your Gemini API key"
+                      data-testid="input-gemini-key"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="sambanova-key"
+                      className="text-sm font-medium"
+                    >
+                      SambaNova API Key
+                    </Label>
+                    <Input
+                      id="sambanova-key"
+                      type="password"
+                      value={sambaNovaApiKey}
+                      onChange={(e) => onSambaNovaApiKeyChange(e.target.value)}
+                      placeholder="Enter your SambaNova API key"
+                      data-testid="input-sambanova-key"
+                    />
+                  </div>
                 </div>
               </div>
 

@@ -8,6 +8,11 @@ export function useWritingSettings() {
   const [writingStyle, setWritingStyle] = useState<
     'casual' | 'formal' | 'creative' | 'technical'
   >('casual');
+  const [aiProvider, setAiProvider] = useState<'auto' | 'gemini' | 'sambanova'>(
+    'auto'
+  );
+  const [geminiApiKey, setGeminiApiKey] = useState('');
+  const [sambaNovaApiKey, setSambaNovaApiKey] = useState('');
 
   return {
     autoSave,
@@ -16,5 +21,11 @@ export function useWritingSettings() {
     setCompletionMode,
     writingStyle,
     setWritingStyle,
+    aiProvider,
+    setAiProvider,
+    geminiApiKey,
+    setGeminiApiKey,
+    sambaNovaApiKey,
+    setSambaNovaApiKey,
   };
 }
