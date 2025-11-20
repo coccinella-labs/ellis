@@ -13,6 +13,12 @@ export default function SettingsPanelExample() {
     setCompletionMode,
     writingStyle,
     setWritingStyle,
+    aiProvider,
+    setAiProvider,
+    geminiApiKey,
+    setGeminiApiKey,
+    sambaNovaApiKey,
+    setSambaNovaApiKey,
   } = useWritingSettings();
 
   return (
@@ -28,6 +34,12 @@ export default function SettingsPanelExample() {
           onCompletionModeChange={setCompletionMode}
           writingStyle={writingStyle}
           onWritingStyleChange={setWritingStyle}
+          aiProvider={aiProvider}
+          onAiProviderChange={setAiProvider}
+          geminiApiKey={geminiApiKey}
+          onGeminiApiKeyChange={setGeminiApiKey}
+          sambaNovaApiKey={sambaNovaApiKey}
+          onSambaNovaApiKeyChange={setSambaNovaApiKey}
         />
       </div>
     </ThemeProvider>
