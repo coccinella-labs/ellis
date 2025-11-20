@@ -1,6 +1,6 @@
 # Autofix
 
-[![NPM version](https://img.shields.io/npm/v/@harpertoken/autofix-cli.svg)](https://npmjs.org/package/@harpertoken/autofix-cli) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/@harpertoken/autofix-cli)
+[![NPM version](https://img.shields.io/npm/v/@harpertoken/autofix-cli.svg)](https://npmjs.org/package/@harpertoken/autofix-cli)
 
 AI-powered text completion platform with CLI tool, web editor, and Node.js server for seamless writing assistance.
 
