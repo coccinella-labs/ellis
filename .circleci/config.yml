@@ -22,7 +22,7 @@ commands:
 jobs:
   lint_and_test:
     docker:
-      - image: cimg/node:22
+      - image: cimg/node:20
     steps:
       - setup_node
       - run:
@@ -39,7 +39,7 @@ jobs:
 
   build_and_test_cli:
     docker:
-      - image: cimg/node:22
+      - image: cimg/node:20
     steps:
       - setup_node
       - run:
@@ -68,7 +68,7 @@ jobs:
 
   build_web_app:
     docker:
-      - image: cimg/node:22
+      - image: cimg/node:20
     steps:
       - setup_node
       - run:
@@ -82,7 +82,7 @@ jobs:
 
   e2e_tests:
     docker:
-      - image: cimg/node:22-browsers
+      - image: cimg/node:20-browsers
     steps:
       - setup_node
       - browser-tools/install-browser-tools
@@ -99,7 +99,7 @@ jobs:
 
   security_scan:
     docker:
-      - image: cimg/node:22
+      - image: cimg/node:20
     steps:
       - setup_node
       # The security_scan job contains two npm audit commands that create redundant and confusing logic. The first command, npm audit --audit-level moderate, will fail the entire job if a moderate (or higher) vulnerability is found. This means the second, more specific check for high severity vulnerabilities might never run. To make the intent clear and the logic robust, you should use a single, decisive npm audit command. If the goal is to fail only on high severity issues, the first command should be removed.
