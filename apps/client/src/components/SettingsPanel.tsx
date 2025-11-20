@@ -153,7 +153,7 @@ export function SettingsPanel({
                           e.target.value as 'word' | 'sentence' | 'paragraph'
                         )
                       }
-                      className="h-10 w-full border rounded px-3"
+                      className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       data-testid="select-completion-mode"
                     >
                       <option value="word">word</option>
@@ -181,7 +181,7 @@ export function SettingsPanel({
                             | 'technical'
                         )
                       }
-                      className="h-10 w-full border rounded px-3"
+                      className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       data-testid="select-writing-style"
                     >
                       <option value="casual">casual</option>
