@@ -84,6 +84,9 @@ jobs:
     docker:
       - image: node:18
     steps:
+      - run:
+          name: "Install jq"
+          command: apt-get update && apt-get install -y jq
       - setup_node
       - browser-tools/install-browser-tools
       - run:
