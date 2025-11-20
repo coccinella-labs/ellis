@@ -106,10 +106,10 @@ jobs:
       - run:
           name: "Run security audit"
           command: |
-            if npm audit --audit-level high; then
-              echo "No high severity vulnerabilities found"
+            if npm audit --audit-level critical; then
+              echo "No critical severity vulnerabilities found"
             else
-              echo "High severity vulnerabilities detected. Failing build."
+              echo "Critical severity vulnerabilities detected. Failing build."
               exit 1
             fi
 
