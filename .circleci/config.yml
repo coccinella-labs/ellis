@@ -51,18 +51,18 @@ jobs:
           name: "Test CLI build"
           command: |
             cd apps/cli
+            apt-get update && apt-get install -y jq
             if [ -z "$GEMINI_API_KEY" ]; then
               echo "Skipping CLI functional test: GEMINI_API_KEY not set"
             else
-              apt-get update && apt-get install -y jq
               echo -e "test input\n.exit" | timeout 10s node dist/index.js new --output test.txt
               if test -f test.txt; then
                 echo "CLI test passed"
               else
                 echo "CLI test failed"
                 exit 1
-               fi
-             fi
+              fi
+            fi
     environment:
       GEMINI_API_KEY: $GEMINI_API_KEY
 
