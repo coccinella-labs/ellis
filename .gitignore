@@ -9,3 +9,5 @@ coverage
 playwright-report/
 test-results/
 *.log
+actionlint
+actionlint.tar.gz
