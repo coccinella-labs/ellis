@@ -40,8 +40,8 @@ jobs:
           run: npm run test:e2e
           env:
             GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        - name: Build CLI
-          run: cd apps/cli && npm ci && npm run build
+         - name: Build CLI
+           run: cd apps/cli && npm install && npm run build
         - name: Configure Git for release
           run: |
             git config --global user.email "action@github.com"
