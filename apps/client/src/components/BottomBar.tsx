@@ -1,5 +1,4 @@
 import { Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 interface BottomBarProps {
   wordCount: number;
