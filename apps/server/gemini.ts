@@ -21,7 +21,7 @@ export async function testApiKey(): Promise<boolean> {
     const result = !!response.text?.trim();
     console.log('Gemini test result:', result);
     return result;
-  } catch (error) {
+  } catch {
     logger.error('Gemini test failed');
     return false;
   }
@@ -44,7 +44,7 @@ export async function testSambaNovaApiKey(): Promise<boolean> {
     const success = !!result?.trim();
     logger.info(`SambaNova test result: ${success}`);
     return success;
-  } catch (error) {
+  } catch {
     logger.error('SambaNova test failed');
     return false;
   }

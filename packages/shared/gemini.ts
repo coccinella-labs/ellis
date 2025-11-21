@@ -68,8 +68,7 @@ export async function generateTextCompletion(
 
       logger.info(`Generated Gemini suggestion (${model}): ${suggestion}`);
       return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
+    } catch {
       logger.error('Gemini generation failed');
       return '';
     }
@@ -104,7 +103,7 @@ export async function generateTextCompletion(
     return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    console.error('Gemini generation error:', error);
+    logger.error('Gemini generation failed');
 
     // Check if it's a rate limit error (429)
     if (
@@ -126,7 +125,7 @@ export async function generateTextCompletion(
           logger.info('Successfully used SambaNova fallback');
           return fallbackSuggestion;
         }
-      } catch (fallbackError) {
+      } catch {
         logger.error('SambaNova fallback failed');
       }
     }

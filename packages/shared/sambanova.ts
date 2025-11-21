@@ -56,7 +56,7 @@ export async function generateTextCompletionSambaNova(
 
     logger.info(`Generated SambaNova suggestion: ${suggestion}`);
     return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
-  } catch (error) {
+  } catch {
     logger.error('SambaNova generation failed');
     return '';
   }

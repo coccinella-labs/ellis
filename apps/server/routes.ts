@@ -27,7 +27,7 @@ export function registerRoutes(app: Express): Express {
           sambanova: sambaNovaWorking,
         },
       });
-    } catch (error) {
+    } catch {
       logger.error('Status check failed');
       res.status(500).json({ status: 'error' });
     }
@@ -59,7 +59,7 @@ export function registerRoutes(app: Express): Express {
         geminiModel
       );
       res.json({ suggestion });
-    } catch (error) {
+    } catch {
       logger.error('API error');
       res.status(500).json({ suggestion: '' });
     }
