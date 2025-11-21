@@ -14,9 +14,7 @@ export default function Editor() {
   const [wordCount, setWordCount] = useState(0);
   const [charCount, setCharCount] = useState(0);
   const [acceptedCount, setAcceptedCount] = useState(0);
-  const [aiStatus, setAiStatus] = useState<'idle' | 'thinking' | 'ready'>(
-    'ready'
-  );
+  const [aiStatus] = useState<'idle' | 'thinking' | 'ready'>('ready');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [welcomeOpen, setWelcomeOpen] = useState(false);
