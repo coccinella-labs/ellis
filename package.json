@@ -31,7 +31,7 @@
     "analyze": "npx vite-bundle-analyzer dist/stats.html",
     "format": "prettier --write .",
     "duplicate-check": "jscpd",
-    "preflight": "npm run prepare && npm run format && npm run lint && npm run check && npm run duplicate-check && npm run test:coverage && npm run build",
+    "preflight": "npm run prepare && npm run format && npm run lint && npm run check && npm run duplicate-check && npm run test:coverage && npm run test:e2e && npm run build",
     "prepare": "husky"
   },
   "dependencies": {
