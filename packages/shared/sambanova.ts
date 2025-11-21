@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { buildSystemPrompt } from './prompts.js';
 
 const sambanova = new OpenAI({
   apiKey: process.env.SAMBANOVA_API_KEY || '',
@@ -76,25 +77,4 @@ export async function generateTextCompletionSambaNova(
     console.error('Error details:', JSON.stringify(error, null, 2));
     return '';
   }
-}
-
-function buildSystemPrompt(
-  mode: 'word' | 'sentence' | 'paragraph',
-  style: 'casual' | 'formal' | 'creative' | 'technical'
-): string {
-  const modeInstructions = {
-    word: 'Complete the current word naturally. Keep it short.',
-    sentence: 'Complete the sentence naturally and coherently.',
-    paragraph: 'Continue the paragraph with relevant content.',
-  };
-
-  const styleInstructions = {
-    casual: 'Use everyday language, contractions, and a friendly tone.',
-    formal:
-      'Use proper grammar, complete sentences, and professional language.',
-    creative: 'Be imaginative, use metaphors, and add creative flair.',
-    technical: 'Use precise, technical language and industry-specific terms.',
-  };
-
-  return `You are an AI writing assistant. ${modeInstructions[mode]} ${styleInstructions[style]} Only provide the completion text, no explanations.`;
 }
