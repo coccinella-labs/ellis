@@ -10,7 +10,7 @@ test('CLI new command creates output file', async () => {
   await execAsync('cd apps/cli && npm run build');
 
   // Run CLI new command
-  const { stdout, stderr } = await execAsync(
+  const { stdout } = await execAsync(
     'cd apps/cli && printf "test content\\n.exit\\n" | node dist/index.js new --output test.txt',
     {
       env: {
