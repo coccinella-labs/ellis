@@ -14,9 +14,9 @@ commands:
       - checkout
       - node/install:
           node-version: "20"
-       - run:
-           name: "Install dependencies"
-           command: npm install
+      - run:
+          name: "Install dependencies"
+          command: npm install
 
 # Define jobs
 jobs:
