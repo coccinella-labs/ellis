@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import { Check, Circle } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -18,7 +19,8 @@ export function createMenuItem<T extends React.ElementType>(ItemPrimitive: T) {
       />
     )
   );
-  MenuItem.displayName = (ItemPrimitive as any).displayName || 'MenuItem';
+  MenuItem.displayName =
+    (ItemPrimitive as React.ComponentType).displayName || 'MenuItem';
   return MenuItem;
 }
 

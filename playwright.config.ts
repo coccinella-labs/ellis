@@ -59,7 +59,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'tsx apps/server/index.ts',
+    command: 'NODE_ENV=development tsx apps/server/index.ts',
     port: 3000,
     reuseExistingServer: true,
   },

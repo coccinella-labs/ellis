@@ -12,9 +12,7 @@ export default function Editor() {
   const [documentTitle, setDocumentTitle] = useState('Untitled Document');
   const [text, setText] = useState('');
   const [wordCount, setWordCount] = useState(0);
-  const [charCount, setCharCount] = useState(0);
   const [acceptedCount, setAcceptedCount] = useState(0);
-  const [aiStatus] = useState<'idle' | 'thinking' | 'ready'>('ready');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [welcomeOpen, setWelcomeOpen] = useState(false);
@@ -37,7 +35,6 @@ export default function Editor() {
   useEffect(() => {
     const words = text.trim().split(/\s+/).filter(Boolean);
     setWordCount(words.length);
-    setCharCount(text.length);
   }, [text]);
 
   useEffect(() => {
@@ -103,12 +100,7 @@ export default function Editor() {
         </div>
       </main>
 
-      <BottomBar
-        wordCount={wordCount}
-        charCount={charCount}
-        suggestionsAccepted={acceptedCount}
-        aiStatus={aiStatus}
-      />
+      <BottomBar wordCount={wordCount} suggestionsAccepted={acceptedCount} />
 
       <SettingsPanel
         isOpen={settingsOpen}

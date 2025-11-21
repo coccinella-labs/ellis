@@ -5,6 +5,9 @@ import type { ToastActionElement, ToastProps } from '@/components/ui/toast';
 const TOAST_LIMIT = 1;
 const TOAST_REMOVE_DELAY = 1000000;
 
+let count = 0;
+const genId = () => (++count).toString();
+
 type ToasterToast = ToastProps & {
   id: string;
   title?: React.ReactNode;
@@ -12,21 +15,14 @@ type ToasterToast = ToastProps & {
   action?: ToastActionElement;
 };
 
-const actionTypes = {
-  ADD_TOAST: 'ADD_TOAST',
-  UPDATE_TOAST: 'UPDATE_TOAST',
-  DISMISS_TOAST: 'DISMISS_TOAST',
-  REMOVE_TOAST: 'REMOVE_TOAST',
-} as const;
+type ActionTypes = {
+  ADD_TOAST: 'ADD_TOAST';
+  UPDATE_TOAST: 'UPDATE_TOAST';
+  DISMISS_TOAST: 'DISMISS_TOAST';
+  REMOVE_TOAST: 'REMOVE_TOAST';
+};
 
-let count = 0;
-
-function genId() {
-  count = (count + 1) % Number.MAX_SAFE_INTEGER;
-  return count.toString();
-}
-
-type ActionType = typeof actionTypes;
+type ActionType = ActionTypes;
 
 type Action =
   | {

@@ -2,17 +2,10 @@ import { Sparkles } from 'lucide-react';
 
 interface BottomBarProps {
   wordCount: number;
-  charCount: number;
   suggestionsAccepted: number;
-  aiStatus: 'idle' | 'thinking' | 'ready';
 }
 
-export function BottomBar({
-  wordCount,
-  charCount,
-  suggestionsAccepted,
-  aiStatus,
-}: BottomBarProps) {
+export function BottomBar({ wordCount, suggestionsAccepted }: BottomBarProps) {
   const isMac = navigator.platform.toLowerCase().includes('mac');
 
   return (

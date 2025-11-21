@@ -49,6 +49,7 @@ export async function generateTextCompletionSambaNova(
 
     // SambaNova returns response in 'reasoning' field instead of 'content'
     const content = response.choices[0]?.message?.content?.trim() || '';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const message = response.choices[0]?.message as any; // Cast to any to access reasoning field
     const reasoning = message?.reasoning?.trim() || '';
     const suggestion = content || reasoning;

@@ -71,6 +71,7 @@ export async function generateTextCompletion(
 
       console.log('Generated Gemini suggestion:', suggestion);
       return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Gemini generation error:', error);
       return '';
@@ -104,6 +105,7 @@ export async function generateTextCompletion(
 
     console.log('Generated Gemini suggestion:', suggestion);
     return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error('Gemini generation error:', error);
 

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import { Sparkles } from 'lucide-react';
 
 interface TextEditorProps {
@@ -24,7 +25,7 @@ export function TextEditor({
   const [suggestion, setSuggestion] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<number | undefined>();
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -79,7 +80,7 @@ export function TextEditor({
 
     timeoutRef.current = setTimeout(() => {
       generateSuggestion(newText);
-    }, 500);
+    }, 500) as unknown as number;
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

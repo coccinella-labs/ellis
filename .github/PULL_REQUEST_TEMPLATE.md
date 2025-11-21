@@ -4,7 +4,7 @@ What + why.
 
 ## Changes
 
-* Bullets.
+- Bullets.
 
 ## Test
 

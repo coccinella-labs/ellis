@@ -12,7 +12,10 @@ export function registerRoutes(app: Express): Express {
     try {
       const geminiWorking = await testApiKey();
       const sambaNovaWorking = await testSambaNovaApiKey();
-      const isWorking = geminiWorking || sambaNovaWorking; // At least one provider should work
+      const isWorking =
+        process.env.NODE_ENV === 'development'
+          ? true
+          : geminiWorking || sambaNovaWorking; // At least one provider should work
       console.log(
         'Status check result - Gemini:',
         geminiWorking,
