@@ -29,7 +29,9 @@ jobs:
               package.json
               package-lock.json
         - name: Install dependencies
-          run: npm install --include=optional
+          run: |
+            npm install --include=optional
+            npm install @rollup/rollup-linux-x64-gnu --save-optional || true
         - name: Run preflight checks
           run: npm run preflight
           env:
@@ -41,7 +43,11 @@ jobs:
           env:
             GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         - name: Build CLI
-          run: cd apps/cli && npm install && npm run build
+          run: |
+            cd apps/cli
+            npm install --include=optional
+            npm install @rollup/rollup-linux-x64-gnu --save-optional || true
+            npm run build
         - name: Configure Git for release
           run: |
             git config --global user.email "action@github.com"
