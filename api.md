@@ -12,9 +12,13 @@ Generates AI-powered text completion based on the provided input.
 
 ```json
 {
-  "text": "string", // The text to complete
+  "text": "string", // The text to complete (required)
   "mode": "word" | "sentence" | "paragraph", // Completion mode (default: "sentence")
-  "style": "casual" | "formal" | "creative" | "technical" // Writing style (default: "casual")
+  "style": "casual" | "formal" | "creative" | "technical", // Writing style (default: "casual")
+  "provider": "auto" | "gemini" | "sambanova", // AI provider selection (default: "auto")
+  "geminiModel": "string", // Specific Gemini model (default: "gemini-3-pro-preview")
+  "geminiApiKey": "string", // Custom Gemini API key (optional)
+  "sambaNovaApiKey": "string" // Custom SambaNova API key (optional)
 }
 ```
 
@@ -63,4 +67,9 @@ The API returns standard HTTP status codes. Error responses may include a JSON b
 
 ## Rate Limiting
 
-Requests are subject to the rate limits of the underlying AI providers (Gemini: 200 requests/day free tier, SambaNova: varies).
+Requests are subject to the rate limits of the underlying AI providers:
+
+- Gemini: 200 requests/day free tier (varies by model)
+- SambaNova: Varies by plan
+
+The system automatically falls back to alternative providers or models when rate limits are hit.

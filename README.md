@@ -33,6 +33,12 @@ autofix "hello this is a"
 
 # With custom style and mode
 autofix "write a function to" --style technical --mode sentence
+
+# Create new document with output file
+echo "Once upon a time" | autofix new --output story.txt
+
+# Edit existing file
+autofix edit myfile.txt --style formal --mode paragraph
 ```
 
 ### Web Editor
@@ -51,13 +57,30 @@ This library includes TypeScript definitions for all request params and response
 {
   "text": "hello this is a",
   "mode": "sentence",
-  "style": "casual"
+  "style": "casual",
+  "provider": "auto",
+  "geminiModel": "gemini-2.5-pro"
 }
 
 // Response
 {
   "suggestion": " test of the AI completion system."
 }
+```
+
+### Advanced API Usage
+
+```bash
+# Using curl to test the API
+curl -X POST http://localhost:3000/api/complete \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "The future of AI is",
+    "mode": "sentence",
+    "style": "technical",
+    "provider": "gemini",
+    "geminiModel": "gemini-2.5-flash"
+  }'
 ```
 
 ### Status Endpoint
@@ -109,8 +132,13 @@ This tool requires AI provider API keys for text completion.
 ### Web Client
 
 - Modern React-based interface
-- Live text completion
-- Settings panel with craft options
+- Live text completion with AI model switching
+- Settings panel with craft options and model selection
+- Keyboard shortcuts for model switching:
+  - Press `1` for gemini-2.5-pro
+  - Press `2` for gemini-2.5-flash
+  - Press `3` for gemini-2.5-flash-lite
+  - Press `Escape` to dismiss model switch prompt
 - Responsive design
 - Welcome modal for new users
 
@@ -134,10 +162,10 @@ This tool requires AI provider API keys for text completion.
 
 Autofix uses a smart fallback system for maximum reliability:
 
-1. **Primary**: Google Gemini 3.0 Pro Preview (latest model)
+1. **Primary**: Google Gemini (configurable model, defaults to gemini-3-pro-preview)
 2. **Fallback**: SambaNova GPT-OSS-120B (when Gemini rate limited)
 
-The system automatically detects rate limits and switches providers seamlessly.
+The system automatically detects rate limits and switches providers seamlessly. Users can also manually switch Gemini models via keyboard shortcuts in the web editor when suggestions fail.
 
 ### Rate Limit Handling
 
@@ -516,6 +544,7 @@ Releases are automated using semantic-release:
 | ------------------------- | ------------------------------------------------------- |
 | `GEMINI_API_KEY` required | Get key from [Google AI Studio](https://ai.google.dev/) |
 | Rate limit errors         | Add `SAMBANOVA_API_KEY` for fallback                    |
+| No suggestions in web app | Press 1,2,3 keys to switch Gemini models                |
 | CLI not found             | Run `npm install -g @harpertoken/autofix-cli`           |
 | Web app not loading       | Check `npm run dev` output                              |
 | Build failures            | Run `npm run preflight` to check all issues             |
