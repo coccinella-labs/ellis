@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useState } from 'react';
 import { ProvidersPage } from '@/pages/Providers';
 
@@ -88,150 +89,68 @@ export function SettingsPanel({
           </div>
 
           <div className="flex-1 overflow-y-auto p-6 space-y-8">
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-sm font-medium uppercase tracking-wide mb-4 text-muted-foreground">
-                  Craft
-                </h3>
-                <div className="space-y-4">
-                  <div className="space-y-3">
-                    <label
-                      htmlFor="completion-mode"
-                      className="text-sm font-medium"
-                    >
-                      completion
-                    </label>
-                    <select
-                      id="completion-mode"
-                      value={completionMode}
-                      onChange={(e) =>
-                        onCompletionModeChange(
-                          e.target.value as 'word' | 'sentence' | 'paragraph'
-                        )
-                      }
-                      className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      data-testid="select-completion-mode"
-                    >
-                      <option value="word">word</option>
-                      <option value="sentence">sentence</option>
-                      <option value="paragraph">paragraph</option>
-                    </select>
-                  </div>
+            <Tabs defaultValue="writing" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="writing">Writing</TabsTrigger>
+                <TabsTrigger value="ai">AI</TabsTrigger>
+                <TabsTrigger value="keys">Keys</TabsTrigger>
+              </TabsList>
 
-                  <div className="space-y-3">
-                    <label
-                      htmlFor="writing-style"
-                      className="text-sm font-medium"
-                    >
-                      style
-                    </label>
-                    <select
-                      id="writing-style"
-                      value={writingStyle}
-                      onChange={(e) =>
-                        onWritingStyleChange(
-                          e.target.value as
-                            | 'casual'
-                            | 'formal'
-                            | 'creative'
-                            | 'technical'
-                        )
-                      }
-                      className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      data-testid="select-writing-style"
-                    >
-                      <option value="casual">casual</option>
-                      <option value="formal">formal</option>
-                      <option value="creative">creative</option>
-                      <option value="technical">technical</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-3">
-                    <label
-                      htmlFor="ai-provider"
-                      className="text-sm font-medium"
-                    >
-                      AI provider
-                    </label>
-                    <select
-                      id="ai-provider"
-                      value={aiProvider}
-                      onChange={(e) =>
-                        onAiProviderChange(
-                          e.target.value as 'auto' | 'gemini' | 'sambanova'
-                        )
-                      }
-                      className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      data-testid="select-ai-provider"
-                    >
-                      <option value="auto">auto (fallback)</option>
-                      <option value="gemini">Gemini only</option>
-                      <option value="sambanova">SambaNova only</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="gemini-model"
-                      className="text-sm font-medium"
-                    >
-                      Gemini model
-                    </label>
-                    <select
-                      id="gemini-model"
-                      value={geminiModel}
-                      onChange={(e) => onGeminiModelChange(e.target.value)}
-                      className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <option value="gemini-3-pro-preview">
-                        gemini-3-pro-preview
-                      </option>
-                      <option value="gemini-2.5-pro">gemini-2.5-pro</option>
-                      <option value="gemini-2.5-flash">gemini-2.5-flash</option>
-                      <option value="gemini-2.5-flash-lite">
-                        gemini-2.5-flash-lite
-                      </option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="gemini-key" className="text-sm font-medium">
-                      Gemini API Key
-                    </Label>
-                    <Input
-                      id="gemini-key"
-                      type="password"
-                      value={geminiApiKey}
-                      onChange={(e) => onGeminiApiKeyChange(e.target.value)}
-                      placeholder="Enter your Gemini API key"
-                      data-testid="input-gemini-key"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="sambanova-key"
-                      className="text-sm font-medium"
-                    >
-                      SambaNova API Key
-                    </Label>
-                    <Input
-                      id="sambanova-key"
-                      type="password"
-                      value={sambaNovaApiKey}
-                      onChange={(e) => onSambaNovaApiKeyChange(e.target.value)}
-                      placeholder="Enter your SambaNova API key"
-                      data-testid="input-sambanova-key"
-                    />
-                  </div>
+              <TabsContent value="writing" className="space-y-4 mt-6">
+                <div className="space-y-3">
+                  <label
+                    htmlFor="completion-mode"
+                    className="text-sm font-medium"
+                  >
+                    completion
+                  </label>
+                  <select
+                    id="completion-mode"
+                    value={completionMode}
+                    onChange={(e) =>
+                      onCompletionModeChange(
+                        e.target.value as 'word' | 'sentence' | 'paragraph'
+                      )
+                    }
+                    className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    data-testid="select-completion-mode"
+                  >
+                    <option value="word">word</option>
+                    <option value="sentence">sentence</option>
+                    <option value="paragraph">paragraph</option>
+                  </select>
                 </div>
-              </div>
 
-              <div>
-                <h3 className="text-sm font-medium uppercase tracking-wide mb-4 text-muted-foreground">
-                  Flow
-                </h3>
-                <div className="flex items-center justify-between">
+                <div className="space-y-3">
+                  <label
+                    htmlFor="writing-style"
+                    className="text-sm font-medium"
+                  >
+                    style
+                  </label>
+                  <select
+                    id="writing-style"
+                    value={writingStyle}
+                    onChange={(e) =>
+                      onWritingStyleChange(
+                        e.target.value as
+                          | 'casual'
+                          | 'formal'
+                          | 'creative'
+                          | 'technical'
+                      )
+                    }
+                    className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    data-testid="select-writing-style"
+                  >
+                    <option value="casual">casual</option>
+                    <option value="formal">formal</option>
+                    <option value="creative">creative</option>
+                    <option value="technical">technical</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center justify-between pt-4 border-t">
                   <Label htmlFor="auto-save" className="text-sm font-medium">
                     auto-save
                   </Label>
@@ -242,8 +161,84 @@ export function SettingsPanel({
                     data-testid="switch-auto-save"
                   />
                 </div>
-              </div>
-            </div>
+              </TabsContent>
+
+              <TabsContent value="ai" className="space-y-4 mt-6">
+                <div className="space-y-3">
+                  <label htmlFor="ai-provider" className="text-sm font-medium">
+                    AI provider
+                  </label>
+                  <select
+                    id="ai-provider"
+                    value={aiProvider}
+                    onChange={(e) =>
+                      onAiProviderChange(
+                        e.target.value as 'auto' | 'gemini' | 'sambanova'
+                      )
+                    }
+                    className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    data-testid="select-ai-provider"
+                  >
+                    <option value="auto">auto (fallback)</option>
+                    <option value="gemini">Gemini only</option>
+                    <option value="sambanova">SambaNova only</option>
+                  </select>
+                </div>
+
+                <div className="space-y-3">
+                  <label htmlFor="gemini-model" className="text-sm font-medium">
+                    Gemini model
+                  </label>
+                  <select
+                    id="gemini-model"
+                    value={geminiModel}
+                    onChange={(e) => onGeminiModelChange(e.target.value)}
+                    className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <option value="gemini-3-pro-preview">
+                      gemini-3-pro-preview
+                    </option>
+                    <option value="gemini-2.5-pro">gemini-2.5-pro</option>
+                    <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                    <option value="gemini-2.5-flash-lite">
+                      gemini-2.5-flash-lite
+                    </option>
+                  </select>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="keys" className="space-y-4 mt-6">
+                <div className="space-y-2">
+                  <Label htmlFor="gemini-key" className="text-sm font-medium">
+                    Gemini API Key
+                  </Label>
+                  <Input
+                    id="gemini-key"
+                    type="password"
+                    value={geminiApiKey}
+                    onChange={(e) => onGeminiApiKeyChange(e.target.value)}
+                    placeholder="Enter your Gemini API key"
+                    data-testid="input-gemini-key"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="sambanova-key"
+                    className="text-sm font-medium"
+                  >
+                    SambaNova API Key
+                  </Label>
+                  <Input
+                    id="sambanova-key"
+                    type="password"
+                    value={sambaNovaApiKey}
+                    onChange={(e) => onSambaNovaApiKeyChange(e.target.value)}
+                    placeholder="Enter your SambaNova API key"
+                    data-testid="input-sambanova-key"
+                  />
+                </div>
+              </TabsContent>
+            </Tabs>
 
             <div className="pt-6 border-t border-border/50 space-y-4">
               <div className="flex items-center justify-between">
