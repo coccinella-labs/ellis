@@ -15,6 +15,8 @@ export default function SettingsPanelExample() {
     setWritingStyle,
     aiProvider,
     setAiProvider,
+    geminiModel,
+    setGeminiModel,
     geminiApiKey,
     setGeminiApiKey,
     sambaNovaApiKey,
@@ -36,6 +38,8 @@ export default function SettingsPanelExample() {
           onWritingStyleChange={setWritingStyle}
           aiProvider={aiProvider}
           onAiProviderChange={setAiProvider}
+          geminiModel={geminiModel}
+          onGeminiModelChange={setGeminiModel}
           geminiApiKey={geminiApiKey}
           onGeminiApiKeyChange={setGeminiApiKey}
           sambaNovaApiKey={sambaNovaApiKey}

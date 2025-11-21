@@ -1,6 +1,7 @@
 import { GoogleGenAI } from '@google/genai';
 import { buildSystemPrompt } from './prompts.js';
 import { generateTextCompletionSambaNova } from './sambanova.js';
+import { logger } from './logger.js';
 
 export const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 
@@ -10,14 +11,10 @@ export async function generateTextCompletion(
   style: 'casual' | 'formal' | 'creative' | 'technical' = 'casual',
   provider: 'auto' | 'gemini' | 'sambanova' = 'auto',
   customGeminiKey?: string,
-  customSambaNovaKey?: string
+  customSambaNovaKey?: string,
+  geminiModel: string = 'gemini-3-pro-preview'
 ): Promise<string> {
-  console.log('Generating text completion for:', {
-    currentText,
-    mode,
-    style,
-    provider,
-  });
+  logger.info(`Generating text completion with ${provider} (${geminiModel})`);
 
   const geminiClient = customGeminiKey
     ? new GoogleGenAI({ apiKey: customGeminiKey })
@@ -69,11 +66,11 @@ export async function generateTextCompletion(
         return suggestion;
       }
 
-      console.log('Generated Gemini suggestion:', suggestion);
+      logger.info(`Generated Gemini suggestion (${model}): ${suggestion}`);
       return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.error('Gemini generation error:', error);
+      logger.error('Gemini generation failed');
       return '';
     }
   }
@@ -81,7 +78,7 @@ export async function generateTextCompletion(
   // provider === 'auto' - try Gemini first, then fallback
   try {
     const systemPrompt = buildSystemPrompt(mode, style);
-    const model = 'gemini-3-pro-preview';
+    const model = geminiModel;
 
     const response = await geminiClient.models.generateContent({
       model,
@@ -103,7 +100,7 @@ export async function generateTextCompletion(
       return suggestion;
     }
 
-    console.log('Generated Gemini suggestion:', suggestion);
+    logger.info(`Generated Gemini suggestion (${model}): ${suggestion}`);
     return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -115,7 +112,7 @@ export async function generateTextCompletion(
       error?.message?.includes('quota') ||
       error?.message?.includes('RESOURCE_EXHAUSTED')
     ) {
-      console.log('Rate limit hit, falling back to SambaNova...');
+      logger.warn('Rate limit hit, falling back to SambaNova...');
 
       // Fallback to SambaNova
       try {
@@ -126,11 +123,11 @@ export async function generateTextCompletion(
           customSambaNovaKey
         );
         if (fallbackSuggestion) {
-          console.log('Successfully used SambaNova fallback');
+          logger.info('Successfully used SambaNova fallback');
           return fallbackSuggestion;
         }
       } catch (fallbackError) {
-        console.error('SambaNova fallback also failed:', fallbackError);
+        logger.error('SambaNova fallback failed');
       }
     }
 

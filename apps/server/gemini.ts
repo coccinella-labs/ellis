@@ -1,11 +1,12 @@
 import { ai, generateTextCompletion } from '../../packages/shared/gemini.js';
 import { generateTextCompletionSambaNova } from '../../packages/shared/sambanova.js';
+import { logger } from '../../packages/shared/logger.js';
 
 export async function testApiKey(): Promise<boolean> {
   try {
-    console.log('Testing Gemini API key...');
+    logger.info('Testing Gemini API key...');
     if (!process.env.GEMINI_API_KEY) {
-      console.log('No Gemini API key set');
+      logger.warn('No Gemini API key set');
       return false;
     }
     const response = await ai.models.generateContent({
@@ -21,17 +22,17 @@ export async function testApiKey(): Promise<boolean> {
     console.log('Gemini test result:', result);
     return result;
   } catch (error) {
-    console.log('Gemini test failed:', error);
+    logger.error('Gemini test failed');
     return false;
   }
 }
 
 export async function testSambaNovaApiKey(): Promise<boolean> {
   try {
-    console.log('Testing SambaNova API key...');
-    console.log('SambaNova API key present:', !!process.env.SAMBANOVA_API_KEY);
+    logger.info('Testing SambaNova API key...');
+    logger.debug('SambaNova API key present:', !!process.env.SAMBANOVA_API_KEY);
     if (!process.env.SAMBANOVA_API_KEY) {
-      console.log('No SambaNova API key set');
+      logger.warn('No SambaNova API key set');
       return false;
     }
     // Test with a simple completion
@@ -41,10 +42,10 @@ export async function testSambaNovaApiKey(): Promise<boolean> {
       'casual'
     );
     const success = !!result?.trim();
-    console.log('SambaNova test result:', success, 'response:', result);
+    logger.info(`SambaNova test result: ${success}`);
     return success;
   } catch (error) {
-    console.log('SambaNova test failed:', error);
+    logger.error('SambaNova test failed');
     return false;
   }
 }

@@ -10,6 +10,8 @@ interface TextEditorProps {
   aiProvider?: 'auto' | 'gemini' | 'sambanova';
   geminiApiKey?: string;
   sambaNovaApiKey?: string;
+  geminiModel?: string;
+  onGeminiModelChange?: (model: string) => void;
 }
 
 export function TextEditor({
@@ -20,10 +22,13 @@ export function TextEditor({
   aiProvider = 'auto',
   geminiApiKey,
   sambaNovaApiKey,
+  geminiModel = 'gemini-3-pro-preview',
+  onGeminiModelChange,
 }: TextEditorProps) {
   const [text, setText] = useState('');
   const [suggestion, setSuggestion] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showModelSwitch, setShowModelSwitch] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const timeoutRef = useRef<number | undefined>();
 
@@ -34,12 +39,10 @@ export function TextEditor({
   }, []);
 
   const generateSuggestion = async (currentText: string) => {
-    if (currentText.length < 10) {
-      setSuggestion('');
-      return;
-    }
+    if (currentText.length < 10) return;
 
     setIsGenerating(true);
+    setShowModelSwitch(false);
 
     try {
       const response = await fetch('/api/complete', {
@@ -54,14 +57,20 @@ export function TextEditor({
           provider: aiProvider,
           geminiApiKey: geminiApiKey || undefined,
           sambaNovaApiKey: sambaNovaApiKey || undefined,
+          geminiModel,
         }),
       });
 
       const data = await response.json();
-      setSuggestion(data.suggestion || '');
+      const newSuggestion = data.suggestion || '';
+      setSuggestion(newSuggestion);
+      if (!newSuggestion) {
+        setShowModelSwitch(true);
+      }
     } catch (error) {
       console.error('Error generating suggestion:', error);
       setSuggestion('');
+      setShowModelSwitch(true);
     } finally {
       setIsGenerating(false);
     }
@@ -77,6 +86,7 @@ export function TextEditor({
     }
 
     setSuggestion('');
+    setShowModelSwitch(false);
 
     timeoutRef.current = setTimeout(() => {
       generateSuggestion(newText);
@@ -84,6 +94,33 @@ export function TextEditor({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (showModelSwitch) {
+      if (e.key === '1') {
+        e.preventDefault();
+        console.log('Switching to gemini-2.5-pro');
+        onGeminiModelChange?.('gemini-2.5-pro');
+        setShowModelSwitch(false);
+        generateSuggestion(text);
+      } else if (e.key === '2') {
+        e.preventDefault();
+        console.log('Switching to gemini-2.5-flash');
+        onGeminiModelChange?.('gemini-2.5-flash');
+        setShowModelSwitch(false);
+        generateSuggestion(text);
+      } else if (e.key === '3') {
+        e.preventDefault();
+        console.log('Switching to gemini-2.5-flash-lite');
+        onGeminiModelChange?.('gemini-2.5-flash-lite');
+        setShowModelSwitch(false);
+        generateSuggestion(text);
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        console.log('Dismissing model switch');
+        setShowModelSwitch(false);
+      }
+      return;
+    }
+
     if (e.key === 'Tab' && suggestion) {
       e.preventDefault();
       const newText = text + suggestion;
@@ -148,6 +185,30 @@ export function TextEditor({
           <div className="flex items-center gap-2 px-3 py-1 bg-background/50 rounded-full backdrop-blur-sm opacity-40">
             <div className="w-1 h-1 bg-ai-suggestion rounded-full animate-pulse" />
             <span className="text-xs text-muted-foreground">thinking</span>
+          </div>
+        </div>
+      )}
+
+      {showModelSwitch && (
+        <div className="absolute bottom-2 left-0 right-0 flex justify-center">
+          <div className="flex flex-col items-center gap-2 px-3 py-2 bg-background/80 rounded-lg backdrop-blur-sm border">
+            <span className="text-xs text-muted-foreground">
+              No suggestion generated. Press key to switch model:
+            </span>
+            <div className="flex gap-2">
+              <span className="text-xs">
+                <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">1</kbd>{' '}
+                gemini-2.5-pro
+              </span>
+              <span className="text-xs">
+                <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">2</kbd>{' '}
+                gemini-2.5-flash
+              </span>
+              <span className="text-xs">
+                <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">3</kbd>{' '}
+                gemini-2.5-flash-lite
+              </span>
+            </div>
           </div>
         </div>
       )}

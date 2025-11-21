@@ -1,12 +1,13 @@
 import OpenAI from 'openai';
 import { buildSystemPrompt } from './prompts.js';
+import { logger } from './logger.js';
 
 const sambanova = new OpenAI({
   apiKey: process.env.SAMBANOVA_API_KEY || '',
   baseURL: 'https://api.sambanova.ai/v1',
 });
 
-console.log('SambaNova API key loaded:', !!process.env.SAMBANOVA_API_KEY);
+logger.debug('SambaNova API key loaded:', !!process.env.SAMBANOVA_API_KEY);
 
 export async function generateTextCompletionSambaNova(
   currentText: string,
@@ -14,12 +15,6 @@ export async function generateTextCompletionSambaNova(
   style: 'casual' | 'formal' | 'creative' | 'technical' = 'casual',
   customKey?: string
 ): Promise<string> {
-  console.log('Generating text completion with SambaNova:', {
-    currentText,
-    mode,
-    style,
-  });
-
   const client = customKey
     ? new OpenAI({
         apiKey: customKey,
@@ -35,8 +30,6 @@ export async function generateTextCompletionSambaNova(
       { role: 'user', content: currentText },
     ];
 
-    console.log('Making SambaNova API call with messages:', messages);
-
     const response = await client.chat.completions.create({
       model: 'gpt-oss-120b',
       messages,
@@ -45,22 +38,12 @@ export async function generateTextCompletionSambaNova(
       stream: false,
     });
 
-    console.log('SambaNova raw response:', JSON.stringify(response, null, 2));
-
     // SambaNova returns response in 'reasoning' field instead of 'content'
     const content = response.choices[0]?.message?.content?.trim() || '';
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const message = response.choices[0]?.message as any; // Cast to any to access reasoning field
     const reasoning = message?.reasoning?.trim() || '';
     const suggestion = content || reasoning;
-
-    console.log('SambaNova extracted suggestion:', `"${suggestion}"`);
-    console.log(
-      'Content field:',
-      `"${content}"`,
-      'Reasoning field:',
-      `"${reasoning}"`
-    );
 
     if (!suggestion) {
       console.log('No suggestion extracted from SambaNova response');
@@ -71,11 +54,10 @@ export async function generateTextCompletionSambaNova(
       return suggestion;
     }
 
-    console.log('Generated SambaNova suggestion:', suggestion);
+    logger.info(`Generated SambaNova suggestion: ${suggestion}`);
     return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
   } catch (error) {
-    console.error('SambaNova generation error:', error);
-    console.error('Error details:', JSON.stringify(error, null, 2));
+    logger.error('SambaNova generation failed');
     return '';
   }
 }

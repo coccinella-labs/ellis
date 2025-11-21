@@ -11,6 +11,7 @@ export function useWritingSettings() {
   const [aiProvider, setAiProvider] = useState<'auto' | 'gemini' | 'sambanova'>(
     'auto'
   );
+  const [geminiModel, setGeminiModel] = useState('gemini-3-pro-preview');
   const [geminiApiKey, setGeminiApiKey] = useState('');
   const [sambaNovaApiKey, setSambaNovaApiKey] = useState('');
 
@@ -23,6 +24,8 @@ export function useWritingSettings() {
     setWritingStyle,
     aiProvider,
     setAiProvider,
+    geminiModel,
+    setGeminiModel,
     geminiApiKey,
     setGeminiApiKey,
     sambaNovaApiKey,

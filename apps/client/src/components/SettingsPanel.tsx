@@ -19,6 +19,8 @@ interface SettingsPanelProps {
   ) => void;
   aiProvider: 'auto' | 'gemini' | 'sambanova';
   onAiProviderChange: (provider: 'auto' | 'gemini' | 'sambanova') => void;
+  geminiModel: string;
+  onGeminiModelChange: (model: string) => void;
   geminiApiKey: string;
   onGeminiApiKeyChange: (key: string) => void;
   sambaNovaApiKey: string;
@@ -47,6 +49,8 @@ export function SettingsPanel({
   onWritingStyleChange,
   aiProvider,
   onAiProviderChange,
+  geminiModel,
+  onGeminiModelChange,
   geminiApiKey,
   onGeminiApiKeyChange,
   sambaNovaApiKey,
@@ -164,6 +168,30 @@ export function SettingsPanel({
                       <option value="auto">auto (fallback)</option>
                       <option value="gemini">Gemini only</option>
                       <option value="sambanova">SambaNova only</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="gemini-model"
+                      className="text-sm font-medium"
+                    >
+                      Gemini model
+                    </label>
+                    <select
+                      id="gemini-model"
+                      value={geminiModel}
+                      onChange={(e) => onGeminiModelChange(e.target.value)}
+                      className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <option value="gemini-3-pro-preview">
+                        gemini-3-pro-preview
+                      </option>
+                      <option value="gemini-2.5-pro">gemini-2.5-pro</option>
+                      <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+                      <option value="gemini-2.5-flash-lite">
+                        gemini-2.5-flash-lite
+                      </option>
                     </select>
                   </div>
 

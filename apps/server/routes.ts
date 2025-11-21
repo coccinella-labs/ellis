@@ -6,6 +6,7 @@ import {
   testSambaNovaApiKey,
 } from './gemini';
 import { textCompletionRequestSchema } from '@shared/schema';
+import { logger } from '../../packages/shared/logger.js';
 
 export function registerRoutes(app: Express): Express {
   app.get('/api/status', async (req, res) => {
@@ -16,11 +17,8 @@ export function registerRoutes(app: Express): Express {
         process.env.NODE_ENV === 'development'
           ? true
           : geminiWorking || sambaNovaWorking; // At least one provider should work
-      console.log(
-        'Status check result - Gemini:',
-        geminiWorking,
-        'SambaNova:',
-        sambaNovaWorking
+      logger.info(
+        `Status check result - Gemini: ${geminiWorking}, SambaNova: ${sambaNovaWorking}`
       );
       res.json({
         status: isWorking ? 'ok' : 'error',
@@ -30,15 +28,22 @@ export function registerRoutes(app: Express): Express {
         },
       });
     } catch (error) {
-      console.error('Status check error:', error);
+      logger.error('Status check failed');
       res.status(500).json({ status: 'error' });
     }
   });
 
   app.post('/api/complete', async (req, res) => {
     try {
-      const { text, mode, style, provider, geminiApiKey, sambaNovaApiKey } =
-        textCompletionRequestSchema.parse(req.body);
+      const {
+        text,
+        mode,
+        style,
+        provider,
+        geminiApiKey,
+        sambaNovaApiKey,
+        geminiModel,
+      } = textCompletionRequestSchema.parse(req.body);
 
       if (!text || text.length < 10) {
         return res.json({ suggestion: '' });
@@ -50,11 +55,12 @@ export function registerRoutes(app: Express): Express {
         style,
         provider,
         geminiApiKey,
-        sambaNovaApiKey
+        sambaNovaApiKey,
+        geminiModel
       );
       res.json({ suggestion });
     } catch (error) {
-      console.error('API error:', error);
+      logger.error('API error');
       res.status(500).json({ suggestion: '' });
     }
   });

@@ -26,6 +26,8 @@ export default function Editor() {
     setWritingStyle,
     aiProvider,
     setAiProvider,
+    geminiModel,
+    setGeminiModel,
     geminiApiKey,
     setGeminiApiKey,
     sambaNovaApiKey,
@@ -96,6 +98,8 @@ export default function Editor() {
             aiProvider={aiProvider}
             geminiApiKey={geminiApiKey}
             sambaNovaApiKey={sambaNovaApiKey}
+            geminiModel={geminiModel}
+            onGeminiModelChange={setGeminiModel}
           />
         </div>
       </main>
@@ -113,6 +117,8 @@ export default function Editor() {
         onWritingStyleChange={setWritingStyle}
         aiProvider={aiProvider}
         onAiProviderChange={setAiProvider}
+        geminiModel={geminiModel}
+        onGeminiModelChange={setGeminiModel}
         geminiApiKey={geminiApiKey}
         onGeminiApiKeyChange={setGeminiApiKey}
         sambaNovaApiKey={sambaNovaApiKey}

@@ -28,6 +28,7 @@ export const textCompletionRequestSchema = z.object({
   provider: z.enum(['auto', 'gemini', 'sambanova']).default('auto'),
   geminiApiKey: z.string().optional(),
   sambaNovaApiKey: z.string().optional(),
+  geminiModel: z.string().default('gemini-3-pro-preview'),
 });
 
 export type TextCompletionRequest = z.infer<typeof textCompletionRequestSchema>;
