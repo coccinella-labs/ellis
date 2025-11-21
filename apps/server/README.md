@@ -170,15 +170,45 @@ RATE_LIMIT_MAX_REQUESTS=100
 
 ### Docker
 
-```dockerfile
-FROM node:22-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-EXPOSE 3001
-CMD ["npm", "start"]
+A Dockerfile is provided in the project root for containerizing the server. Pre-built images are available on Docker Hub and GitHub Container Registry.
+
+#### Pull from Docker Hub
+
+```bash
+docker pull harpertoken/autofix-server
 ```
+
+#### Pull from GHCR
+
+```bash
+docker pull ghcr.io/harpertoken/autofix-server
+```
+
+#### Build and Run Locally
+
+```bash
+docker build -t autofix-server .
+docker run -p 3001:3001 \
+  -e GEMINI_API_KEY=your_api_key \
+  -e SAMBANOVA_API_KEY=your_samba_key \
+  -v autofix-data:/app/data \
+  autofix-server
+```
+
+#### Environment Variables
+
+- `GEMINI_API_KEY`: Required for Google Gemini AI
+- `SAMBANOVA_API_KEY`: Optional fallback AI provider
+- `DATABASE_URL`: PostgreSQL connection string (if using database)
+- `SESSION_SECRET`: Secret for session management
+
+#### Volumes
+
+- `/app/data`: Persistent storage for user files and sessions
+
+#### Ports
+
+- `3001`: HTTP server port
 
 ### Environment Setup
 

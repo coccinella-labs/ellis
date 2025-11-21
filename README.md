@@ -1,6 +1,6 @@
 # Autofix
 
-[![NPM version](https://img.shields.io/npm/v/@harpertoken/autofix-cli.svg)](https://npmjs.org/package/@harpertoken/autofix-cli)
+[![NPM version](https://img.shields.io/npm/v/@harpertoken/autofix-cli.svg)](https://npmjs.org/package/@harpertoken/autofix-cli) [![GitHub release](https://img.shields.io/github/v/release/harpertoken/autofix)](https://github.com/harpertoken/autofix/releases)
 
 AI-powered text completion platform with CLI tool, web editor, and Node.js server for seamless writing assistance.
 
@@ -22,6 +22,26 @@ cd autofix
 npm install
 npm run prepare
 ```
+
+### Docker (Production)
+
+For containerized deployment:
+
+```sh
+# Pull from Docker Hub
+docker pull harpertoken/autofix-server
+
+# Or from GHCR
+docker pull ghcr.io/harpertoken/autofix-server
+
+# Run with environment variables
+docker run -p 3001:3001 \
+  -e GEMINI_API_KEY=your_api_key \
+  -e SAMBANOVA_API_KEY=your_samba_key \
+  harpertoken/autofix-server
+```
+
+See [server README](apps/server/README.md#docker) for detailed Docker usage.
 
 ## Usage
 

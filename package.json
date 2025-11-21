@@ -19,7 +19,7 @@
     "dev": "NODE_ENV=development tsx apps/server/index.ts",
     "build": "vite build --mode production && esbuild apps/server/index.ts --platform=node --packages=external --bundle --format=esm --outfile=api/index.js",
     "build:cli": "cd apps/cli && npm run build",
-    "start": "NODE_ENV=production node dist/index.js",
+    "start": "NODE_ENV=production node api/index.js",
     "check": "npx tsc",
     "lint": "eslint . --ext .ts,.tsx",
     "db:push": "drizzle-kit push",
@@ -153,6 +153,7 @@
     "vitest": "^3.2.4"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,md}": "prettier --write"
+    "*.{js,jsx,ts,tsx,json,md}": "prettier --write",
+    "*.{ts,tsx}": "eslint --fix"
   }
 }
