@@ -91,9 +91,15 @@ export function SettingsPanel({
           <div className="flex-1 overflow-y-auto p-6 space-y-8">
             <Tabs defaultValue="writing" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="writing">Writing</TabsTrigger>
-                <TabsTrigger value="ai">AI</TabsTrigger>
-                <TabsTrigger value="keys">Keys</TabsTrigger>
+                <TabsTrigger value="writing" data-testid="tab-writing">
+                  Writing
+                </TabsTrigger>
+                <TabsTrigger value="ai" data-testid="tab-ai">
+                  AI
+                </TabsTrigger>
+                <TabsTrigger value="keys" data-testid="tab-keys">
+                  Keys
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="writing" className="space-y-4 mt-6">

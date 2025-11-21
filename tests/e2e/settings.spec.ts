@@ -13,6 +13,10 @@ test.describe('Settings Panel', () => {
     const settingsButton = page.locator('[data-testid="button-settings"]');
     await settingsButton.click();
 
+    // Switch to AI tab
+    const aiTab = page.locator('[data-testid="tab-ai"]');
+    await aiTab.click();
+
     // Change AI provider to Gemini only
     const providerSelect = page.locator('[data-testid="select-ai-provider"]');
     await providerSelect.selectOption('gemini');
@@ -23,6 +27,7 @@ test.describe('Settings Panel', () => {
 
     // Reopen settings to verify persistence
     await settingsButton.click();
+    await aiTab.click();
     await expect(providerSelect).toHaveValue('gemini');
   });
 
