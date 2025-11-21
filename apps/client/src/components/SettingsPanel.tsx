@@ -13,47 +13,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-interface SettingsSelectProps<T extends string> {
-  id: string;
-  label: string;
-  value: T;
-  onValueChange: (value: T) => void;
-  options: Array<{ value: T; label: string }>;
-  testId: string;
-}
-
-function SettingsSelect<T extends string>({
-  id,
-  label,
-  value,
-  onValueChange,
-  options,
-  testId,
-}: SettingsSelectProps<T>) {
-  return (
-    <div className="space-y-3">
-      <Label htmlFor={id} className="text-sm font-medium">
-        {label}
-      </Label>
-      <Select
-        value={value}
-        onValueChange={(value) => onValueChange(value as T)}
-      >
-        <SelectTrigger id={id} data-testid={testId} className="h-10">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  );
-}
-
 interface SettingsPanelProps {
   isOpen: boolean;
   onClose: () => void;
