@@ -104,11 +104,8 @@ export function SettingsPanel({
 
               <TabsContent value="writing" className="space-y-4 mt-6">
                 <div className="space-y-3">
-                  <label
-                    htmlFor="completion-mode"
-                    className="text-sm font-medium"
-                  >
-                    completion
+                  <label htmlFor="ai-provider" className="text-sm font-medium">
+                    ai provider
                   </label>
                   <select
                     id="completion-mode"
@@ -128,11 +125,8 @@ export function SettingsPanel({
                 </div>
 
                 <div className="space-y-3">
-                  <label
-                    htmlFor="writing-style"
-                    className="text-sm font-medium"
-                  >
-                    style
+                  <label htmlFor="gemini-model" className="text-sm font-medium">
+                    gemini model
                   </label>
                   <select
                     id="writing-style"
@@ -216,7 +210,7 @@ export function SettingsPanel({
               <TabsContent value="keys" className="space-y-4 mt-6">
                 <div className="space-y-2">
                   <Label htmlFor="gemini-key" className="text-sm font-medium">
-                    Gemini API Key
+                    gemini api key
                   </Label>
                   <Input
                     id="gemini-key"
@@ -232,7 +226,7 @@ export function SettingsPanel({
                     htmlFor="sambanova-key"
                     className="text-sm font-medium"
                   >
-                    SambaNova API Key
+                    sambanova api key
                   </Label>
                   <Input
                     id="sambanova-key"
