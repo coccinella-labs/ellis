@@ -5,13 +5,6 @@ import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { ProvidersPage } from '@/pages/Providers';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
 interface SettingsPanelProps {
   isOpen: boolean;
