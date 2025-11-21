@@ -57,7 +57,7 @@ jobs:
           test -f test.txt
 
       - name: Upload CLI test output
-        if: always()
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: cli-test-results
