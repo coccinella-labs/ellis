@@ -9,14 +9,43 @@ if [ ${#commit_msg} -gt 60 ]; then
     exit 1
 fi
 
-# Check lowercase
-if [ "$commit_msg" != "$(echo "$commit_msg" | tr '[:upper:]' '[:lower:]')" ]; then
-    echo "Commit message first line must be lowercase"
+# Check lowercase, ignoring content inside backticks
+msg_without_backticks=$(echo "$commit_msg" | sed 's/`[^`]*`//g')
+if [ "$msg_without_backticks" != "$(echo "$msg_without_backticks" | tr '[:upper:]' '[:lower:]')" ]; then
+    echo "Commit message first line must be lowercase (except inside backticks)"
     exit 1
 fi
 
 # Check starts with conventional type
 if ! echo "$commit_msg" | grep -qE '^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: '; then
-    echo "Commit message must start with a conventional commit type (feat:, fix:, etc.)"
+    echo "Commit message must start with a conventional commit type (e.g., feat:, fix:, refactor:)"
     exit 1
+fi
+
+# Backtick rule – allow only for code identifiers (letters, numbers, underscore, uppercase, hyphen)
+backtick_violations=$(echo "$commit_msg" | grep -o '`[^`]*`' | while read -r block; do
+    if ! echo "$block" | grep -qE '^`[a-zA-Z0-9_-]+`$'; then
+        echo "$block"
+    fi
+done)
+
+if [ -n "$backtick_violations" ]; then
+    echo "Invalid backtick usage detected: $backtick_violations"
+    echo "Backticks should only wrap simple code identifiers (e.g., \`myfunction\`)"
+    exit 1
+fi
+
+# Check for description if significant changes
+staged_files=$(git diff --cached --name-only)
+new_files=$(echo "$staged_files" | grep "^tests/" | wc -l)
+modified_files=$(echo "$staged_files" | wc -l)
+
+if [ "$new_files" -gt 2 ] || [ "$modified_files" -gt 5 ]; then
+    commit_body=$(tail -n +2 "$commit_msg_file")
+    if [ -z "$commit_body" ] || [ "$(echo "$commit_body" | wc -l)" -lt 2 ]; then
+        echo "Significant changes detected ($modified_files files, $new_files new tests)."
+        echo "Please add a detailed commit description (at least 2 lines)."
+        echo "Example: Explain what was changed and why."
+        exit 1
+    fi
 fi
