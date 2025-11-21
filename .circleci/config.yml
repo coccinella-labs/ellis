@@ -16,7 +16,9 @@ commands:
           node-version: "20"
       - run:
           name: "Install dependencies"
-          command: npm install --include=optional
+          command: |
+            npm install --include=optional
+            npm install @rollup/rollup-linux-x64-gnu --save-optional || true
 
 # Define jobs
 jobs:
