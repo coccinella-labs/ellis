@@ -31,7 +31,7 @@ jobs:
              cache: npm
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --include=optional
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3

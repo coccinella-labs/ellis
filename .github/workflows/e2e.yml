@@ -26,8 +26,8 @@ jobs:
             package-lock.json
              apps/*/package-lock.json
 
-      - name: Install dependencies
-        run: npm install
+       - name: Install dependencies
+         run: npm install --include=optional
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps

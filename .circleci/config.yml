@@ -16,7 +16,7 @@ commands:
           node-version: "20"
       - run:
           name: "Install dependencies"
-          command: npm install
+          command: npm install --include=optional
 
 # Define jobs
 jobs:
