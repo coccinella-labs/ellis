@@ -8,9 +8,14 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Sanitization helper: strips newlines from a string
+function sanitizeForLog(input: string): string {
+  return input.replace(/[\n\r]/g, '');
+}
+
 app.use((req, res, next) => {
   const start = Date.now();
-  const path = req.path;
+  const path = sanitizeForLog(req.path);
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
 
   const originalResJson = res.json;
