@@ -104,8 +104,11 @@ export function SettingsPanel({
 
               <TabsContent value="writing" className="space-y-4 mt-6">
                 <div className="space-y-3">
-                  <label htmlFor="ai-provider" className="text-sm font-medium">
-                    ai provider
+                  <label
+                    htmlFor="completion-mode"
+                    className="text-sm font-medium"
+                  >
+                    completion
                   </label>
                   <select
                     id="completion-mode"
@@ -125,8 +128,11 @@ export function SettingsPanel({
                 </div>
 
                 <div className="space-y-3">
-                  <label htmlFor="gemini-model" className="text-sm font-medium">
-                    gemini model
+                  <label
+                    htmlFor="writing-style"
+                    className="text-sm font-medium"
+                  >
+                    style
                   </label>
                   <select
                     id="writing-style"
@@ -166,7 +172,7 @@ export function SettingsPanel({
               <TabsContent value="ai" className="space-y-4 mt-6">
                 <div className="space-y-3">
                   <label htmlFor="ai-provider" className="text-sm font-medium">
-                    AI provider
+                    ai provider
                   </label>
                   <select
                     id="ai-provider"
@@ -179,15 +185,15 @@ export function SettingsPanel({
                     className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     data-testid="select-ai-provider"
                   >
-                    <option value="auto">auto (fallback)</option>
-                    <option value="gemini">Gemini only</option>
-                    <option value="sambanova">SambaNova only</option>
+                    <option value="auto">auto</option>
+                    <option value="gemini">gemini</option>
+                    <option value="sambanova">sambanova</option>
                   </select>
                 </div>
 
                 <div className="space-y-3">
                   <label htmlFor="gemini-model" className="text-sm font-medium">
-                    Gemini model
+                    gemini model
                   </label>
                   <select
                     id="gemini-model"
@@ -218,6 +224,7 @@ export function SettingsPanel({
                     value={geminiApiKey}
                     onChange={(e) => onGeminiApiKeyChange(e.target.value)}
                     placeholder="Enter your Gemini API key"
+                    className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     data-testid="input-gemini-key"
                   />
                 </div>
@@ -234,6 +241,7 @@ export function SettingsPanel({
                     value={sambaNovaApiKey}
                     onChange={(e) => onSambaNovaApiKeyChange(e.target.value)}
                     placeholder="Enter your SambaNova API key"
+                    className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     data-testid="input-sambanova-key"
                   />
                 </div>
