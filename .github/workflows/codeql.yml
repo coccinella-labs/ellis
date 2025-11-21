@@ -34,7 +34,9 @@ jobs:
             package-lock.json
 
       - name: Install dependencies
-        run: npm install --include=optional
+        run: |
+          npm install --include=optional
+          npm install @rollup/rollup-linux-x64-gnu --save-optional || true
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
