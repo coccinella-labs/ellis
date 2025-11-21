@@ -1,1 +1,1 @@
-// Setup moved to individual test files
+import '@testing-library/jest-dom';
