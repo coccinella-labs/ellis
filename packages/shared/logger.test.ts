@@ -19,10 +19,26 @@ describe('logger', () => {
     logger.error('error message');
     logger.warn('warn message');
 
-    expect(consoleLogSpy).toHaveBeenCalledWith('[LOG] test message');
-    expect(consoleInfoSpy).toHaveBeenCalledWith('[INFO] info message');
-    expect(consoleErrorSpy).toHaveBeenCalledWith('[ERROR] error message');
-    expect(consoleWarnSpy).toHaveBeenCalledWith('[WARN] warn message');
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      expect.stringMatching(
+        /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z \[LOG\] test message/
+      )
+    );
+    expect(consoleInfoSpy).toHaveBeenCalledWith(
+      expect.stringMatching(
+        /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z \[INFO\] info message/
+      )
+    );
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect.stringMatching(
+        /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z \[ERROR\] error message/
+      )
+    );
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      expect.stringMatching(
+        /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z \[WARN\] warn message/
+      )
+    );
 
     consoleLogSpy.mockRestore();
     consoleInfoSpy.mockRestore();
@@ -31,8 +47,8 @@ describe('logger', () => {
   });
 
   it('should not log debug messages in production', () => {
-    const originalEnv = process.env.NODE_ENV;
-    process.env.NODE_ENV = 'production';
+    const originalLevel = process.env.LOG_LEVEL;
+    process.env.LOG_LEVEL = 'warn';
 
     const consoleDebugSpy = vi
       .spyOn(console, 'debug')
@@ -43,12 +59,12 @@ describe('logger', () => {
     expect(consoleDebugSpy).not.toHaveBeenCalled();
 
     consoleDebugSpy.mockRestore();
-    process.env.NODE_ENV = originalEnv;
+    process.env.LOG_LEVEL = originalLevel;
   });
 
   it('should log debug messages in development', () => {
-    const originalEnv = process.env.NODE_ENV;
-    process.env.NODE_ENV = 'development';
+    const originalLevel = process.env.LOG_LEVEL;
+    process.env.LOG_LEVEL = 'debug';
 
     const consoleDebugSpy = vi
       .spyOn(console, 'debug')
@@ -56,9 +72,13 @@ describe('logger', () => {
 
     logger.debug('debug message');
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith('[DEBUG] debug message');
+    expect(consoleDebugSpy).toHaveBeenCalledWith(
+      expect.stringMatching(
+        /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z \[DEBUG\] debug message/
+      )
+    );
 
     consoleDebugSpy.mockRestore();
-    process.env.NODE_ENV = originalEnv;
+    process.env.LOG_LEVEL = originalLevel;
   });
 });

@@ -47,14 +47,13 @@ app.use((req, res, next) => {
 const configuredApp = registerRoutes(app);
 
 configuredApp.use(
-  /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || 'Internal Server Error';
 
     res.status(status).json({ message });
   }
-  /* eslint-enable @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
 );
 
 // importantly only setup vite in development and after
