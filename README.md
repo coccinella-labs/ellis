@@ -79,7 +79,7 @@ This library includes TypeScript definitions for all request params and response
   "mode": "sentence",
   "style": "casual",
   "provider": "auto",
-  "geminiModel": "gemini-2.5-pro"
+  "geminiModel": "gemini-3-pro-preview"
 }
 
 // Response
