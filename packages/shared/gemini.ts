@@ -74,7 +74,29 @@ export async function generateTextCompletion(
     }
   }
 
-  // provider === 'auto' - try Gemini first, then fallback
+  // provider === 'auto' - try Gemini first (if key available), then fallback
+  const hasGeminiKey = !!(process.env.GEMINI_API_KEY || customGeminiKey);
+
+  // Skip Gemini if no API key available
+  if (!hasGeminiKey) {
+    logger.info('No Gemini API key, using SambaNova directly');
+    try {
+      const suggestion = await generateTextCompletionSambaNova(
+        currentText,
+        mode,
+        style,
+        customSambaNovaKey
+      );
+      if (suggestion) {
+        logger.info('Generated SambaNova suggestion (direct)');
+        return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
+      }
+    } catch {
+      logger.error('SambaNova generation failed');
+    }
+    return '';
+  }
+
   try {
     const systemPrompt = buildSystemPrompt(mode, style);
     const model = geminiModel;
