@@ -17,7 +17,7 @@ export function StatusBar() {
         ? 'bg-red-500'
         : 'bg-yellow-500';
   return (
-    <div className="flex items-center justify-center py-1 bg-gray-100 dark:bg-gray-800 border-b">
+    <div className="flex items-center justify-center py-1 bg-background border-b">
       <div className={`w-2 h-2 rounded-full ${color}`}></div>
     </div>
   );

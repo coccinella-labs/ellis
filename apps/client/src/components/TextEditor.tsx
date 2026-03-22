@@ -38,13 +38,17 @@ export function TextEditor({
     }
   }, []);
 
-  const generateSuggestion = async (currentText: string) => {
+  const generateSuggestion = async (
+    currentText: string,
+    overrideGeminiModel?: string
+  ) => {
     if (currentText.length < 10) return;
 
     setIsGenerating(true);
     setShowModelSwitch(false);
 
     try {
+      const effectiveGeminiModel = overrideGeminiModel ?? geminiModel;
       const response = await fetch('/api/complete', {
         method: 'POST',
         headers: {
@@ -57,7 +61,7 @@ export function TextEditor({
           provider: aiProvider,
           geminiApiKey: geminiApiKey || undefined,
           sambaNovaApiKey: sambaNovaApiKey || undefined,
-          geminiModel,
+          geminiModel: effectiveGeminiModel,
         }),
       });
 
@@ -98,21 +102,24 @@ export function TextEditor({
       if (e.key === '1') {
         e.preventDefault();
         console.log('Switching to gemini-2.5-pro');
-        onGeminiModelChange?.('gemini-2.5-pro');
+        const nextModel = 'gemini-2.5-pro';
+        onGeminiModelChange?.(nextModel);
         setShowModelSwitch(false);
-        generateSuggestion(text);
+        generateSuggestion(text, nextModel);
       } else if (e.key === '2') {
         e.preventDefault();
         console.log('Switching to gemini-2.5-flash');
-        onGeminiModelChange?.('gemini-2.5-flash');
+        const nextModel = 'gemini-2.5-flash';
+        onGeminiModelChange?.(nextModel);
         setShowModelSwitch(false);
-        generateSuggestion(text);
+        generateSuggestion(text, nextModel);
       } else if (e.key === '3') {
         e.preventDefault();
         console.log('Switching to gemini-2.5-flash-lite');
-        onGeminiModelChange?.('gemini-2.5-flash-lite');
+        const nextModel = 'gemini-2.5-flash-lite';
+        onGeminiModelChange?.(nextModel);
         setShowModelSwitch(false);
-        generateSuggestion(text);
+        generateSuggestion(text, nextModel);
       } else if (e.key === 'Escape') {
         e.preventDefault();
         console.log('Dismissing model switch');

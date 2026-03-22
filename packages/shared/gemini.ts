@@ -43,7 +43,7 @@ export async function generateTextCompletion(
     // Only try Gemini
     try {
       const systemPrompt = buildSystemPrompt(mode, style);
-      const model = 'gemini-2.5-pro';
+      const model = geminiModel;
 
       const response = await geminiClient.models.generateContent({
         model,

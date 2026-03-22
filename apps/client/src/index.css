@@ -167,53 +167,55 @@
   --elevate-1: rgba(255, 255, 255, 0.04);
   --elevate-2: rgba(255, 255, 255, 0.09);
 
-  --background: 222 15% 12%;
+  /* Neutral dark theme (match the app canvas color) */
+  /* #3f3f3f */
+  --background: 0 0% 25%;
 
   --foreground: 0 0% 100%;
 
-  --border: 222 13% 18%;
+  --border: 0 0% 18%;
 
-  --card: 222 13% 15%;
+  --card: 0 0% 12%;
 
   --card-foreground: 0 0% 100%;
 
-  --card-border: 222 13% 13%;
+  --card-border: 0 0% 16%;
 
-  --sidebar: 222 12% 14%;
+  --sidebar: 0 0% 10%;
 
   --sidebar-foreground: 220 13% 91%;
 
-  --sidebar-border: 222 12% 16%;
+  --sidebar-border: 0 0% 16%;
 
   --sidebar-primary: 217 91% 60%;
 
   --sidebar-primary-foreground: 220 13% 91%;
 
-  --sidebar-accent: 222 12% 16%;
+  --sidebar-accent: 0 0% 16%;
 
   --sidebar-accent-foreground: 220 13% 91%;
 
   --sidebar-ring: 217 91% 60%;
 
-  --popover: 222 12% 14%;
+  --popover: 0 0% 10%;
 
   --popover-foreground: 220 13% 91%;
 
-  --popover-border: 222 12% 16%;
+  --popover-border: 0 0% 16%;
 
   --primary: 0 0% 50%;
 
   --primary-foreground: 220 13% 91%;
 
-  --secondary: 222 12% 18%;
+  --secondary: 0 0% 18%;
 
   --secondary-foreground: 220 13% 91%;
 
-  --muted: 222 12% 16%;
+  --muted: 0 0% 14%;
 
   --muted-foreground: 220 9% 65%;
 
-  --accent: 222 11% 17%;
+  --accent: 0 0% 16%;
 
   --accent-foreground: 220 13% 91%;
 
@@ -221,7 +223,7 @@
 
   --destructive-foreground: 220 13% 91%;
 
-  --input: 222 13% 24%;
+  --input: 0 0% 22%;
   --ring: 0 0% 50%;
   --chart-1: 217 91% 65%;
   --chart-2: 142 76% 55%;
