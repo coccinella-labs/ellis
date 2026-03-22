@@ -11,12 +11,25 @@ import { logger } from '../../packages/shared/logger.js';
 export function registerRoutes(app: Express): Express {
   app.get('/api/status', async (req, res) => {
     try {
-      const geminiWorking = await testApiKey();
-      const sambaNovaWorking = await testSambaNovaApiKey();
+      const hasGeminiKey = !!process.env.GEMINI_API_KEY;
+      const hasSambaNovaKey = !!process.env.SAMBANOVA_API_KEY;
+
+      let geminiWorking = false;
+      let sambaNovaWorking = false;
+
+      // Skip Gemini test if DISABLE_GEMINI is set or if quota is exceeded
+      const skipGemini = process.env.DISABLE_GEMINI === 'true';
+      if (hasGeminiKey && !skipGemini) {
+        geminiWorking = await testApiKey();
+      }
+      if (hasSambaNovaKey) {
+        sambaNovaWorking = await testSambaNovaApiKey();
+      }
+
       const isWorking =
         process.env.NODE_ENV === 'development'
           ? true
-          : geminiWorking || sambaNovaWorking; // At least one provider should work
+          : geminiWorking || sambaNovaWorking;
       logger.info(
         `Status check result - Gemini: ${geminiWorking}, SambaNova: ${sambaNovaWorking}`
       );

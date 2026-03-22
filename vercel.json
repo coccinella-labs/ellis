@@ -2,12 +2,11 @@
   "buildCommand": "npm install --include=optional && npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
+  "regions": ["iad1"],
   "functions": {
-    "api/complete.ts": {
-      "maxDuration": 30
-    },
-    "api/status.ts": {
-      "maxDuration": 10
+    "api/index.js": {
+      "maxDuration": 30,
+      "memory": 512
     }
   }
 }

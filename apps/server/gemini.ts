@@ -10,7 +10,7 @@ export async function testApiKey(): Promise<boolean> {
       return false;
     }
     const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
+      model: 'gemini-2.5-pro',
       config: {
         systemInstruction: 'Respond with "ok"',
         temperature: 0,
@@ -21,8 +21,8 @@ export async function testApiKey(): Promise<boolean> {
     const result = !!response.text?.trim();
     console.log('Gemini test result:', result);
     return result;
-  } catch {
-    logger.error('Gemini test failed');
+  } catch (error) {
+    logger.error('Gemini test failed:', error);
     return false;
   }
 }

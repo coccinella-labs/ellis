@@ -12,7 +12,7 @@ export async function generateTextCompletion(
   provider: 'auto' | 'gemini' | 'sambanova' = 'auto',
   customGeminiKey?: string,
   customSambaNovaKey?: string,
-  geminiModel: string = 'gemini-3-pro-preview'
+  geminiModel: string = 'gemini-2.5-pro'
 ): Promise<string> {
   logger.info(`Generating text completion with ${provider} (${geminiModel})`);
 
@@ -43,7 +43,7 @@ export async function generateTextCompletion(
     // Only try Gemini
     try {
       const systemPrompt = buildSystemPrompt(mode, style);
-      const model = 'gemini-3-pro-preview';
+      const model = 'gemini-2.5-pro';
 
       const response = await geminiClient.models.generateContent({
         model,
