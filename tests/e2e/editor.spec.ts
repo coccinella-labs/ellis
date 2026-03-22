@@ -10,7 +10,7 @@ test.describe('Text Editor App', () => {
     await page.waitForLoadState('domcontentloaded');
 
     // Check that the page title is visible
-    await expect(page).toHaveTitle(/Harper Autofix/);
+    await expect(page).toHaveTitle(/autofix/);
 
     // Check that the main editor textarea is present
     const editor = page.locator('[data-testid="input-editor"]');
