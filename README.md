@@ -2,6 +2,8 @@
 
 [![NPM version](https://img.shields.io/npm/v/@harpertoken/autofix-cli.svg)](https://npmjs.org/package/@harpertoken/autofix-cli) [![GitHub release](https://img.shields.io/github/v/release/harpertoken/autofix)](https://github.com/harpertoken/autofix/releases)
 
+![Autofix Web Editor](https://raw.githubusercontent.com/harpertoken/autofix/main/assets/app-preview.png)
+
 AI-powered text completion platform with CLI tool, web editor, and Node.js server for seamless writing assistance.
 
 The full API of this library can be found in [api.md](api.md).
