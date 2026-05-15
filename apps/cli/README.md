@@ -1,12 +1,15 @@
-# Harper Autofix CLI
+# Autofix CLI
 
-CLI for AI-powered text completion.
+This package provides the `autofix` command.
 
-## Installation
+It opens a small terminal editor for AI text completion. It can start a new
+document or edit an existing file.
 
-From the project root:
+## Build
 
-```bash
+From the repo root:
+
+```sh
 npm install
 cd apps/cli
 npm install
@@ -15,57 +18,40 @@ npm run build
 
 ## Setup
 
-1. Get Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Create `.env` file in the monorepo root (parent of apps/ folder):
-   ```
-   GEMINI_API_KEY=your_api_key_here
-   ```
+Set a Gemini key before running the command:
 
-## Usage
+```sh
+export GEMINI_API_KEY=your_key
+```
 
-### Create a new document
+The CLI also looks for a `.env` file while walking up from the current
+directory.
 
-```bash
+## Use
+
+Create a new document:
+
+```sh
 autofix new
 ```
 
-Options:
+Edit a file:
 
-- `-m, --mode <mode>`: Completion mode (word, sentence, paragraph) - default: sentence
-- `-s, --style <style>`: Writing style (casual, formal, creative, technical) - default: casual
-- `-o, --output <file>`: Output file path
+```sh
+autofix edit draft.txt
+```
 
-### Edit an existing file
+Useful options:
 
-````bash
-harper-autofix edit my-document.txt
+```sh
+autofix new --mode sentence --style casual --output notes.txt
+autofix edit draft.txt --mode paragraph --style technical
+```
 
-## Interactive Commands
+Modes are `word`, `sentence`, and `paragraph`.
 
-- Type text + Enter for suggestions
-- `.help` - Show commands
-- `.save` - Save text
-- `.exit` - Save and exit
-- `Ctrl+C` - Save and exit
-
-## Examples
-
-```bash
-# Start writing with default settings
-autofix new
-
-# Write technical documentation
-autofix new --mode paragraph --style technical --output docs.txt
-
-# Edit an existing file
-harper-autofix edit story.txt --style creative
-````
-
-## Requirements
-
-- Node.js 16+
-- Gemini API key
+Styles are `casual`, `formal`, `creative`, and `technical`.
 
 ## License
 
-MIT
+MIT.

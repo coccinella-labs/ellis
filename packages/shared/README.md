@@ -1,71 +1,30 @@
-# Shared Package
+# Shared package
 
-The shared package provides core utilities and AI provider integrations that power the autofix text completion platform. It serves as the foundation for AI-powered writing assistance across CLI, web, and server components.
+This package holds code used by the server, client, and tests.
 
-## Overview
+It contains the request and response schemas, prompt helpers, provider helpers,
+and logger.
 
-This package centralizes common functionality used throughout the autofix ecosystem, including AI model integrations, prompt engineering, and data validation schemas. By maintaining shared logic here, we ensure consistency and reduce code duplication across different platform components.
+## Main files
 
-## Components
+`schema.ts` defines the text completion request and response shapes.
 
-### AI Providers
+`prompts.ts` builds prompts from the selected mode and style.
 
-- **Google Gemini** (`gemini.ts`) - Integration with Google's Gemini AI models for text generation
-- **SambaNova** (`sambanova.ts`) - Alternative AI provider for enhanced reliability and performance
+`gemini.ts` calls Gemini and can fall back to SambaNova when configured.
 
-### Core Utilities
+`sambanova.ts` calls SambaNova.
 
-- **Prompt Engineering** (`prompts.ts`) - System prompt templates and dynamic prompt building
-- **Schema Validation** (`schema.ts`) - TypeScript schemas for request/response validation
-- **Schema Tests** (`schema.test.ts`) - Comprehensive test suite for data validation
+`logger.ts` provides shared logging.
 
-## Usage
+## Tests
 
-### Basic Text Completion
+Run tests from the repo root:
 
-```typescript
-import { generateTextCompletion } from './gemini.js';
-
-const suggestion = await generateTextCompletion(
-  'Hello world, this is',
-  'sentence',
-  'casual'
-);
+```sh
+npm run test
 ```
 
-### Custom Prompts
+## License
 
-```typescript
-import { buildSystemPrompt } from './prompts.js';
-
-const prompt = buildSystemPrompt('paragraph', 'technical');
-```
-
-## Architecture
-
-The shared package follows these design principles:
-
-- **Provider Abstraction** - Unified interface for multiple AI providers
-- **Type Safety** - Comprehensive TypeScript definitions
-- **Error Handling** - Graceful fallbacks between providers
-- **Performance** - Efficient prompt caching and response processing
-
-## Dependencies
-
-- `@google/genai` - Google Gemini AI SDK
-- `zod` - Schema validation
-- Custom AI provider SDKs
-
-## Testing
-
-Run the test suite:
-
-```bash
-npm test
-```
-
-## References
-
-- [Google Gemini AI Documentation](https://ai.google.dev/docs)
-- [SambaNova API Reference](https://sambanova.ai/docs)
-- [Zod Schema Validation](https://zod.dev/)
+MIT.

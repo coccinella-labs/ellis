@@ -1,4 +1,3 @@
----
 name: Release
 
 on:
@@ -15,53 +14,61 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-        - uses: actions/checkout@v4
-          with:
-            fetch-depth: 0
-            fetch-tags: true
-            token: ${{ secrets.GITHUB_TOKEN }}
-        - name: Setup Node.js
-          uses: actions/setup-node@v4
-          with:
-            node-version: 22
-            cache: npm
-            cache-dependency-path: |
-              package.json
-              package-lock.json
-        - name: Install dependencies
-          run: |
-            npm install --include=optional
-            npm install @rollup/rollup-linux-x64-gnu --save-optional || true
-        - name: Run preflight checks
-          run: npm run preflight
-          env:
-            GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        - name: Install Playwright browsers
-          run: npx playwright install --with-deps
-        - name: Run E2E tests
-          run: npm run test:e2e
-          env:
-            GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        - name: Build CLI
-          run: |
-            cd apps/cli
-            npm install --include=optional
-            npm install @rollup/rollup-linux-x64-gnu --save-optional || true
-            npm run build
-        - name: Configure Git for release
-          run: |
-            git config --global user.email "action@github.com"
-            git config --global user.name "GitHub Action"
-        - name: Check bundle sizes
-          run: |
-            echo "Client bundle sizes:"
-            ls -lh dist/assets/
-            echo "Server bundle size:"
-            ls -lh api/index.js
-        - name: Release
-          run: npx semantic-release
-          if: "${{ !contains(github.event.head_commit.message, 'chore(release)') }}"
-          env:
-            GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-            NPM_TOKEN: "${{ secrets.NPM_TOKEN }}"
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package.json
+            package-lock.json
+
+      - name: Install dependencies
+        run: |
+          npm install --include=optional
+          npm install @rollup/rollup-linux-x64-gnu --save-optional || true
+
+      - name: Run preflight checks
+        run: npm run preflight
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: Build CLI
+        run: |
+          cd apps/cli
+          npm install --include=optional
+          npm install @rollup/rollup-linux-x64-gnu --save-optional || true
+          npm run build
+
+      - name: Configure Git for release
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+
+      - name: Check bundle sizes
+        run: |
+          echo "Client bundle sizes:"
+          ls -lh dist/assets/
+          echo "Server bundle size:"
+          ls -lh api/index.js
+
+      - name: Release
+        run: npx semantic-release
+        if: "${{ !contains(github.event.head_commit.message, 'chore(release)') }}"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          NPM_TOKEN: "${{ secrets.NPM_TOKEN }}"

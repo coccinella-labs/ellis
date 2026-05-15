@@ -33,7 +33,7 @@ jobs:
             package.json
             package-lock.json
             apps/*/package-lock.json
-             packages/*/package-lock.json
+            packages/*/package-lock.json
 
       - name: Install root dependencies
         run: npm install --include=optional

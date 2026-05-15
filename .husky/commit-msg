@@ -1,2 +1,2 @@
 #!/bin/bash
-./scripts/commit-msg $1
+./scripts/commit-msg "$1"

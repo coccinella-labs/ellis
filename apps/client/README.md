@@ -1,99 +1,38 @@
-# Client Application
+# Autofix client
 
-The client application delivers a modern, responsive web-based text editor that provides intelligent writing assistance through AI-powered text completion. It serves as the primary user interface for the autofix platform.
+This app is the web editor for Autofix.
 
-## Overview
+It is a React and TypeScript app built with Vite. It sends text to the server
+and shows completion suggestions in the editor.
 
-This React-based application offers a seamless writing experience with real-time AI suggestions, customizable settings, and an intuitive interface. The client communicates with the autofix server to provide context-aware text completion across different writing styles and modes.
+## Run
 
-## Features
+From the repo root:
 
-### Core Functionality
-
-- **Real-time Completion** - Instant AI-powered text suggestions as you type
-- **Multi-Provider Support** - Choose between Gemini and SambaNova AI models
-- **Style Customization** - Casual, formal, creative, and technical writing modes
-- **Mode Selection** - Word, sentence, and paragraph completion levels
-
-### User Experience
-
-- **Keyboard Shortcuts** - Efficient navigation and editing commands
-- **Settings Panel** - Comprehensive configuration options
-- **Responsive Design** - Works seamlessly across desktop and mobile devices
-- **Theme Support** - Light and dark mode compatibility
-
-### Advanced Features
-
-- **Session Persistence** - Maintains writing context across sessions
-- **Error Handling** - Graceful degradation when AI services are unavailable
-- **Performance Optimized** - Efficient rendering and minimal latency
-
-## Development
-
-### Local Development
-
-```bash
-cd apps/client
-npm install
+```sh
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open `http://localhost:3000`.
 
-### Build for Production
+## What is here
 
-```bash
+The main editor page is in `src/pages/Editor.tsx`.
+
+Editor controls live in `src/components`.
+
+Writing settings live in `src/hooks/useWritingSettings.ts`.
+
+The client calls `POST /api/complete` for suggestions.
+
+## Build
+
+From the repo root:
+
+```sh
 npm run build
 ```
 
-## Architecture
+## License
 
-### Component Structure
-
-```
-src/
-├── components/     # Reusable UI components
-├── pages/         # Route-based page components
-├── hooks/         # Custom React hooks
-└── lib/           # Utility functions and configurations
-```
-
-### State Management
-
-- React Query for server state
-- Local component state for UI
-- Context providers for global settings
-
-## Technologies
-
-### Core Framework
-
-- **React 18** - Modern React with concurrent features
-- **TypeScript** - Type-safe development
-- **Vite** - Fast build tool and dev server
-
-### UI & Styling
-
-- **Tailwind CSS** - Utility-first CSS framework
-- **Radix UI** - Accessible component primitives
-- **Framer Motion** - Smooth animations and transitions
-
-### Data & Networking
-
-- **React Query** - Powerful data synchronization
-- **WebSocket** - Real-time communication
-- **REST API** - Standard HTTP communication
-
-## Browser Support
-
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
-
-## References
-
-- [React Documentation](https://react.dev/)
-- [Vite Build Tool](https://vitejs.dev/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Radix UI Components](https://www.radix-ui.com/)
+MIT.

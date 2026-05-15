@@ -23,7 +23,7 @@ jobs:
           cache-dependency-path: |
             package.json
             package-lock.json
-             apps/*/package-lock.json
+            apps/*/package-lock.json
 
       - name: Install dependencies
         run: |

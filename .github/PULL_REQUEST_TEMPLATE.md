@@ -1,11 +1,7 @@
 ## Summary
 
-What + why.
+Describe the change and why it is needed.
 
-## Changes
+## Verification
 
-- Bullets.
-
-## Test
-
-How verified.
+List the commands or checks you ran.

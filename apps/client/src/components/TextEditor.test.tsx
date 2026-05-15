@@ -10,6 +10,9 @@ describe('TextEditor', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
+    fetchMock.mockResolvedValue({
+      json: vi.fn().mockResolvedValue({ suggestion: ' suggestion' }),
+    });
   });
 
   afterEach(() => {
@@ -48,7 +51,7 @@ describe('TextEditor', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('debounces API calls', () => {
+  it('debounces API calls', async () => {
     render(<TextEditor />);
 
     const textarea = screen.getByTestId('input-editor');
@@ -69,8 +72,9 @@ describe('TextEditor', () => {
     expect(fetchMock).not.toHaveBeenCalled();
 
     // Advance to 500ms - should trigger
-    act(() => {
+    await act(async () => {
       vi.advanceTimersByTime(100);
+      await Promise.resolve();
     });
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });

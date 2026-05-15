@@ -1,75 +1,72 @@
-# Autofix API Reference
+# Autofix API
 
-This document describes the REST API endpoints provided by the Autofix server.
+The server exposes a small HTTP API for text completion.
 
-## Endpoints
+## POST /api/complete
 
-### POST /api/complete
+Returns a suggestion for the given text.
 
-Generates AI-powered text completion based on the provided input.
-
-**Request Body:**
+Request:
 
 ```json
 {
-  "text": "string", // The text to complete (required)
-  "mode": "word" | "sentence" | "paragraph", // Completion mode (default: "sentence")
-  "style": "casual" | "formal" | "creative" | "technical", // Writing style (default: "casual")
-  "provider": "auto" | "gemini" | "sambanova", // AI provider selection (default: "auto")
-  "geminiModel": "string", // Specific Gemini model (default: "gemini-3-pro-preview")
-  "geminiApiKey": "string", // Custom Gemini API key (optional)
-  "sambaNovaApiKey": "string" // Custom SambaNova API key (optional)
+  "text": "The future of AI is",
+  "mode": "sentence",
+  "style": "technical",
+  "provider": "auto",
+  "geminiModel": "gemini-3-pro-preview"
 }
 ```
 
-**Response:**
+Fields:
+
+`text` is required.
+
+`mode` may be `word`, `sentence`, or `paragraph`. The default is `sentence`.
+
+`style` may be `casual`, `formal`, `creative`, or `technical`. The default is
+`casual`.
+
+`provider` may be `auto`, `gemini`, or `sambanova`. The default is `auto`.
+
+`geminiApiKey` and `sambaNovaApiKey` may be sent per request. If omitted, the
+server uses environment variables.
+
+Response:
 
 ```json
 {
-  "suggestion": "string" // The generated completion text
+  "suggestion": "..."
 }
 ```
 
-**Status Codes:**
+If `text` is shorter than 10 characters, the server returns an empty
+suggestion.
 
-- 200: Success
-- 400: Bad Request
-- 500: Internal Server Error
+## GET /api/status
 
-### GET /api/status
+Returns provider status.
 
-Returns the status of the server and available AI providers.
-
-**Response:**
+Response:
 
 ```json
 {
   "status": "ok",
   "providers": {
-    "gemini": boolean, // Whether Gemini is available
-    "sambanova": boolean // Whether SambaNova is available
+    "gemini": true,
+    "sambanova": true
   }
 }
 ```
 
-**Status Codes:**
+In development, `status` can be `ok` even when no provider is ready. In
+production, at least one provider must work for `status` to be `ok`.
 
-- 200: Success
-- 500: Internal Server Error
+## Environment
 
-## Authentication
+```sh
+GEMINI_API_KEY=your_gemini_key
+SAMBANOVA_API_KEY=your_sambanova_key
+```
 
-API requests require valid AI provider API keys to be configured on the server.
-
-## Error Handling
-
-The API returns standard HTTP status codes. Error responses may include a JSON body with error details.
-
-## Rate Limiting
-
-Requests are subject to the rate limits of the underlying AI providers:
-
-- Gemini: 200 requests/day free tier (varies by model)
-- SambaNova: Varies by plan
-
-The system automatically falls back to alternative providers or models when rate limits are hit.
+`DISABLE_GEMINI=true` skips the Gemini status check.
