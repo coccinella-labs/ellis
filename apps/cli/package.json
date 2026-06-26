@@ -1,13 +1,13 @@
 {
-  "name": "@harpertoken/autofix-cli",
+  "name": "@palmshed/fx",
   "version": "1.0.0",
-  "description": "CLI for Harper Autofix - AI-powered text completion editor",
+  "description": "CLI for palmshed",
   "main": "dist/index.js",
   "publishConfig": {
     "access": "public"
   },
   "bin": {
-    "autofix": "./dist/index.js"
+    "fx": "dist/index.js"
   },
   "scripts": {
     "build": "tsc",
@@ -20,7 +20,7 @@
     "text-completion",
     "writing"
   ],
-  "author": "harpertoken",
+  "author": "palmshed",
   "license": "MIT",
   "dependencies": {
     "@google/genai": "^1.21.0",
