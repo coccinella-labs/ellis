@@ -4,7 +4,7 @@
   "description": "AI-powered text autofix with CLI and web client.",
   "author": "harpertoken",
   "private": true,
-  "repository": "https://github.com/harpertoken/autofix",
+  "repository": "https://github.com/palmshed/hautofix",
   "type": "module",
   "license": "MIT",
   "keywords": [
