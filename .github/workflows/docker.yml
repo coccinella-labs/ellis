@@ -52,7 +52,7 @@ jobs:
         if: steps.check-secrets.outputs.has_secrets == 'true'
         uses: docker/metadata-action@v5
         with:
-          images: harpertoken/autofix-server
+          images: palmshed/fx
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -64,7 +64,7 @@ jobs:
         id: meta-ghcr
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/harpertoken/autofix-server
+          images: ghcr.io/palmshed/fx
           tags: |
             type=ref,event=branch
             type=ref,event=pr
