@@ -1,24 +1,13 @@
-# Autofix CLI
+# @palmshed/fx
 
-This package provides the `autofix` command.
+Terminal editor for AI text completion.
 
-It opens a small terminal editor for AI text completion. It can start a new
-document or edit an existing file.
-
-## Build
-
-From the repo root:
-
-```sh
-npm install
-cd apps/cli
-npm install
-npm run build
+```
+fx new
+fx edit draft.txt
 ```
 
 ## Setup
-
-Set a Gemini key before running the command:
 
 ```sh
 export GEMINI_API_KEY=your_key
@@ -27,30 +16,23 @@ export GEMINI_API_KEY=your_key
 The CLI also looks for a `.env` file while walking up from the current
 directory.
 
-## Use
+## Options
 
-Create a new document:
-
-```sh
-autofix new
+```
+fx new --mode sentence --style casual --output notes.txt
+fx edit draft.txt --mode paragraph --style technical
 ```
 
-Edit a file:
+Modes: `word`, `sentence`, `paragraph`.
+Styles: `casual`, `formal`, `creative`, `technical`.
+
+## Build
 
 ```sh
-autofix edit draft.txt
+cd apps/cli
+npm install
+npm run build
 ```
-
-Useful options:
-
-```sh
-autofix new --mode sentence --style casual --output notes.txt
-autofix edit draft.txt --mode paragraph --style technical
-```
-
-Modes are `word`, `sentence`, and `paragraph`.
-
-Styles are `casual`, `formal`, `creative`, and `technical`.
 
 ## License
 
