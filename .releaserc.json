@@ -13,9 +13,7 @@
     [
       "@semantic-release/npm",
       {
-        "npmPublish": true,
-        "registry": "https://registry.npmjs.org",
-        "token": "NPM_TOKEN"
+        "npmPublish": false
       }
     ],
     "@semantic-release/github"
