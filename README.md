@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/basebin/hautofix/main/.github/assets/thumbnail.png" alt="hautofix" width="100%">
+</p>
+
 # autofix
 
 **AI-powered text editor - web app + CLI.**
