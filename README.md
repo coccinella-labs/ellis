@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/basebin/hautofix/main/.github/assets/thumbnail.png" alt="hautofix" width="100%">
+  <img src="https://raw.githubusercontent.com/Coccinella-Labs/hautofix/main/.github/assets/thumbnail.png" alt="hautofix" width="100%">
 </p>
 
 # autofix
