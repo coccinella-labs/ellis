@@ -77,7 +77,7 @@ export function ProvidersPage({ isOpen, onOpenChange }: ProvidersPageProps) {
             <p className="text-xs text-muted-foreground">
               Questions?{' '}
               <a
-                href="https://github.com/harpertoken/autofix/issues"
+                href="https://github.com/coccinella-labs/hautofix/issues"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline hover:text-primary"

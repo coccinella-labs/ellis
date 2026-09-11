@@ -258,7 +258,7 @@ export function SettingsPanel({
               <p className="text-sm text-muted-foreground">
                 Private and local.{' '}
                 <a
-                  href="https://github.com/harpertoken/autofix/issues"
+                  href="https://github.com/coccinella-labs/hautofix/issues"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline hover:text-primary"
