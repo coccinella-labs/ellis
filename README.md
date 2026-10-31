@@ -28,4 +28,15 @@ import { logger } from '@shared/logger';
 import { generateTextCompletion } from '@shared/gemini';
 ```
 
-The relaxed commit-msg hook in scripts/commit-msg together with the commitlint configuration, and the README structure adapted from the palmshed sandbox template, are also reusable. The rest of the codebase is application-specific. Licensed under MIT. See [LICENSE](LICENSE).
+The relaxed commit-msg hook in scripts/commit-msg together with the commitlint configuration, and the README structure adapted from the palmshed sandbox template, are also reusable. For example, the commit-msg hook:
+
+```sh
+#!/bin/bash
+commit_msg=$(head -n1 "$1")
+if [ ${#commit_msg} -gt 80 ]; then
+  echo "Commit message first line must be <= 80 characters"
+  exit 1
+fi
+```
+
+The rest of the codebase is application-specific. Licensed under MIT. See [LICENSE](LICENSE).
