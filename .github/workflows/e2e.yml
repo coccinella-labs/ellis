@@ -29,6 +29,7 @@ jobs:
         run: |
           npm install --include=optional
           npm install @rollup/rollup-linux-x64-gnu --save-optional || true
+          cd apps/cli && npm install --include=optional
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
