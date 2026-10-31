@@ -4,7 +4,7 @@
 
 # autofix
 
-autofix is an AI-powered text editor that ships as both a web app and a command-line tool. It is part of the [palmshed](https://github.com/palmshed) stack, built on vortai and thread, and uses mlapi for execution.
+autofix is an AI-powered text editor that ships as both a web app and a command-line tool.
 
 ## What It Does
 
@@ -12,11 +12,11 @@ autofix offers inline AI text completion as you type. Suggestions appear as ghos
 
 ## Getting Started
 
-Clone the repository with `git clone https://github.com/palmshed/hautofix` and move into the directory. Copy `.env.example` to `.env` and add your `GEMINI_API_KEY`, since Gemini is the primary provider and the app will not produce suggestions without it. Run `npm install` to fetch dependencies, then `npm run dev` to start the development server. Open `http://localhost:3000` and start typing. Suggestions appear after you pause for 500 milliseconds, so the editor stays out of the way while you are actively writing and only offers help when you stop.
+Clone the repository with `git clone https://github.com/coccinella-labs/hautofix` and move into the directory. Copy `.env.example` to `.env` and add your `GEMINI_API_KEY`, since Gemini is the primary provider and the app will not produce suggestions without it. Run `npm install` to fetch dependencies, then `npm run dev` to start the development server. Open `http://localhost:3000` and start typing. Suggestions appear after you pause for 500 milliseconds, so the editor stays out of the way while you are actively writing and only offers help when you stop.
 
 ## Interfaces
 
-The web app is a React single-page application with a dark and light theme, a settings panel, and keyboard shortcuts. It runs on an Express server with Vite handling the frontend build and dev experience. The CLI is the same editing idea for headless workflows: an `autofix` command that opens a terminal-based editor. Start a fresh document with `autofix new --mode sentence --style casual`, or open an existing file with `autofix edit draft.txt --mode paragraph --style technical`. The CLI also needs `GEMINI_API_KEY` set in `.env`.
+The web app is a React single-page application with a dark and light theme, a settings panel, and keyboard shortcuts. It runs on an Express server with Vite handling the frontend build and dev experience. The CLI is the same editing idea for headless workflows: an `fx` command that opens a terminal-based editor. Start a fresh document with `fx new --mode sentence --style casual`, or open an existing file with `fx edit draft.txt --mode paragraph --style technical`. The CLI also needs `GEMINI_API_KEY` set in `.env`.
 
 ## AI Providers
 
@@ -36,7 +36,7 @@ Suggestions depend on a network call to an AI provider, so the editor needs conn
 
 ## Related Projects
 
-autofix sits in the palmshed stack. It builds on vortai and thread and delegates execution to mlapi, so behavior changes in those projects can surface here.
+autofix is developed under the coccinella-labs organization.
 
 ## License
 
