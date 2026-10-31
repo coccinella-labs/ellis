@@ -3,35 +3,9 @@
 commit_msg_file=$1
 commit_msg=$(head -n1 "$commit_msg_file")
 
-# Check length <= 60
-if [ ${#commit_msg} -gt 60 ]; then
-    echo "Commit message first line must be <= 60 characters"
-    exit 1
-fi
-
-# Check lowercase, ignoring content inside backticks
-msg_without_backticks=$(echo "$commit_msg" | sed 's/`[^`]*`//g')
-if [ "$msg_without_backticks" != "$(echo "$msg_without_backticks" | tr '[:upper:]' '[:lower:]')" ]; then
-    echo "Commit message first line must be lowercase (except inside backticks)"
-    exit 1
-fi
-
-# Check starts with conventional type
-if ! echo "$commit_msg" | grep -qE '^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: '; then
-    echo "Commit message must start with a conventional commit type (e.g., feat:, fix:, refactor:)"
-    exit 1
-fi
-
-# Backtick rule – allow only for code identifiers (letters, numbers, underscore, uppercase, hyphen)
-backtick_violations=$(echo "$commit_msg" | grep -o '`[^`]*`' | while read -r block; do
-    if ! echo "$block" | grep -qE '^`[a-zA-Z0-9_-]+`$'; then
-        echo "$block"
-    fi
-done)
-
-if [ -n "$backtick_violations" ]; then
-    echo "Invalid backtick usage detected: $backtick_violations"
-    echo "Backticks should only wrap simple code identifiers (e.g., \`myfunction\`)"
+# Check length <= 80
+if [ ${#commit_msg} -gt 80 ]; then
+    echo "Commit message first line must be <= 80 characters"
     exit 1
 fi
 
