@@ -1,142 +1,157 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import {
-  testApiKey,
-  testSambaNovaApiKey,
-  generateTextCompletion,
-} from './gemini';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import express, { type Express } from 'express';
+import request from 'supertest';
+import { registerRoutes } from './routes';
 
-// Mock dependencies
+// Mock the gemini module so we don't hit real APIs
 vi.mock('./gemini', () => ({
+  generateTextCompletion: vi.fn(),
   testApiKey: vi.fn(),
   testSambaNovaApiKey: vi.fn(),
-  generateTextCompletion: vi.fn(),
 }));
 
-vi.mock('../../packages/shared/logger.js', () => ({
+vi.mock('@shared/logger', () => ({
   logger: {
     info: vi.fn(),
     error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
   },
 }));
 
-describe('Server Route Logic', () => {
-  let mockTestApiKey: ReturnType<typeof vi.mocked<typeof testApiKey>>;
-  let mockTestSambaNovaApiKey: ReturnType<
-    typeof vi.mocked<typeof testSambaNovaApiKey>
-  >;
-  let mockGenerateTextCompletion: ReturnType<
-    typeof vi.mocked<typeof generateTextCompletion>
-  >;
+import {
+  generateTextCompletion,
+  testApiKey,
+  testSambaNovaApiKey,
+} from './gemini';
+
+describe('Express routes', () => {
+  let app: Express;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockTestApiKey = vi.mocked(testApiKey);
-    mockTestSambaNovaApiKey = vi.mocked(testSambaNovaApiKey);
-    mockGenerateTextCompletion = vi.mocked(generateTextCompletion);
+    process.env.NODE_ENV = 'test';
+    app = express();
+    app.use(express.json());
+    app = registerRoutes(app);
   });
 
-  describe('Status check logic', () => {
-    it('returns ok status when providers are working in development', async () => {
-      process.env.NODE_ENV = 'development';
-      mockTestApiKey.mockResolvedValue(true);
-      mockTestSambaNovaApiKey.mockResolvedValue(true);
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
-      // Test the status logic directly
-      const geminiWorking = await mockTestApiKey();
-      const sambaNovaWorking = await mockTestSambaNovaApiKey();
-      const isWorking =
-        process.env.NODE_ENV === 'development'
-          ? true
-          : geminiWorking || sambaNovaWorking;
-
-      expect(isWorking).toBe(true);
-      expect(geminiWorking).toBe(true);
-      expect(sambaNovaWorking).toBe(true);
-    });
-
-    it('returns ok status when at least one provider works in production', async () => {
-      process.env.NODE_ENV = 'production';
-      mockTestApiKey.mockResolvedValue(false);
-      mockTestSambaNovaApiKey.mockResolvedValue(true);
-
-      const geminiWorking = await mockTestApiKey();
-      const sambaNovaWorking = await mockTestSambaNovaApiKey();
-      const isWorking =
-        process.env.NODE_ENV === 'development'
-          ? true
-          : geminiWorking || sambaNovaWorking;
-
-      expect(isWorking).toBe(true);
-      expect(geminiWorking).toBe(false);
-      expect(sambaNovaWorking).toBe(true);
-    });
-
-    it('returns error status when no providers work in production', async () => {
-      process.env.NODE_ENV = 'production';
-      mockTestApiKey.mockResolvedValue(false);
-      mockTestSambaNovaApiKey.mockResolvedValue(false);
-
-      const geminiWorking = await mockTestApiKey();
-      const sambaNovaWorking = await mockTestSambaNovaApiKey();
-      const isWorking =
-        process.env.NODE_ENV === 'development'
-          ? true
-          : geminiWorking || sambaNovaWorking;
-
-      expect(isWorking).toBe(false);
-      expect(geminiWorking).toBe(false);
-      expect(sambaNovaWorking).toBe(false);
+  describe('GET /api/health', () => {
+    it('returns 200 with status ok', async () => {
+      const res = await request(app).get('/api/health');
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({ status: 'ok' });
     });
   });
 
-  describe('Text completion logic', () => {
-    it('calls generateTextCompletion with correct parameters', async () => {
-      const requestBody = {
-        text: 'This is a test text that should generate a suggestion',
+  describe('POST /api/complete', () => {
+    it('returns suggestion for valid request', async () => {
+      vi.mocked(generateTextCompletion).mockResolvedValue(' great idea');
+
+      const res = await request(app).post('/api/complete').send({
+        text: 'I think this is a really good idea',
         mode: 'sentence',
         style: 'casual',
         provider: 'auto',
         geminiModel: 'gemini-3.8-flash',
-      };
+      });
 
-      mockGenerateTextCompletion.mockResolvedValue(' generated suggestion');
-
-      // Test the completion logic
-      const { text, mode, style, provider, geminiModel } = requestBody;
-
-      if (text && text.length >= 10) {
-        const suggestion = await mockGenerateTextCompletion(
-          text,
-          mode as 'word' | 'sentence' | 'paragraph',
-          style as 'casual' | 'formal' | 'creative' | 'technical',
-          provider as 'auto' | 'gemini' | 'sambanova',
-          geminiModel
-        );
-
-        expect(suggestion).toBe(' generated suggestion');
-        expect(mockGenerateTextCompletion).toHaveBeenCalledWith(
-          'This is a test text that should generate a suggestion',
-          'sentence',
-          'casual',
-          'auto',
-          'gemini-3.8-flash'
-        );
-      }
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({ suggestion: ' great idea' });
+      expect(generateTextCompletion).toHaveBeenCalledWith(
+        'I think this is a really good idea',
+        'sentence',
+        'casual',
+        'auto',
+        'gemini-3.8-flash'
+      );
     });
 
-    it('skips generation for short text', async () => {
-      const requestBody = {
+    it('returns empty suggestion for short text without calling provider', async () => {
+      const res = await request(app).post('/api/complete').send({
         text: 'Hi',
         mode: 'word',
         style: 'formal',
         provider: 'gemini',
-      };
+      });
 
-      const { text } = requestBody;
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({ suggestion: '' });
+      expect(generateTextCompletion).not.toHaveBeenCalled();
+    });
 
-      if (!text || text.length < 10) {
-        expect(mockGenerateTextCompletion).not.toHaveBeenCalled();
-      }
+    it('returns 500 with empty suggestion when provider throws', async () => {
+      vi.mocked(generateTextCompletion).mockRejectedValue(new Error('boom'));
+
+      const res = await request(app).post('/api/complete').send({
+        text: 'This is a long enough test text',
+        mode: 'sentence',
+        style: 'casual',
+        provider: 'auto',
+      });
+
+      expect(res.status).toBe(500);
+      expect(res.body).toEqual({ suggestion: '' });
+    });
+
+    it('returns 500 with empty suggestion when schema validation fails', async () => {
+      const res = await request(app).post('/api/complete').send({
+        text: 'This is a long enough test text',
+        mode: 'invalid',
+        style: 'casual',
+        provider: 'auto',
+      });
+
+      expect(res.status).toBe(500);
+      expect(res.body).toEqual({ suggestion: '' });
+    });
+  });
+
+  describe('GET /api/status', () => {
+    it('returns ok in test environment', async () => {
+      const res = await request(app).get('/api/status');
+      expect(res.status).toBe(200);
+      expect(res.body.status).toBe('ok');
+    });
+
+    it('returns provider status when keys are set in production', async () => {
+      process.env.NODE_ENV = 'production';
+      process.env.GEMINI_API_KEY = 'test-key';
+      process.env.SAMBANOVA_API_KEY = 'test-key';
+      vi.mocked(testApiKey).mockResolvedValue(true);
+      vi.mocked(testSambaNovaApiKey).mockResolvedValue(false);
+
+      const res = await request(app).get('/api/status');
+      expect(res.status).toBe(200);
+      expect(res.body.status).toBe('ok');
+      expect(res.body.providers.gemini).toBe(true);
+      expect(res.body.providers.sambanova).toBe(false);
+    });
+
+    it('returns error when no provider works in production', async () => {
+      process.env.NODE_ENV = 'production';
+      process.env.GEMINI_API_KEY = 'test-key';
+      process.env.SAMBANOVA_API_KEY = 'test-key';
+      vi.mocked(testApiKey).mockResolvedValue(false);
+      vi.mocked(testSambaNovaApiKey).mockResolvedValue(false);
+
+      const res = await request(app).get('/api/status');
+      expect(res.status).toBe(200);
+      expect(res.body.status).toBe('error');
+    });
+
+    it('returns 500 when status check throws', async () => {
+      process.env.NODE_ENV = 'production';
+      process.env.GEMINI_API_KEY = 'test-key';
+      vi.mocked(testApiKey).mockRejectedValue(new Error('network down'));
+
+      const res = await request(app).get('/api/status');
+      expect(res.status).toBe(500);
+      expect(res.body).toEqual({ status: 'error' });
     });
   });
 });

@@ -41,7 +41,7 @@ export function TextEditor({
   ) => {
     if (currentText.length < 10) return;
 
-    const mySeq = ++requestSeqRef.current;
+    const mySeq = requestSeqRef.current;
     setIsGenerating(true);
     setShowModelSwitch(false);
 
@@ -79,7 +79,9 @@ export function TextEditor({
       setSuggestion('');
       setShowModelSwitch(true);
     } finally {
-      setIsGenerating(false);
+      if (mySeq === requestSeqRef.current) {
+        setIsGenerating(false);
+      }
     }
   };
 
@@ -87,6 +89,8 @@ export function TextEditor({
     const newText = e.target.value;
     setText(newText);
     onTextChange?.(newText);
+
+    requestSeqRef.current += 1;
 
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -113,13 +117,6 @@ export function TextEditor({
         e.preventDefault();
         console.log('Switching to gemini-3.5-flash-lite');
         const nextModel = 'gemini-3.5-flash-lite';
-        onGeminiModelChange?.(nextModel);
-        setShowModelSwitch(false);
-        generateSuggestion(text, nextModel);
-      } else if (e.key === '3') {
-        e.preventDefault();
-        console.log('Switching to gemini-3.8-flash');
-        const nextModel = 'gemini-3.8-flash';
         onGeminiModelChange?.(nextModel);
         setShowModelSwitch(false);
         generateSuggestion(text, nextModel);
