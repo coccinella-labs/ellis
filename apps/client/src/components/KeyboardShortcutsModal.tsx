@@ -1,5 +1,3 @@
-import { X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -29,15 +27,6 @@ export function KeyboardShortcutsModal({
       <DialogContent className="sm:max-w-md" data-testid="modal-shortcuts">
         <DialogHeader>
           <DialogTitle>Keyboard Shortcuts</DialogTitle>
-          <Button
-            size="icon"
-            variant="ghost"
-            onClick={onClose}
-            className="absolute right-4 top-4"
-            data-testid="button-close-shortcuts"
-          >
-            <X className="w-4 h-4" />
-          </Button>
         </DialogHeader>
 
         <div className="grid gap-3 py-4">
