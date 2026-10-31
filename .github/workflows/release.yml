@@ -30,9 +30,7 @@ jobs:
             package-lock.json
 
       - name: Install dependencies
-        run: |
-          npm install --include=optional
-          npm install @rollup/rollup-linux-x64-gnu --save-optional || true
+        run: npm ci
 
       - name: Run preflight checks
         run: npm run preflight
@@ -45,7 +43,7 @@ jobs:
       - name: Build CLI
         run: |
           cd apps/cli
-          npm install --include=optional
+          npm ci
           npm run build
 
       - name: Run E2E tests

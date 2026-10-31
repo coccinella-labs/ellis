@@ -36,11 +36,11 @@ jobs:
             packages/*/package-lock.json
 
       - name: Install root dependencies
-        run: npm install --include=optional
+        run: npm ci
 
       - name: Install CLI dependencies
         working-directory: apps/cli
-        run: npm install --include=optional
+        run: npm ci
 
       - name: Build CLI package
         working-directory: apps/cli

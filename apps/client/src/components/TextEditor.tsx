@@ -99,6 +99,11 @@ export function TextEditor({
     setSuggestion('');
     setShowModelSwitch(false);
 
+    if (newText.length < 10) {
+      setIsGenerating(false);
+      return;
+    }
+
     timeoutRef.current = setTimeout(() => {
       generateSuggestion(newText);
     }, 500) as unknown as number;
