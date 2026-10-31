@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
 export function useWritingSettings() {
-  const [autoSave, setAutoSave] = useState(true);
   const [completionMode, setCompletionMode] = useState<
     'word' | 'sentence' | 'paragraph'
   >('sentence');
@@ -12,12 +11,8 @@ export function useWritingSettings() {
     'auto'
   );
   const [geminiModel, setGeminiModel] = useState('gemini-3.8-flash');
-  const [geminiApiKey, setGeminiApiKey] = useState('');
-  const [sambaNovaApiKey, setSambaNovaApiKey] = useState('');
 
   return {
-    autoSave,
-    setAutoSave,
     completionMode,
     setCompletionMode,
     writingStyle,
@@ -26,9 +21,5 @@ export function useWritingSettings() {
     setAiProvider,
     geminiModel,
     setGeminiModel,
-    geminiApiKey,
-    setGeminiApiKey,
-    sambaNovaApiKey,
-    setSambaNovaApiKey,
   };
 }

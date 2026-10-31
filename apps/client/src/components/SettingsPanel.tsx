@@ -1,8 +1,5 @@
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useState } from 'react';
 import { ProvidersPage } from '@/pages/Providers';
@@ -10,8 +7,6 @@ import { ProvidersPage } from '@/pages/Providers';
 interface SettingsPanelProps {
   isOpen: boolean;
   onClose: () => void;
-  autoSave: boolean;
-  onAutoSaveChange: (enabled: boolean) => void;
   completionMode: 'word' | 'sentence' | 'paragraph';
   onCompletionModeChange: (mode: 'word' | 'sentence' | 'paragraph') => void;
   writingStyle: 'casual' | 'formal' | 'creative' | 'technical';
@@ -22,10 +17,6 @@ interface SettingsPanelProps {
   onAiProviderChange: (provider: 'auto' | 'gemini' | 'sambanova') => void;
   geminiModel: string;
   onGeminiModelChange: (model: string) => void;
-  geminiApiKey: string;
-  onGeminiApiKeyChange: (key: string) => void;
-  sambaNovaApiKey: string;
-  onSambaNovaApiKeyChange: (key: string) => void;
 }
 
 function ProvidersLink({ onClick }: { onClick: () => void }) {
@@ -42,8 +33,6 @@ function ProvidersLink({ onClick }: { onClick: () => void }) {
 export function SettingsPanel({
   isOpen,
   onClose,
-  autoSave,
-  onAutoSaveChange,
   completionMode,
   onCompletionModeChange,
   writingStyle,
@@ -52,10 +41,6 @@ export function SettingsPanel({
   onAiProviderChange,
   geminiModel,
   onGeminiModelChange,
-  geminiApiKey,
-  onGeminiApiKeyChange,
-  sambaNovaApiKey,
-  onSambaNovaApiKeyChange,
 }: SettingsPanelProps) {
   const [showProviders, setShowProviders] = useState(false);
   return (
@@ -90,15 +75,12 @@ export function SettingsPanel({
 
           <div className="flex-1 overflow-y-auto p-6 space-y-8">
             <Tabs defaultValue="writing" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="writing" data-testid="tab-writing">
                   Writing
                 </TabsTrigger>
                 <TabsTrigger value="ai" data-testid="tab-ai">
                   AI
-                </TabsTrigger>
-                <TabsTrigger value="keys" data-testid="tab-keys">
-                  Keys
                 </TabsTrigger>
               </TabsList>
 
@@ -155,18 +137,6 @@ export function SettingsPanel({
                     <option value="technical">technical</option>
                   </select>
                 </div>
-
-                <div className="flex items-center justify-between pt-4 border-t">
-                  <Label htmlFor="auto-save" className="text-sm font-medium">
-                    auto-save
-                  </Label>
-                  <Switch
-                    id="auto-save"
-                    checked={autoSave}
-                    onCheckedChange={onAutoSaveChange}
-                    data-testid="switch-auto-save"
-                  />
-                </div>
               </TabsContent>
 
               <TabsContent value="ai" className="space-y-4 mt-6">
@@ -208,40 +178,6 @@ export function SettingsPanel({
                   </select>
                 </div>
               </TabsContent>
-
-              <TabsContent value="keys" className="space-y-4 mt-6">
-                <div className="space-y-2">
-                  <Label htmlFor="gemini-key" className="text-sm font-medium">
-                    gemini api key
-                  </Label>
-                  <Input
-                    id="gemini-key"
-                    type="password"
-                    value={geminiApiKey}
-                    onChange={(e) => onGeminiApiKeyChange(e.target.value)}
-                    placeholder="Enter your Gemini API key"
-                    className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    data-testid="input-gemini-key"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="sambanova-key"
-                    className="text-sm font-medium"
-                  >
-                    sambanova api key
-                  </Label>
-                  <Input
-                    id="sambanova-key"
-                    type="password"
-                    value={sambaNovaApiKey}
-                    onChange={(e) => onSambaNovaApiKeyChange(e.target.value)}
-                    placeholder="Enter your SambaNova API key"
-                    className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    data-testid="input-sambanova-key"
-                  />
-                </div>
-              </TabsContent>
             </Tabs>
 
             <div className="pt-6 border-t border-border/50 space-y-4">
@@ -254,7 +190,7 @@ export function SettingsPanel({
               <p className="text-sm text-muted-foreground">
                 Private and local.{' '}
                 <a
-                  href="https://github.com/coccinella-labs/hautofix/issues"
+                  href="https://github.com/coccinella-labs/ellis/issues"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline hover:text-primary"

@@ -6,23 +6,10 @@ describe('useWritingSettings', () => {
   it('returns default values', () => {
     const { result } = renderHook(() => useWritingSettings());
 
-    expect(result.current.autoSave).toBe(true);
     expect(result.current.completionMode).toBe('sentence');
     expect(result.current.writingStyle).toBe('casual');
     expect(result.current.aiProvider).toBe('auto');
     expect(result.current.geminiModel).toBe('gemini-3.8-flash');
-    expect(result.current.geminiApiKey).toBe('');
-    expect(result.current.sambaNovaApiKey).toBe('');
-  });
-
-  it('allows updating autoSave', () => {
-    const { result } = renderHook(() => useWritingSettings());
-
-    act(() => {
-      result.current.setAutoSave(false);
-    });
-
-    expect(result.current.autoSave).toBe(false);
   });
 
   it('allows updating completionMode', () => {
@@ -81,18 +68,6 @@ describe('useWritingSettings', () => {
     });
 
     expect(result.current.geminiModel).toBe('gemini-3.8-flash');
-  });
-
-  it('allows updating API keys', () => {
-    const { result } = renderHook(() => useWritingSettings());
-
-    act(() => {
-      result.current.setGeminiApiKey('test-gemini-key');
-      result.current.setSambaNovaApiKey('test-samba-key');
-    });
-
-    expect(result.current.geminiApiKey).toBe('test-gemini-key');
-    expect(result.current.sambaNovaApiKey).toBe('test-samba-key');
   });
 
   it('maintains state across renders', () => {

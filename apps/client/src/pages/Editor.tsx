@@ -17,8 +17,6 @@ export default function Editor() {
   const [welcomeOpen, setWelcomeOpen] = useState(false);
 
   const {
-    autoSave,
-    setAutoSave,
     completionMode,
     setCompletionMode,
     writingStyle,
@@ -27,10 +25,6 @@ export default function Editor() {
     setAiProvider,
     geminiModel,
     setGeminiModel,
-    geminiApiKey,
-    setGeminiApiKey,
-    sambaNovaApiKey,
-    setSambaNovaApiKey,
   } = useWritingSettings();
 
   useEffect(() => {
@@ -49,7 +43,7 @@ export default function Editor() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
-        console.log('Document saved');
+        handleExport();
       } else if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
         e.preventDefault();
         handleExport();
@@ -105,8 +99,6 @@ export default function Editor() {
       <SettingsPanel
         isOpen={settingsOpen}
         onClose={() => setSettingsOpen(false)}
-        autoSave={autoSave}
-        onAutoSaveChange={setAutoSave}
         completionMode={completionMode}
         onCompletionModeChange={setCompletionMode}
         writingStyle={writingStyle}
@@ -115,10 +107,6 @@ export default function Editor() {
         onAiProviderChange={setAiProvider}
         geminiModel={geminiModel}
         onGeminiModelChange={setGeminiModel}
-        geminiApiKey={geminiApiKey}
-        onGeminiApiKeyChange={setGeminiApiKey}
-        sambaNovaApiKey={sambaNovaApiKey}
-        onSambaNovaApiKeyChange={setSambaNovaApiKey}
       />
 
       <KeyboardShortcutsModal

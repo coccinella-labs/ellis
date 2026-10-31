@@ -16,8 +16,6 @@ describe('SettingsPanel', () => {
     const props = {
       isOpen: true,
       onClose: vi.fn(),
-      autoSave: true,
-      onAutoSaveChange: vi.fn(),
       completionMode: 'sentence' as const,
       onCompletionModeChange: vi.fn(),
       writingStyle: 'casual' as const,
@@ -26,10 +24,6 @@ describe('SettingsPanel', () => {
       onAiProviderChange: vi.fn(),
       geminiModel: 'gemini-3.8-flash',
       onGeminiModelChange: vi.fn(),
-      geminiApiKey: '',
-      onGeminiApiKeyChange: vi.fn(),
-      sambaNovaApiKey: '',
-      onSambaNovaApiKeyChange: vi.fn(),
     };
     const { container } = render(
       <ThemeProvider>
