@@ -1,43 +1,118 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Coccinella-Labs/hautofix/main/.github/assets/thumbnail.png" alt="hautofix" width="100%">
+  <img src="https://raw.githubusercontent.com/coccinella-labs/hautofix/main/.github/assets/thumbnail.png" alt="hautofix" width="100%">
 </p>
 
-# autofix
+# hautofix
 
-autofix is an AI-powered text editor that ships as both a web app and a command-line tool.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Node.js](https://img.shields.io/badge/Node.js-22.x-339933.svg)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6.svg)](https://www.typescriptlang.org/)
 
-## What It Does
+AI-powered inline text completion for the web and the command line. hautofix suggests completions as ghost text as you type; press Tab to accept or Esc to dismiss. Completions can be generated at word, sentence, or paragraph granularity, in casual, formal, creative, or technical styles. Mode and style are independent.
 
-autofix offers inline AI text completion as you type. Suggestions appear as ghost text overlaid on your writing, and you press Tab to accept one or Esc to dismiss it. Completions can be generated at three granularities, word, sentence, or paragraph, and in four writing styles: casual, formal, creative, or technical. Mode and style are independent, so you can ask for a technical paragraph or a casual sentence without changing anything else about your setup.
+## Features
+
+- Inline ghost-text completion with Tab to accept and Esc to dismiss.
+- Three completion granularities: word, sentence, paragraph.
+- Four writing styles: casual, formal, creative, technical.
+- Dual interface: React single-page web app and a terminal-based CLI.
+- Provider fallback: Google Gemini (primary) with SambaNova fallback on rate limits or errors.
+- Dark and light themes, settings panel, keyboard shortcuts.
+- PostgreSQL persistence via Drizzle ORM; Docker and Vercel deployment support.
 
 ## Getting Started
 
-Clone the repository with `git clone https://github.com/coccinella-labs/hautofix` and move into the directory. Copy `.env.example` to `.env` and add your `GEMINI_API_KEY`, since Gemini is the primary provider and the app will not produce suggestions without it. Run `npm install` to fetch dependencies, then `npm run dev` to start the development server. Open `http://localhost:3000` and start typing. Suggestions appear after you pause for 500 milliseconds, so the editor stays out of the way while you are actively writing and only offers help when you stop.
+### Prerequisites
 
-## Interfaces
+- Node.js 22.x
+- npm
+- A Gemini API key (`GEMINI_API_KEY`)
+- Optional: SambaNova API key (`SAMBANOVA_API_KEY`) for fallback
+- Optional: PostgreSQL database (`DATABASE_URL`) for persistence
 
-The web app is a React single-page application with a dark and light theme, a settings panel, and keyboard shortcuts. It runs on an Express server with Vite handling the frontend build and dev experience. The CLI is the same editing idea for headless workflows: an `fx` command that opens a terminal-based editor. Start a fresh document with `fx new --mode sentence --style casual`, or open an existing file with `fx edit draft.txt --mode paragraph --style technical`. The CLI also needs `GEMINI_API_KEY` set in `.env`.
+### Installation
+
+```sh
+git clone https://github.com/coccinella-labs/hautofix
+cd hautofix
+cp .env.example .env
+# Edit .env and set GEMINI_API_KEY (and optional keys)
+npm install
+```
+
+### Run (web app)
+
+```sh
+npm run dev
+```
+
+Open `http://localhost:3000`.
+
+### Run (CLI)
+
+```sh
+cd apps/cli
+npm install
+npm run build
+# or: npm run dev
+fx new --mode sentence --style casual
+fx edit draft.txt --mode paragraph --style technical
+```
+
+The CLI requires `GEMINI_API_KEY` in `.env`.
+
+## Configuration
+
+Environment variables (see `.env.example`):
+
+| Variable            | Required | Description                                  |
+| ------------------- | -------- | -------------------------------------------- |
+| `GEMINI_API_KEY`    | Yes      | Google Gemini API key (primary provider)     |
+| `SAMBANOVA_API_KEY` | No       | SambaNova API key (fallback provider)        |
+| `DATABASE_URL`      | No       | PostgreSQL connection string for Drizzle ORM |
+| `PORT`              | No       | Server port (default 3000)                   |
 
 ## AI Providers
 
-Google Gemini is the primary provider, with the models gemini-3-pro-preview, gemini-2.5-pro, gemini-2.5-flash, and gemini-2.5-flash-lite available. SambaNova is the fallback provider, running gpt-oss-120b. In auto mode, autofix tries Gemini first and falls back to SambaNova when Gemini hits a rate limit or returns an error, so a transient failure on the primary provider does not interrupt the writing session. If you want to use the fallback path, configure the SambaNova credentials alongside your Gemini key in `.env`, following the variable names in `.env.example`.
+| Provider      | Role     | Models                                                                        |
+| ------------- | -------- | ----------------------------------------------------------------------------- |
+| Google Gemini | Primary  | gemini-3-pro-preview, gemini-2.5-pro, gemini-2.5-flash, gemini-2.5-flash-lite |
+| SambaNova     | Fallback | gpt-oss-120b                                                                  |
+
+In auto mode, hautofix tries Gemini first and falls back to SambaNova on rate limits or errors.
 
 ## Tech Stack
 
-autofix is written in TypeScript. The frontend uses React 18, Vite 7, Tailwind CSS 3, and Radix UI components. The backend is Express 4, with Drizzle ORM over PostgreSQL for persistence. The CLI is built with Commander.js. Testing uses Vitest for unit tests and Playwright for browser tests. The project includes Docker support and is set up for deployment on Vercel.
+- **Language:** TypeScript
+- **Frontend:** React 18, Vite 7, Tailwind CSS 3, Radix UI
+- **Backend:** Express 4, Drizzle ORM, PostgreSQL (Neon serverless)
+- **CLI:** Commander.js
+- **Testing:** Vitest (unit), Playwright (e2e)
+- **Tooling:** Docker, Vercel, ESLint, Prettier, Husky
 
-## Contributing
+## Scripts
 
-Fork the repository, create a feature branch, and run the app locally with `npm run dev` to try your change. Because the web app and CLI share the same completion behavior, changes to modes, styles, or provider handling should be checked in both interfaces. Add or update Vitest and Playwright tests alongside your change, and describe in your pull request which mode, style, and provider path you exercised.
+| Script              | Description                                             |
+| ------------------- | ------------------------------------------------------- |
+| `npm run dev`       | Start development server                                |
+| `npm run build`     | Build client and server                                 |
+| `npm run build:cli` | Build CLI                                               |
+| `npm run check`     | TypeScript type check                                   |
+| `npm run lint`      | Run ESLint                                              |
+| `npm test`          | Run unit tests                                          |
+| `npm run test:e2e`  | Run Playwright e2e tests                                |
+| `npm run preflight` | Format, lint, type check, duplicate check, tests, build |
+
+## Development
+
+Fork the repository, create a feature branch, and run `npm run dev` to try changes. Because the web app and CLI share completion behavior, changes to modes, styles, or provider handling should be checked in both interfaces. Add or update Vitest and Playwright tests alongside your change.
 
 ## Known Limitations
 
-Suggestions depend on a network call to an AI provider, so the editor needs connectivity and a valid API key to be useful. Fallback only triggers on rate limits or errors, which means a slow response from Gemini is not the same as a failure and will not by itself switch providers. The CLI is a terminal editor intended for headless and lightweight workflows, not a full replacement for the web interface's settings panel and theming.
-
-## Related Projects
-
-autofix is developed under the coccinella-labs organization.
+- Suggestions require network access and a valid API key.
+- Fallback triggers only on rate limits or errors; a slow Gemini response does not switch providers.
+- The CLI is intended for headless and lightweight workflows, not a full replacement for the web settings panel and theming.
 
 ## License
 
-MIT.
+MIT. See [LICENSE](LICENSE).
