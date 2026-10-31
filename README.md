@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/coccinella-labs/hautofix/main/.github/assets/thumbnail.png" alt="ellis" width="100%">
+  <img src="https://raw.githubusercontent.com/coccinella-labs/ellis/main/.github/assets/thumbnail.png" alt="ellis" width="100%">
 </p>
 
 # ellis
