@@ -71,11 +71,11 @@ Set `DISABLE_GEMINI=true` to skip the Gemini status check.
 Build and run the server image from the repo root:
 
 ```sh
-docker build -t autofix-server .
+docker build -t ellis-server .
 docker run -p 3001:3001 \
   -e GEMINI_API_KEY=your_key \
   -e SAMBANOVA_API_KEY=your_key \
-  autofix-server
+  ellis-server
 ```
 
 ## License

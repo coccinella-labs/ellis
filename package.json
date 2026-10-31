@@ -4,13 +4,13 @@
   "description": "AI-powered text editor with CLI and web client.",
   "author": "coccinella-labs",
   "private": true,
-  "repository": "https://github.com/coccinella-labs/hautofix",
+  "repository": "https://github.com/coccinella-labs/ellis",
   "type": "module",
   "license": "MIT",
   "keywords": [
     "ai",
     "text",
-    "autofix",
+    "ellis",
     "cli",
     "typescript",
     "react"
