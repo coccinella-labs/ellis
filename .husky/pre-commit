@@ -1,1 +1,2 @@
+# Run formatting and linting for staged files using the package.json lint-staged rules.
 npx lint-staged
