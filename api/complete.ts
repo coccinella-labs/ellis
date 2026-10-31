@@ -1,5 +1,5 @@
-import { generateTextCompletion } from '../apps/server/gemini.js';
-import { textCompletionRequestSchema } from '../packages/shared/schema.js';
+import { generateTextCompletion } from '../apps/server/gemini.ts';
+import { textCompletionRequestSchema } from '../packages/shared/schema.ts';
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
