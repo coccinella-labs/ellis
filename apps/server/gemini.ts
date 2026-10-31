@@ -1,6 +1,6 @@
-import { ai, generateTextCompletion } from '@shared/gemini.js';
-import { generateTextCompletionSambaNova } from '@shared/sambanova.js';
-import { logger } from '@shared/logger.js';
+import { ai, generateTextCompletion } from '@shared/gemini.ts';
+import { generateTextCompletionSambaNova } from '@shared/sambanova.ts';
+import { logger } from '@shared/logger.ts';
 
 export async function testApiKey(): Promise<boolean> {
   try {
