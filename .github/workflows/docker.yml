@@ -52,7 +52,7 @@ jobs:
         if: steps.check-secrets.outputs.has_secrets == 'true'
         uses: docker/metadata-action@v5
         with:
-          images: palmshed/fx
+          images: coccinella-labs/fx
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -64,7 +64,7 @@ jobs:
         id: meta-ghcr
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/palmshed/fx
+          images: ghcr.io/coccinella-labs/fx
           tags: |
             type=ref,event=branch
             type=ref,event=pr
