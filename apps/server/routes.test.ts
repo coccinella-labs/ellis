@@ -119,7 +119,8 @@ describe('Express routes', () => {
   });
 
   describe('GET /api/status', () => {
-    it('returns ok in test environment', async () => {
+    it('returns ok in development environment', async () => {
+      process.env.NODE_ENV = 'development';
       const res = await request(app).get('/api/status');
       expect(res.status).toBe(200);
       expect(res.body.status).toBe('ok');
@@ -146,6 +147,13 @@ describe('Express routes', () => {
       vi.mocked(testApiKey).mockResolvedValue(false);
       vi.mocked(testSambaNovaApiKey).mockResolvedValue(false);
 
+      const res = await request(app).get('/api/status');
+      expect(res.status).toBe(200);
+      expect(res.body.status).toBe('error');
+    });
+
+    it('returns error in test environment when no keys are set', async () => {
+      process.env.NODE_ENV = 'test';
       const res = await request(app).get('/api/status');
       expect(res.status).toBe(200);
       expect(res.body.status).toBe('error');
