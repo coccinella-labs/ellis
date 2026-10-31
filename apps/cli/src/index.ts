@@ -29,7 +29,7 @@ config({ path: envPath });
 const program = new Command();
 
 program
-  .name('autofix')
+  .name('fx')
   .description('AI-powered text completion editor for the command line')
   .version(version);
 

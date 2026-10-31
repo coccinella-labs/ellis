@@ -1,14 +1,14 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/coccinella-labs/hautofix/main/.github/assets/thumbnail.png" alt="hautofix" width="100%">
+  <img src="https://raw.githubusercontent.com/coccinella-labs/hautofix/main/.github/assets/thumbnail.png" alt="ellis" width="100%">
 </p>
 
-# hautofix
+# ellis
 
-hautofix is an AI-powered text editor that ships as both a web application and a command-line tool. It offers inline AI text completion as you type: suggestions appear as ghost text over your writing, and you press Tab to accept one or Escape to dismiss it. Completions can be generated at three granularities, word, sentence, or paragraph, and in four writing styles, casual, formal, creative, or technical. Mode and style are independent, so a technical paragraph or a casual sentence can be requested without changing anything else about the setup.
+ellis is an AI-powered text editor that ships as both a web application and a command-line tool. It offers inline AI text completion as you type: suggestions appear as ghost text over your writing, and you press Tab to accept one or Escape to dismiss it. Completions can be generated at three granularities, word, sentence, or paragraph, and in four writing styles, casual, formal, creative, or technical. Mode and style are independent, so a technical paragraph or a casual sentence can be requested without changing anything else about the setup.
 
 The web app is a React single-page application with dark and light themes, a settings panel, and keyboard shortcuts. It runs on an Express server with Vite handling the frontend build and development experience. The CLI provides a simpler, line-based editing workflow through the `fx` command: start a fresh document with `fx new --mode sentence --style casual`, or open an existing file with `fx edit draft.txt --mode paragraph --style technical`. The web app supports Gemini and SambaNova. The CLI currently requires a Gemini API key.
 
-Google Gemini is the primary AI provider, with Gemini 3.8 Flash (`gemini-3.8-flash`) as the default model and Gemini 3.5 Flash-Lite (`gemini-3.5-flash-lite`) as an alternative. SambaNova is the alternative provider, running gpt-oss-120b. In auto mode, hautofix tries Gemini first when a Gemini API key is configured and falls back to SambaNova on rate-limit or quota-related errors. If no Gemini API key is configured, auto mode uses SambaNova directly. Other Gemini errors, including timeouts, do not automatically trigger fallback. Explicitly selecting a provider uses that provider without automatic fallback.
+Google Gemini is the primary AI provider, with Gemini 3.8 Flash (`gemini-3.8-flash`) as the default model and Gemini 3.5 Flash-Lite (`gemini-3.5-flash-lite`) as an alternative. SambaNova is the alternative provider, running gpt-oss-120b. In auto mode, ellis tries Gemini first when a Gemini API key is configured and falls back to SambaNova on rate-limit or quota-related errors. If no Gemini API key is configured, auto mode uses SambaNova directly. Other Gemini errors, including timeouts, do not automatically trigger fallback. Explicitly selecting a provider uses that provider without automatic fallback.
 
 To get started, clone the repository with `git clone https://github.com/coccinella-labs/hautofix`, move into the directory, copy `.env.example` to `.env`, and add your `GEMINI_API_KEY`. Add `SAMBANOVA_API_KEY` if you want to use SambaNova. Run `npm install` to fetch dependencies, then `npm run dev` to start the development server, and open `http://localhost:3000`. Suggestions appear after you pause for 500 milliseconds, so the editor stays out of the way while you are actively writing and only offers help when you stop.
 
