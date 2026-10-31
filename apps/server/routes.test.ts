@@ -105,7 +105,7 @@ describe('Express routes', () => {
       expect(res.body).toEqual({ suggestion: '' });
     });
 
-    it('returns 500 with empty suggestion when schema validation fails', async () => {
+    it('returns 400 with empty suggestion when schema validation fails', async () => {
       const res = await request(app).post('/api/complete').send({
         text: 'This is a long enough test text',
         mode: 'invalid',
@@ -113,7 +113,7 @@ describe('Express routes', () => {
         provider: 'auto',
       });
 
-      expect(res.status).toBe(500);
+      expect(res.status).toBe(400);
       expect(res.body).toEqual({ suggestion: '' });
     });
   });
