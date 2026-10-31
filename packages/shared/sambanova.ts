@@ -2,19 +2,19 @@ import OpenAI from 'openai';
 import { buildSystemPrompt } from './prompts.js';
 import { logger } from './logger.js';
 
-const sambanova = new OpenAI({
-  apiKey: process.env.SAMBANOVA_API_KEY || '',
-  baseURL: 'https://api.sambanova.ai/v1',
-});
-
-logger.debug('SambaNova API key loaded:', !!process.env.SAMBANOVA_API_KEY);
+function getSambaNovaClient() {
+  return new OpenAI({
+    apiKey: process.env.SAMBANOVA_API_KEY || '',
+    baseURL: 'https://api.sambanova.ai/v1',
+  });
+}
 
 export async function generateTextCompletionSambaNova(
   currentText: string,
   mode: 'word' | 'sentence' | 'paragraph' = 'sentence',
   style: 'casual' | 'formal' | 'creative' | 'technical' = 'casual'
 ): Promise<string> {
-  const client = sambanova;
+  const client = getSambaNovaClient();
 
   try {
     const systemPrompt = buildSystemPrompt(mode, style);
