@@ -15,7 +15,6 @@ interface KeyboardShortcutsModalProps {
 const shortcuts = [
   { keys: ['Tab'], description: 'Accept AI suggestion' },
   { keys: ['Esc'], description: 'Dismiss AI suggestion' },
-  { keys: ['Ctrl', 'S'], description: 'Save document' },
   { keys: ['Ctrl', 'E'], description: 'Export document' },
   { keys: ['Ctrl', ','], description: 'Open settings' },
   { keys: ['Ctrl', '/'], description: 'Show keyboard shortcuts' },
