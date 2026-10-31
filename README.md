@@ -2,22 +2,120 @@
   <img src="https://raw.githubusercontent.com/coccinella-labs/hautofix/main/.github/assets/thumbnail.png" alt="hautofix" width="100%">
 </p>
 
-# hautofix
+# hautofix (`coccinella-labs/hautofix`)
 
-hautofix is an AI-powered text editor that ships as both a web application and a command-line tool. It offers inline AI text completion as you type: suggestions appear as ghost text over your writing, and you press Tab to accept one or Escape to dismiss it. Completions can be generated at three granularities, word, sentence, or paragraph, and in four writing styles, casual, formal, creative, or technical. Mode and style are independent, so a technical paragraph or a casual sentence can be requested without changing anything else about the setup.
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Node.js](https://img.shields.io/badge/node-22.x-339933.svg)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/typescript-5.x-3178C6.svg)](https://www.typescriptlang.org/)
+[![Tests](https://img.shields.io/badge/tests-vitest-brightgreen.svg)](https://vitest.dev/)
 
-The web app is a React single-page application with dark and light themes, a settings panel, and keyboard shortcuts. It runs on an Express server with Vite handling the frontend build and development experience. The CLI provides the same editing idea for headless workflows through the `fx` command: start a fresh document with `fx new --mode sentence --style casual`, or open an existing file with `fx edit draft.txt --mode paragraph --style technical`. Both interfaces require a Gemini API key.
+> AI-powered inline text completion for the web and the command line.
 
-Google Gemini is the primary AI provider, with the models gemini-3-pro-preview, gemini-2.5-pro, gemini-2.5-flash, and gemini-2.5-flash-lite available. SambaNova is the fallback provider, running gpt-oss-120b. In auto mode, hautofix tries Gemini first and falls back to SambaNova when Gemini hits a rate limit or returns an error, so a transient failure on the primary provider does not interrupt the writing session.
+hautofix provides inline AI text completion as you type. Suggestions appear as ghost text over your writing; press Tab to accept or Esc to dismiss. Completions can be generated at word, sentence, or paragraph granularity, in casual, formal, creative, or technical styles. Mode and style are independent.
 
-To get started, clone the repository with `git clone https://github.com/coccinella-labs/hautofix`, move into the directory, copy `.env.example` to `.env`, and add your `GEMINI_API_KEY`. Run `npm install` to fetch dependencies, then `npm run dev` to start the development server, and open `http://localhost:3000`. Suggestions appear after you pause for 500 milliseconds, so the editor stays out of the way while you are actively writing and only offers help when you stop.
+---
 
-Configuration is handled through environment variables. `GEMINI_API_KEY` is required. `SAMBANOVA_API_KEY` enables the fallback provider. `DATABASE_URL` points at a PostgreSQL database used by Drizzle ORM for persistence. `PORT` overrides the default server port of 3000.
+## Current Status & Stability Expectations
 
-The project is written in TypeScript. The frontend uses React 18, Vite 7, Tailwind CSS 3, and Radix UI. The backend is Express 4. Persistence uses Drizzle ORM over PostgreSQL. The CLI is built with Commander.js. Testing uses Vitest for unit tests and Playwright for browser tests. Docker and Vercel deployment are supported. Useful scripts include `npm run dev`, `npm run build`, `npm run build:cli`, `npm run check` for type checking, `npm run lint`, `npm test`, and `npm run test:e2e`.
+- **Version**: `1.0.0`
+- **Stability**: Stable for local and single-user use. The completion contract (modes, styles, provider fallback) is documented below and changes follow semantic versioning.
+- **Providers**: Google Gemini (primary) with SambaNova fallback. Network access and a valid `GEMINI_API_KEY` are required for suggestions.
+- **Storage**: PostgreSQL via Drizzle ORM when `DATABASE_URL` is set; in-memory otherwise.
 
-Fork the repository, create a feature branch, and run the app locally with `npm run dev` to try a change. Because the web app and CLI share the same completion behavior, changes to modes, styles, or provider handling should be checked in both interfaces. Add or update Vitest and Playwright tests alongside your change, and describe in your pull request which mode, style, and provider path you exercised.
+---
 
-Suggestions depend on a network call to an AI provider, so the editor needs connectivity and a valid API key to be useful. Fallback only triggers on rate limits or errors, which means a slow response from Gemini is not the same as a failure and will not by itself switch providers. The CLI is a terminal editor intended for headless and lightweight workflows, not a full replacement for the web interface's settings panel and theming.
+## Architecture
 
-hautofix is developed under the coccinella-labs organization. Licensed under MIT. See [LICENSE](LICENSE).
+1. **Web app** (`apps/client`): React 18 SPA with Vite 7, Tailwind CSS 3, Radix UI.
+2. **Server** (`apps/server`): Express 4 API exposing `/api/status` and `/api/complete`, with Vite middleware in development.
+3. **CLI** (`apps/cli`): Commander.js terminal editor published as `fx`.
+4. **Shared** (`packages/shared`): Zod schemas, prompts, Gemini/SambaNova clients, logger.
+5. **Persistence** (`packages/shared/schema.ts`): Drizzle ORM schema for PostgreSQL.
+
+---
+
+## Installation
+
+```sh
+git clone https://github.com/coccinella-labs/hautofix
+cd hautofix
+cp .env.example .env
+# Set GEMINI_API_KEY (and optional keys) in .env
+npm install
+```
+
+---
+
+## Quickstart
+
+Web app:
+
+```sh
+npm run dev
+```
+
+Open `http://localhost:3000`.
+
+CLI:
+
+```sh
+cd apps/cli
+npm install
+npm run build
+fx new --mode sentence --style casual
+fx edit draft.txt --mode paragraph --style technical
+```
+
+---
+
+## Configuration
+
+| Variable            | Required | Description                                  |
+| ------------------- | -------- | -------------------------------------------- |
+| `GEMINI_API_KEY`    | Yes      | Google Gemini API key (primary provider)     |
+| `SAMBANOVA_API_KEY` | No       | SambaNova API key (fallback provider)        |
+| `DATABASE_URL`      | No       | PostgreSQL connection string for Drizzle ORM |
+| `PORT`              | No       | Server port (default 3000)                   |
+
+---
+
+## AI Providers
+
+| Provider      | Role     | Models                                                                        |
+| ------------- | -------- | ----------------------------------------------------------------------------- |
+| Google Gemini | Primary  | gemini-3-pro-preview, gemini-2.5-pro, gemini-2.5-flash, gemini-2.5-flash-lite |
+| SambaNova     | Fallback | gpt-oss-120b                                                                  |
+
+In auto mode, hautofix tries Gemini first and falls back to SambaNova on rate limits or errors.
+
+---
+
+## Development & Verification
+
+The repository uses a shared preflight pipeline (same as CI):
+
+- `npm run preflight:quick` is not defined; use `npm run dev` for fast feedback.
+- `npm run preflight` - full deterministic gate: format, lint, type check, duplicate check, tests, coverage, build.
+- `npm run test:e2e` - Playwright end-to-end tests.
+
+Run the unit tests with `npm test` and the type check with `npm run check`.
+
+---
+
+## Debug Logging
+
+Set `DEBUG` or inspect server logs. The server logs request method, path, status, and duration for `/api` routes.
+
+---
+
+## Known Limitations
+
+- Suggestions require network access and a valid API key.
+- Fallback triggers only on rate limits or errors; a slow Gemini response does not switch providers.
+- The CLI is intended for headless and lightweight workflows, not a full replacement for the web settings panel and theming.
+
+---
+
+## License
+
+MIT. See [LICENSE](LICENSE).
