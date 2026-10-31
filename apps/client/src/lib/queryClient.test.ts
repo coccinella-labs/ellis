@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { QueryFunctionParams } from '@tanstack/react-query';
 import { apiRequest, getQueryFn } from './queryClient';
 
 const fetchMock = vi.fn();
@@ -32,9 +31,7 @@ describe('queryClient', () => {
   it('getQueryFn returns null on 401 when configured', async () => {
     fetchMock.mockResolvedValue({ status: 401, ok: false });
     const fn = getQueryFn({ on401: 'returnNull' });
-    const result = await fn({
-      queryKey: ['api', 'test'],
-    } as QueryFunctionParams<unknown>);
+    const result = await fn({ queryKey: ['api', 'test'] });
     expect(result).toBeNull();
   });
 });
