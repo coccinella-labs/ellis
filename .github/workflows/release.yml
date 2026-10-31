@@ -42,17 +42,16 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Run E2E tests
-        run: npm run test:e2e
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-
       - name: Build CLI
         run: |
           cd apps/cli
           npm install --include=optional
-          npm install @rollup/rollup-linux-x64-gnu --save-optional || true
           npm run build
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
       - name: Configure Git for release
         run: |
