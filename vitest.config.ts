@@ -13,6 +13,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './apps/client/src'),
+      '@shared': path.resolve(__dirname, './packages/shared'),
     },
   },
 });
