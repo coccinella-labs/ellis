@@ -24,13 +24,18 @@ export async function generateTextCompletionSambaNova(
       { role: 'user', content: currentText },
     ];
 
-    const response = await client.chat.completions.create({
-      model: 'gpt-oss-120b',
-      messages,
-      max_tokens: mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
-      temperature: 0.7,
-      stream: false,
-    });
+    const response = (await Promise.race([
+      client.chat.completions.create({
+        model: 'gpt-oss-120b',
+        messages,
+        max_tokens: mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
+        temperature: 0.7,
+        stream: false,
+      }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('sambanova timeout')), 30000)
+      ),
+    ])) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     // SambaNova returns response in 'reasoning' field instead of 'content'
     const content = response.choices[0]?.message?.content?.trim() || '';

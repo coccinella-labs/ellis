@@ -16,8 +16,20 @@ const completeLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+const statusLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+let statusCache: { data: unknown; expires: number } | null = null;
+
 export function registerRoutes(app: Express): Express {
-  app.get('/api/status', async (req, res) => {
+  app.get('/api/status', statusLimiter, async (req, res) => {
+    if (statusCache && statusCache.expires > Date.now()) {
+      return res.json(statusCache.data);
+    }
     try {
       const hasGeminiKey = !!process.env.GEMINI_API_KEY;
       const hasSambaNovaKey = !!process.env.SAMBANOVA_API_KEY;
@@ -40,13 +52,15 @@ export function registerRoutes(app: Express): Express {
       logger.info(
         `Status check result - Gemini: ${geminiWorking}, SambaNova: ${sambaNovaWorking}`
       );
-      res.json({
+      const payload = {
         status: isWorking ? 'ok' : 'error',
         providers: {
           gemini: geminiWorking,
           sambanova: sambaNovaWorking,
         },
-      });
+      };
+      statusCache = { data: payload, expires: Date.now() + 60000 };
+      res.json(payload);
     } catch (error) {
       logger.error('Status check failed', error);
       res.status(500).json({ status: 'error' });

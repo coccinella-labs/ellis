@@ -40,16 +40,21 @@ export async function generateTextCompletion(
       const systemPrompt = buildSystemPrompt(mode, style);
       const model = geminiModel;
 
-      const response = await geminiClient.models.generateContent({
-        model,
-        config: {
-          systemInstruction: systemPrompt,
-          temperature: 0.7,
-          maxOutputTokens:
-            mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
-        },
-        contents: currentText,
-      });
+      const response = (await Promise.race([
+        geminiClient.models.generateContent({
+          model,
+          config: {
+            systemInstruction: systemPrompt,
+            temperature: 0.7,
+            maxOutputTokens:
+              mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
+          },
+          contents: currentText,
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('gemini timeout')), 30000)
+        ),
+      ])) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
       const suggestion = response.text?.trim() || '';
 
@@ -95,15 +100,21 @@ export async function generateTextCompletion(
     const systemPrompt = buildSystemPrompt(mode, style);
     const model = geminiModel;
 
-    const response = await geminiClient.models.generateContent({
-      model,
-      config: {
-        systemInstruction: systemPrompt,
-        temperature: 0.7,
-        maxOutputTokens: mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
-      },
-      contents: currentText,
-    });
+    const response = (await Promise.race([
+      geminiClient.models.generateContent({
+        model,
+        config: {
+          systemInstruction: systemPrompt,
+          temperature: 0.7,
+          maxOutputTokens:
+            mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
+        },
+        contents: currentText,
+      }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('gemini timeout')), 30000)
+      ),
+    ])) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     const suggestion = response.text?.trim() || '';
 
