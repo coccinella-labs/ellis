@@ -1,6 +1,6 @@
 # Contributing
 
-Use Node.js 20 or later.
+Use Node.js 22 or later.
 
 Install the repo and start the app:
 
