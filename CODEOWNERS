@@ -1,12 +1,12 @@
-*       @coccinella-labs
+*       @bniladridas
 
-/apps/client/    @coccinella-labs
-/apps/server/    @coccinella-labs
-/apps/cli/       @coccinella-labs
-/packages/shared/ @coccinella-labs
+/apps/client/    @bniladridas
+/apps/server/    @bniladridas
+/apps/cli/       @bniladridas
+/packages/shared/ @bniladridas
 
-.github/         @coccinella-labs
-.github/workflows/ @coccinella-labs
+.github/         @bniladridas
+.github/workflows/ @bniladridas
 
-api/             @coccinella-labs
-tests/           @coccinella-labs
+api/             @bniladridas
+tests/           @bniladridas
