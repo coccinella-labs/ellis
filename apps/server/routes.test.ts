@@ -96,7 +96,7 @@ describe('Server Route Logic', () => {
         mode: 'sentence',
         style: 'casual',
         provider: 'auto',
-        geminiModel: 'gemini-2.5-pro',
+        geminiModel: 'gemini-3.8-flash',
       };
 
       mockGenerateTextCompletion.mockResolvedValue(' generated suggestion');
@@ -119,7 +119,7 @@ describe('Server Route Logic', () => {
           'sentence',
           'casual',
           'auto',
-          'gemini-2.5-pro'
+          'gemini-3.8-flash'
         );
       }
     });

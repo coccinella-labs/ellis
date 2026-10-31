@@ -95,22 +95,22 @@ export function TextEditor({
     if (showModelSwitch) {
       if (e.key === '1') {
         e.preventDefault();
-        console.log('Switching to gemini-2.5-pro');
-        const nextModel = 'gemini-2.5-pro';
+        console.log('Switching to gemini-3.8-flash');
+        const nextModel = 'gemini-3.8-flash';
         onGeminiModelChange?.(nextModel);
         setShowModelSwitch(false);
         generateSuggestion(text, nextModel);
       } else if (e.key === '2') {
         e.preventDefault();
-        console.log('Switching to gemini-2.5-flash');
-        const nextModel = 'gemini-2.5-flash';
+        console.log('Switching to gemini-3.5-flash-lite');
+        const nextModel = 'gemini-3.5-flash-lite';
         onGeminiModelChange?.(nextModel);
         setShowModelSwitch(false);
         generateSuggestion(text, nextModel);
       } else if (e.key === '3') {
         e.preventDefault();
-        console.log('Switching to gemini-2.5-flash-lite');
-        const nextModel = 'gemini-2.5-flash-lite';
+        console.log('Switching to gemini-3.8-flash');
+        const nextModel = 'gemini-3.8-flash';
         onGeminiModelChange?.(nextModel);
         setShowModelSwitch(false);
         generateSuggestion(text, nextModel);
@@ -197,18 +197,18 @@ export function TextEditor({
               No suggestion generated. Press key to switch model:
             </span>
             <div className="flex gap-2">
-              <span className="text-xs">
-                <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">1</kbd>{' '}
-                gemini-2.5-pro
-              </span>
-              <span className="text-xs">
-                <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">2</kbd>{' '}
-                gemini-2.5-flash
-              </span>
-              <span className="text-xs">
-                <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">3</kbd>{' '}
-                gemini-2.5-flash-lite
-              </span>
+<span className="text-xs">
+                 <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">1</kbd>{' '}
+                 gemini-3.8-flash
+               </span>
+               <span className="text-xs">
+                 <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">2</kbd>{' '}
+                 gemini-3.5-flash-lite
+               </span>
+               <span className="text-xs">
+                 <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">3</kbd>{' '}
+                 gemini-3.8-flash
+               </span>
             </div>
           </div>
         </div>

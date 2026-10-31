@@ -10,7 +10,7 @@ export async function generateTextCompletion(
   mode: 'word' | 'sentence' | 'paragraph' = 'sentence',
   style: 'casual' | 'formal' | 'creative' | 'technical' = 'casual',
   provider: 'auto' | 'gemini' | 'sambanova' = 'auto',
-  geminiModel: string = 'gemini-2.5-pro'
+  geminiModel: string = 'gemini-3.8-flash'
 ): Promise<string> {
   logger.info(`Generating text completion with ${provider} (${geminiModel})`);
 

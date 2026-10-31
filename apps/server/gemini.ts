@@ -10,7 +10,7 @@ export async function testApiKey(): Promise<boolean> {
       return false;
     }
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-pro',
+      model: 'gemini-3.8-flash',
       config: {
         systemInstruction: 'Respond with "ok"',
         temperature: 0,

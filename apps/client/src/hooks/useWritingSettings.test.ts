@@ -77,10 +77,10 @@ describe('useWritingSettings', () => {
     const { result } = renderHook(() => useWritingSettings());
 
     act(() => {
-      result.current.setGeminiModel('gemini-2.5-pro');
+      result.current.setGeminiModel('gemini-3.8-flash');
     });
 
-    expect(result.current.geminiModel).toBe('gemini-2.5-pro');
+    expect(result.current.geminiModel).toBe('gemini-3.8-flash');
   });
 
   it('allows updating API keys', () => {
