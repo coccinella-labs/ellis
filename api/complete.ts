@@ -2,42 +2,52 @@ import { generateTextCompletion } from '../apps/server/gemini.ts';
 import { textCompletionRequestSchema } from '../packages/shared/schema.ts';
 
 // Rate limit: 30 requests per 60-second window per IP.
-// This is a best-effort in-memory store. Vercel serverless instances do not
-// share state, so this is not reliable across deployments. For production,
-// replace this with a shared store such as Redis via @upstash/ratelimit.
-const requestCounts = new Map<string, { count: number; resetAt: number }>();
+// Uses Upstash Redis when UPSTASH_REDIS_URL is configured, which works across
+// Vercel serverless instances. Falls back to an in-memory store for local
+// development where Redis is not available.
+let ratelimit: any = null;
+let fallbackStore: Map<string, { count: number; resetAt: number }> | null =
+  null;
+
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS = 30;
 
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = requestCounts.get(ip);
+async function getRatelimit() {
+  if (ratelimit) return ratelimit;
 
-  if (!entry || now > entry.resetAt) {
-    requestCounts.set(ip, { count: 1, resetAt: now + WINDOW_MS });
-    return false;
-  }
-
-  entry.count += 1;
-  return entry.count > MAX_REQUESTS;
-}
-
-// Remove expired entries to prevent the Map from growing unboundedly.
-function cleanupExpiredEntries(): void {
-  const now = Date.now();
-  for (const [ip, entry] of requestCounts.entries()) {
-    if (now > entry.resetAt) {
-      requestCounts.delete(ip);
+  const redisUrl = process.env.UPSTASH_REDIS_URL;
+  if (redisUrl) {
+    try {
+      const { Ratelimit } = await import('@upstash/ratelimit');
+      ratelimit = new Ratelimit({
+        redis: { url: redisUrl },
+        limiter: Ratelimit.slidingWindow(MAX_REQUESTS, `${WINDOW_MS} ms`),
+        analytics: false,
+      });
+      return ratelimit;
+    } catch (error) {
+      console.error(
+        'Failed to initialize Upstash ratelimit, using in-memory fallback:',
+        error
+      );
     }
   }
+
+  // In-memory fallback for local development.
+  fallbackStore = new Map();
+  return null;
 }
 
-// Run cleanup periodically (every 60 seconds) to bound memory usage.
-let cleanupStarted = false;
-function startCleanup(): void {
-  if (cleanupStarted) return;
-  cleanupStarted = true;
-  setInterval(cleanupExpiredEntries, WINDOW_MS).unref?.();
+function isRateLimitedFallback(ip: string): boolean {
+  if (!fallbackStore) return false;
+  const now = Date.now();
+  const entry = fallbackStore.get(ip);
+  if (!entry || now > entry.resetAt) {
+    fallbackStore.set(ip, { count: 1, resetAt: now + WINDOW_MS });
+    return false;
+  }
+  entry.count += 1;
+  return entry.count > MAX_REQUESTS;
 }
 
 export default async function handler(req: any, res: any) {
@@ -46,11 +56,17 @@ export default async function handler(req: any, res: any) {
     return;
   }
 
-  startCleanup();
-
   const ip =
     req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown';
-  if (isRateLimited(ip)) {
+
+  const limiter = await getRatelimit();
+  if (limiter) {
+    const { success } = await limiter.limit(ip);
+    if (!success) {
+      res.status(429).json({ error: 'Too many requests' });
+      return;
+    }
+  } else if (isRateLimitedFallback(ip)) {
     res.status(429).json({ error: 'Too many requests' });
     return;
   }
