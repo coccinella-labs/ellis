@@ -29,9 +29,9 @@ export function ProvidersPage({ isOpen, onOpenChange }: ProvidersPageProps) {
                 Primary
               </h4>
               <div className="space-y-2 text-sm">
-                <p>Google Gemini 3.0 Pro Preview</p>
+                <p>Google Gemini 3.8 Flash</p>
                 <p className="text-muted-foreground">
-                  Advanced completions, latest model.
+                  Fast, efficient completions, default model.
                 </p>
               </div>
             </div>

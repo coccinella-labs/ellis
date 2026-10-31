@@ -88,7 +88,7 @@ test.describe('Text Editor App', () => {
 
     // Check modal content
     await expect(providersModal).toContainText('AI Providers');
-    await expect(providersModal).toContainText('Google Gemini 3.0 Pro Preview');
+    await expect(providersModal).toContainText('Google Gemini 3.8 Flash');
     await expect(providersModal).toContainText('SambaNova GPT-OSS-120B');
   });
 
