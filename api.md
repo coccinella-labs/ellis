@@ -29,8 +29,8 @@ Fields:
 
 `provider` may be `auto`, `gemini`, or `sambanova`. The default is `auto`.
 
-`geminiApiKey` and `sambaNovaApiKey` may be sent per request. If omitted, the
-server uses environment variables.
+API keys are not accepted per request; the server uses environment variables
+only.
 
 Response:
 
@@ -42,6 +42,18 @@ Response:
 
 If `text` is shorter than 10 characters, the server returns an empty
 suggestion.
+
+## GET /api/health
+
+Returns a simple health check.
+
+Response:
+
+```json
+{
+  "status": "ok"
+}
+```
 
 ## GET /api/status
 
