@@ -18,7 +18,7 @@ The project is written in TypeScript. The frontend uses React 18, Vite 7, Tailwi
 
 Fork the repository, create a feature branch, and run the app locally with `npm run dev` to try a change. Because the web app and CLI share the same completion behavior, changes to modes, styles, or provider handling should be checked in both interfaces. Add or update Vitest and Playwright tests alongside your change, and describe in your pull request which mode, style, and provider path you exercised.
 
-Suggestions depend on a network call to an AI provider, so the editor needs connectivity and a valid API key to be useful. Fallback only triggers on rate limits or errors, which means a slow response from Gemini is not the same as a failure and will not by itself switch providers. The CLI is a terminal editor intended for headless and lightweight workflows, not a full replacement for the web interface's settings panel and theming.
+Suggestions depend on a network call to an AI provider, so the editor needs connectivity and a valid API key to be useful. Fallback only triggers on rate limits or errors, which means a slow response from Gemini is not the same as a failure and will not by itself switch providers. The CLI is a terminal editor intended for headless and lightweight workflows, not a full replacement for the web interface's settings panel and theming. The server exposes a health check at /api/health and enforces request size limits and graceful shutdown.
 
 Reusable parts of this repository include the shared package at packages/shared, which contains Zod schemas, prompt builders, a logger, and Gemini and SambaNova client wrappers. For example:
 
