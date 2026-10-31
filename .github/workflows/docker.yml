@@ -52,7 +52,7 @@ jobs:
         if: steps.check-secrets.outputs.has_secrets == 'true'
         uses: docker/metadata-action@v5
         with:
-          images: coccinella-labs/fx
+          images: coccinella-labs/ellis
           tags: |
             type=ref,event=branch
             type=ref,event=pr

@@ -93,6 +93,10 @@ export function registerRoutes(app: Express): Express {
       );
       res.json({ suggestion });
     } catch (error) {
+      // Zod validation failures are client errors, not server errors.
+      if (error instanceof Error && error.name === 'ZodError') {
+        return res.status(400).json({ suggestion: '' });
+      }
       logger.error('API error', error);
       res.status(500).json({ suggestion: '' });
     }

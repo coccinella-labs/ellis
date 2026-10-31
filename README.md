@@ -28,7 +28,7 @@ import { logger } from '@shared/logger';
 import { generateTextCompletion } from '@shared/gemini';
 ```
 
-The relaxed commit-msg hook in `scripts/commit-msg` together with the commitlint configuration, and the README structure adapted from the palmshed sandbox template, are also reusable. For example, the commit-msg hook:
+The relaxed commit-msg hook in `scripts/commit-msg` together with the commitlint configuration, and the README structure adapted from the original repository template, are also reusable. For example, the commit-msg hook:
 
 ```sh
 #!/bin/bash

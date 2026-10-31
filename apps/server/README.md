@@ -1,4 +1,4 @@
-# Autofix server
+# Ellis server
 
 This app provides the HTTP API used by the web editor.
 

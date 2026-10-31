@@ -15,7 +15,7 @@ export function WelcomeModal({ isOpen, onOpenChange }: WelcomeModalProps) {
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg" data-testid="modal-welcome">
         <DialogHeader>
-          <DialogTitle>Welcome to Autofix</DialogTitle>
+          <DialogTitle>Welcome to Ellis</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6 py-4">

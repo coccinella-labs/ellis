@@ -1,4 +1,4 @@
-# Autofix API
+# Ellis API
 
 The server exposes a small HTTP API for text completion.
 

@@ -1,4 +1,4 @@
-# @palmshed/fx
+# fx CLI
 
 Terminal editor for AI text completion.
 

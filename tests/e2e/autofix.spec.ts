@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Autofix Functionality', () => {
+test.describe('Ellis Functionality', () => {
   test('should generate and accept AI suggestion', async ({ page }) => {
     await page.goto('/');
 

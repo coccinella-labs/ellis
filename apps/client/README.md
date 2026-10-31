@@ -1,6 +1,6 @@
-# Autofix client
+# Ellis client
 
-This app is the web editor for Autofix.
+This app is the web editor for Ellis.
 
 It is a React and TypeScript app built with Vite. It sends text to the server
 and shows completion suggestions in the editor.

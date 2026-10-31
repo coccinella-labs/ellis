@@ -1,7 +1,7 @@
 {
-  "name": "@palmshed/fx",
+  "name": "@ellis/fx",
   "version": "1.0.0",
-  "description": "CLI for palmshed",
+  "description": "CLI for ellis",
   "main": "dist/index.js",
   "publishConfig": {
     "access": "public"
@@ -20,7 +20,7 @@
     "text-completion",
     "writing"
   ],
-  "author": "palmshed",
+  "author": "coccinella-labs",
   "license": "MIT",
   "dependencies": {
     "@google/genai": "^1.21.0",
