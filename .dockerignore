@@ -2,7 +2,6 @@ node_modules
 npm-debug.log
 .git
 .gitignore
-README.md
 .env
 .nyc_output
 coverage
@@ -18,9 +17,5 @@ api
 tests
 .github
 .husky
-apps/client
 apps/cli
-packages
-scripts
-public
 *.log
