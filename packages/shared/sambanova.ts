@@ -12,15 +12,9 @@ logger.debug('SambaNova API key loaded:', !!process.env.SAMBANOVA_API_KEY);
 export async function generateTextCompletionSambaNova(
   currentText: string,
   mode: 'word' | 'sentence' | 'paragraph' = 'sentence',
-  style: 'casual' | 'formal' | 'creative' | 'technical' = 'casual',
-  customKey?: string
+  style: 'casual' | 'formal' | 'creative' | 'technical' = 'casual'
 ): Promise<string> {
-  const client = customKey
-    ? new OpenAI({
-        apiKey: customKey,
-        baseURL: 'https://api.sambanova.ai/v1',
-      })
-    : sambanova;
+  const client = sambanova;
 
   try {
     const systemPrompt = buildSystemPrompt(mode, style);

@@ -10,15 +10,11 @@ export async function generateTextCompletion(
   mode: 'word' | 'sentence' | 'paragraph' = 'sentence',
   style: 'casual' | 'formal' | 'creative' | 'technical' = 'casual',
   provider: 'auto' | 'gemini' | 'sambanova' = 'auto',
-  customGeminiKey?: string,
-  customSambaNovaKey?: string,
   geminiModel: string = 'gemini-2.5-pro'
 ): Promise<string> {
   logger.info(`Generating text completion with ${provider} (${geminiModel})`);
 
-  const geminiClient = customGeminiKey
-    ? new GoogleGenAI({ apiKey: customGeminiKey })
-    : ai;
+  const geminiClient = ai;
 
   if (provider === 'sambanova') {
     // Only try SambaNova
@@ -26,8 +22,7 @@ export async function generateTextCompletion(
       const suggestion = await generateTextCompletionSambaNova(
         currentText,
         mode,
-        style,
-        customSambaNovaKey
+        style
       );
       if (suggestion) {
         console.log('Generated SambaNova suggestion:', suggestion);
@@ -75,7 +70,7 @@ export async function generateTextCompletion(
   }
 
   // provider === 'auto' - try Gemini first (if key available), then fallback
-  const hasGeminiKey = !!(process.env.GEMINI_API_KEY || customGeminiKey);
+  const hasGeminiKey = !!process.env.GEMINI_API_KEY;
 
   // Skip Gemini if no API key available
   if (!hasGeminiKey) {
@@ -84,8 +79,7 @@ export async function generateTextCompletion(
       const suggestion = await generateTextCompletionSambaNova(
         currentText,
         mode,
-        style,
-        customSambaNovaKey
+        style
       );
       if (suggestion) {
         logger.info('Generated SambaNova suggestion (direct)');
@@ -140,8 +134,7 @@ export async function generateTextCompletion(
         const fallbackSuggestion = await generateTextCompletionSambaNova(
           currentText,
           mode,
-          style,
-          customSambaNovaKey
+          style
         );
         if (fallbackSuggestion) {
           logger.info('Successfully used SambaNova fallback');

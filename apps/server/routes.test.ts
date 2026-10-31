@@ -96,23 +96,13 @@ describe('Server Route Logic', () => {
         mode: 'sentence',
         style: 'casual',
         provider: 'auto',
-        geminiApiKey: 'test-key',
-        sambaNovaApiKey: 'samba-key',
         geminiModel: 'gemini-2.5-pro',
       };
 
       mockGenerateTextCompletion.mockResolvedValue(' generated suggestion');
 
       // Test the completion logic
-      const {
-        text,
-        mode,
-        style,
-        provider,
-        geminiApiKey,
-        sambaNovaApiKey,
-        geminiModel,
-      } = requestBody;
+      const { text, mode, style, provider, geminiModel } = requestBody;
 
       if (text && text.length >= 10) {
         const suggestion = await mockGenerateTextCompletion(
@@ -120,8 +110,6 @@ describe('Server Route Logic', () => {
           mode as 'word' | 'sentence' | 'paragraph',
           style as 'casual' | 'formal' | 'creative' | 'technical',
           provider as 'auto' | 'gemini' | 'sambanova',
-          geminiApiKey,
-          sambaNovaApiKey,
           geminiModel
         );
 
@@ -131,8 +119,6 @@ describe('Server Route Logic', () => {
           'sentence',
           'casual',
           'auto',
-          'test-key',
-          'samba-key',
           'gemini-2.5-pro'
         );
       }

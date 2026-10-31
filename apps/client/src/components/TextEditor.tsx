@@ -8,8 +8,6 @@ interface TextEditorProps {
   completionMode?: 'word' | 'sentence' | 'paragraph';
   writingStyle?: 'casual' | 'formal' | 'creative' | 'technical';
   aiProvider?: 'auto' | 'gemini' | 'sambanova';
-  geminiApiKey?: string;
-  sambaNovaApiKey?: string;
   geminiModel?: string;
   onGeminiModelChange?: (model: string) => void;
 }
@@ -20,8 +18,6 @@ export function TextEditor({
   completionMode = 'sentence',
   writingStyle = 'casual',
   aiProvider = 'auto',
-  geminiApiKey,
-  sambaNovaApiKey,
   geminiModel = 'gemini-3-pro-preview',
   onGeminiModelChange,
 }: TextEditorProps) {
@@ -59,8 +55,6 @@ export function TextEditor({
           mode: completionMode,
           style: writingStyle,
           provider: aiProvider,
-          geminiApiKey: geminiApiKey || undefined,
-          sambaNovaApiKey: sambaNovaApiKey || undefined,
           geminiModel: effectiveGeminiModel,
         }),
       });

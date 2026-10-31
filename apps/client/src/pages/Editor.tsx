@@ -94,8 +94,6 @@ export default function Editor() {
             completionMode={completionMode}
             writingStyle={writingStyle}
             aiProvider={aiProvider}
-            geminiApiKey={geminiApiKey}
-            sambaNovaApiKey={sambaNovaApiKey}
             geminiModel={geminiModel}
             onGeminiModelChange={setGeminiModel}
           />

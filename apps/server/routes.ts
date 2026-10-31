@@ -1,4 +1,5 @@
 import type { Express } from 'express';
+import rateLimit from 'express-rate-limit';
 
 import {
   generateTextCompletion,
@@ -6,7 +7,14 @@ import {
   testSambaNovaApiKey,
 } from './gemini';
 import { textCompletionRequestSchema } from '@shared/schema';
-import { logger } from '../../packages/shared/logger.js';
+import { logger } from '@shared/logger';
+
+const completeLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 export function registerRoutes(app: Express): Express {
   app.get('/api/status', async (req, res) => {
@@ -17,7 +25,6 @@ export function registerRoutes(app: Express): Express {
       let geminiWorking = false;
       let sambaNovaWorking = false;
 
-      // Skip Gemini test if DISABLE_GEMINI is set or if quota is exceeded
       const skipGemini = process.env.DISABLE_GEMINI === 'true';
       if (hasGeminiKey && !skipGemini) {
         geminiWorking = await testApiKey();
@@ -40,23 +47,16 @@ export function registerRoutes(app: Express): Express {
           sambanova: sambaNovaWorking,
         },
       });
-    } catch {
-      logger.error('Status check failed');
+    } catch (error) {
+      logger.error('Status check failed', error);
       res.status(500).json({ status: 'error' });
     }
   });
 
-  app.post('/api/complete', async (req, res) => {
+  app.post('/api/complete', completeLimiter, async (req, res) => {
     try {
-      const {
-        text,
-        mode,
-        style,
-        provider,
-        geminiApiKey,
-        sambaNovaApiKey,
-        geminiModel,
-      } = textCompletionRequestSchema.parse(req.body);
+      const { text, mode, style, provider, geminiModel } =
+        textCompletionRequestSchema.parse(req.body);
 
       if (!text || text.length < 10) {
         return res.json({ suggestion: '' });
@@ -67,13 +67,11 @@ export function registerRoutes(app: Express): Express {
         mode,
         style,
         provider,
-        geminiApiKey,
-        sambaNovaApiKey,
         geminiModel
       );
       res.json({ suggestion });
-    } catch {
-      logger.error('API error');
+    } catch (error) {
+      logger.error('API error', error);
       res.status(500).json({ suggestion: '' });
     }
   });
