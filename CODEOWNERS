@@ -1,0 +1,12 @@
+*       @coccinella-labs
+
+/apps/client/    @coccinella-labs
+/apps/server/    @coccinella-labs
+/apps/cli/       @coccinella-labs
+/packages/shared/ @coccinella-labs
+
+.github/         @coccinella-labs
+.github/workflows/ @coccinella-labs
+
+api/             @coccinella-labs
+tests/           @coccinella-labs
