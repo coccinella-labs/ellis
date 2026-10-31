@@ -31,7 +31,12 @@ describe('queryClient', () => {
   it('getQueryFn returns null on 401 when configured', async () => {
     fetchMock.mockResolvedValue({ status: 401, ok: false });
     const fn = getQueryFn({ on401: 'returnNull' });
-    const result = await fn({ queryKey: ['api', 'test'] });
+    const result = await fn({
+      client: {} as never,
+      queryKey: ['api', 'test'],
+      signal: new AbortController().signal,
+      meta: undefined,
+    });
     expect(result).toBeNull();
   });
 });
