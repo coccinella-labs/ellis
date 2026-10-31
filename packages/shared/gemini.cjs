@@ -10,7 +10,7 @@ async function generateTextCompletion(
   currentText,
   mode = 'sentence',
   style = 'casual',
-  model = 'gemini-3.1-pro-preview'
+  model = 'gemini-3.8-flash'
 ) {
   console.log('Generating text completion for:', { currentText, mode, style });
   try {

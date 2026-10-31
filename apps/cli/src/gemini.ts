@@ -57,7 +57,7 @@ export async function generateTextCompletion(
     const systemPrompt = buildSystemPrompt(mode, style);
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3.1-pro-preview',
+      model: 'gemini-3.8-flash',
       config: {
         systemInstruction: systemPrompt,
         temperature: 0.7,

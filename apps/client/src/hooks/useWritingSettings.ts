@@ -11,7 +11,7 @@ export function useWritingSettings() {
   const [aiProvider, setAiProvider] = useState<'auto' | 'gemini' | 'sambanova'>(
     'auto'
   );
-  const [geminiModel, setGeminiModel] = useState('gemini-3.1-pro-preview');
+  const [geminiModel, setGeminiModel] = useState('gemini-3.8-flash');
   const [geminiApiKey, setGeminiApiKey] = useState('');
   const [sambaNovaApiKey, setSambaNovaApiKey] = useState('');
 

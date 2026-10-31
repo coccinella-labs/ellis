@@ -14,7 +14,7 @@ Request:
   "mode": "sentence",
   "style": "technical",
   "provider": "auto",
-  "geminiModel": "gemini-3.1-pro-preview"
+  "geminiModel": "gemini-3.8-flash"
 }
 ```
 

@@ -42,7 +42,7 @@ describe('textCompletionRequestSchema', () => {
       expect(result.data.mode).toBe('sentence');
       expect(result.data.style).toBe('casual');
       expect(result.data.provider).toBe('auto');
-      expect(result.data.geminiModel).toBe('gemini-3.1-pro-preview');
+      expect(result.data.geminiModel).toBe('gemini-3.8-flash');
     }
   });
 
