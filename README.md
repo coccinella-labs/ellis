@@ -39,4 +39,13 @@ if [ ${#commit_msg} -gt 80 ]; then
 fi
 ```
 
-The rest of the codebase is application-specific. Licensed under MIT. See [LICENSE](LICENSE).
+The rest of the codebase is application-specific.
+
+Maintenance: keep dependencies current with:
+
+```sh
+npm update
+npm run preflight
+```
+
+When upgrading, review these locations: model names in `packages/shared/schema.ts`, `packages/shared/gemini.ts`, `apps/cli/src/gemini.ts`, and `apps/client/src/components/SettingsPanel.tsx`; the package name and bin in `apps/cli/package.json`; environment variables in `.env.example`; and provider endpoints in `packages/shared/sambanova.ts`. Licensed under MIT. See [LICENSE](LICENSE).
