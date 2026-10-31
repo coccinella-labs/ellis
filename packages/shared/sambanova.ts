@@ -37,12 +37,9 @@ export async function generateTextCompletionSambaNova(
       ),
     ])) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
-    // SambaNova returns response in 'reasoning' field instead of 'content'
+    // SambaNova returns response in 'content' field
     const content = response.choices[0]?.message?.content?.trim() || '';
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const message = response.choices[0]?.message as any; // Cast to any to access reasoning field
-    const reasoning = message?.reasoning?.trim() || '';
-    const suggestion = content || reasoning;
+    const suggestion = content;
 
     if (!suggestion) {
       console.log('No suggestion extracted from SambaNova response');
