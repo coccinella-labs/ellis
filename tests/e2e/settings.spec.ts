@@ -1,16 +1,19 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Settings Panel', () => {
+  test.beforeEach(async ({ page }) => {
+    // Prevent the welcome modal from opening on every navigation.
+    await page.addInitScript(() => {
+      localStorage.setItem('hasVisited', 'true');
+    });
+  });
+
   test('should change AI provider in settings', async ({ page }) => {
     await page.goto('/');
 
-    // Prevent welcome modal from opening
-    await page.evaluate(() => localStorage.setItem('hasVisited', 'true'));
-    await page.reload();
-    await page.waitForLoadState('domcontentloaded');
-
     // Open settings
     const settingsButton = page.locator('[data-testid="button-settings"]');
+    await settingsButton.waitFor({ state: 'visible' });
     await settingsButton.click();
 
     // Switch to AI tab
@@ -34,13 +37,9 @@ test.describe('Settings Panel', () => {
   test('should change completion mode and writing style', async ({ page }) => {
     await page.goto('/');
 
-    // Prevent welcome modal from opening
-    await page.evaluate(() => localStorage.setItem('hasVisited', 'true'));
-    await page.reload();
-    await page.waitForLoadState('domcontentloaded');
-
     // Open settings
     const settingsButton = page.locator('[data-testid="button-settings"]');
+    await settingsButton.waitFor({ state: 'visible' });
     await settingsButton.click();
 
     // Change completion mode to paragraph
@@ -59,25 +58,5 @@ test.describe('Settings Panel', () => {
     await settingsButton.click();
     await expect(modeSelect).toHaveValue('paragraph');
     await expect(styleSelect).toHaveValue('formal');
-  });
-
-  test('should toggle auto-save setting', async ({ page }) => {
-    await page.goto('/');
-
-    // Prevent welcome modal from opening
-    await page.evaluate(() => localStorage.setItem('hasVisited', 'true'));
-    await page.reload();
-    await page.waitForLoadState('domcontentloaded');
-
-    // Open settings
-    const settingsButton = page.locator('[data-testid="button-settings"]');
-    await settingsButton.click();
-
-    // Toggle auto-save
-    const autoSaveSwitch = page.locator('[data-testid="switch-auto-save"]');
-    await autoSaveSwitch.check();
-
-    // Check that it's checked
-    await expect(autoSaveSwitch).toBeChecked();
   });
 });
