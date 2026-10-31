@@ -20,4 +20,4 @@ Fork the repository, create a feature branch, and run the app locally with `npm 
 
 Suggestions depend on a network call to an AI provider, so the editor needs connectivity and a valid API key to be useful. Fallback only triggers on rate limits or errors, which means a slow response from Gemini is not the same as a failure and will not by itself switch providers. The CLI is a terminal editor intended for headless and lightweight workflows, not a full replacement for the web interface's settings panel and theming.
 
-hautofix is developed under the coccinella-labs organization. Licensed under MIT. See [LICENSE](LICENSE).
+Reusable parts of this repository include the shared package at packages/shared, which contains Zod schemas, prompt builders, a logger, and Gemini and SambaNova client wrappers; the relaxed commit-msg hook in scripts/commit-msg together with the commitlint configuration; and the README structure adapted from the palmshed sandbox template. The rest of the codebase is application-specific. Licensed under MIT. See [LICENSE](LICENSE).
