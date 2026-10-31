@@ -13,7 +13,7 @@ node -e '
 const { GoogleGenAI } = require("@google/genai");
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-const models = ["gemini-2.5-pro", "gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-3-pro-preview"];
+const models = ["gemini-2.5-pro", "gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-3.1-pro-preview"];
 
 async function testGeminiModel(model) {
   try {

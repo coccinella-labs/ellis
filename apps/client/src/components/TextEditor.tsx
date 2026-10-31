@@ -18,7 +18,7 @@ export function TextEditor({
   completionMode = 'sentence',
   writingStyle = 'casual',
   aiProvider = 'auto',
-  geminiModel = 'gemini-3-pro-preview',
+  geminiModel = 'gemini-3.1-pro-preview',
   onGeminiModelChange,
 }: TextEditorProps) {
   const [text, setText] = useState('');

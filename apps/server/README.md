@@ -44,7 +44,7 @@ Set `DISABLE_GEMINI=true` to skip the Gemini status check.
   "mode": "sentence",
   "style": "technical",
   "provider": "auto",
-  "geminiModel": "gemini-3-pro-preview"
+  "geminiModel": "gemini-3.1-pro-preview"
 }
 ```
 

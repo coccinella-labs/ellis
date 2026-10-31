@@ -10,7 +10,7 @@ describe('useWritingSettings', () => {
     expect(result.current.completionMode).toBe('sentence');
     expect(result.current.writingStyle).toBe('casual');
     expect(result.current.aiProvider).toBe('auto');
-    expect(result.current.geminiModel).toBe('gemini-3-pro-preview');
+    expect(result.current.geminiModel).toBe('gemini-3.1-pro-preview');
     expect(result.current.geminiApiKey).toBe('');
     expect(result.current.sambaNovaApiKey).toBe('');
   });
