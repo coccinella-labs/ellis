@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import express, { type Express } from 'express';
 import request from 'supertest';
-import { registerRoutes } from './routes';
+import { registerRoutes, clearStatusCache } from './routes';
 
 // Mock the gemini module so we don't hit real APIs
 vi.mock('./gemini', () => ({
@@ -30,7 +30,10 @@ describe('Express routes', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    clearStatusCache();
     process.env.NODE_ENV = 'test';
+    delete process.env.GEMINI_API_KEY;
+    delete process.env.SAMBANOVA_API_KEY;
     app = express();
     app.use(express.json());
     app = registerRoutes(app);
@@ -38,6 +41,10 @@ describe('Express routes', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    process.env.NODE_ENV = 'test';
+    delete process.env.GEMINI_API_KEY;
+    delete process.env.SAMBANOVA_API_KEY;
+    delete process.env.DISABLE_GEMINI;
   });
 
   describe('GET /api/health', () => {

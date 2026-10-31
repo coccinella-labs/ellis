@@ -25,6 +25,10 @@ const statusLimiter = rateLimit({
 
 let statusCache: { data: unknown; expires: number } | null = null;
 
+export function clearStatusCache(): void {
+  statusCache = null;
+}
+
 export function registerRoutes(app: Express): Express {
   app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok' });
