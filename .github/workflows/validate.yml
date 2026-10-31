@@ -20,10 +20,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Validate GitHub Actions
-        uses: github/super-linter@v5
+        uses: github/super-linter@v6
         env:
           VALIDATE_ALL_CODEBASE: true
           VALIDATE_GITHUB_ACTIONS: true
