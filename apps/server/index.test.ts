@@ -28,6 +28,7 @@ describe('server index', () => {
   afterAll(() => {
     delete process.env.NODE_ENV;
     delete process.env.PORT;
+    delete process.env.VERCEL;
   });
 
   it('exports app and errorHandler', async () => {
@@ -39,10 +40,20 @@ describe('server index', () => {
     expect(res.json).toHaveBeenCalledWith({ message: 'bad' });
   });
 
-  it('uses production branch without Vercel', async () => {
+  it('uses the production branch with Vercel', async () => {
     vi.resetModules();
     process.env.NODE_ENV = 'production';
     process.env.PORT = '3100';
+    process.env.VERCEL = '1';
+    const mod = await import('./index');
+    expect(mod.default).toBeTruthy();
+    delete process.env.VERCEL;
+  });
+
+  it('uses the production branch without Vercel', async () => {
+    vi.resetModules();
+    process.env.NODE_ENV = 'production';
+    process.env.PORT = '3101';
     delete process.env.VERCEL;
     const exitSpy = vi
       .spyOn(process, 'exit')
@@ -52,15 +63,5 @@ describe('server index', () => {
     process.emit('SIGTERM');
     expect(exitSpy).toHaveBeenCalledWith(0);
     exitSpy.mockRestore();
-  });
-
-  it('uses production branch with Vercel', async () => {
-    vi.resetModules();
-    process.env.NODE_ENV = 'production';
-    process.env.PORT = '3101';
-    process.env.VERCEL = '1';
-    const mod = await import('./index');
-    expect(mod.default).toBeTruthy();
-    delete process.env.VERCEL;
   });
 });
