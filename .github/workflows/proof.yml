@@ -90,9 +90,32 @@ jobs:
               );
             }
 
+            // The full set of labels this workflow manages. Any of these that
+            // are currently on the PR but no longer apply are removed, so the
+            // "labels will be cleared automatically" promise in the bot
+            // comments is actually honored.
+            const managed = [
+              'missing:summary', 'missing:changes', 'missing:verification',
+              'missing:checklist', 'title:needs-capitalization',
+              'commit:subject-too-long', 'header:needs-fix',
+            ];
+
+            // Add labels that should be present.
             if (labels.length > 0) {
               await github.rest.issues.addLabels({
                 owner, repo, issue_number: number, labels,
+              });
+            }
+
+            // Remove managed labels that are present but no longer apply.
+            const { data: issue } = await github.rest.issues.get({
+              owner, repo, issue_number: number,
+            });
+            const current = new Set((issue.labels || []).map((l) => l.name));
+            const stale = managed.filter((l) => current.has(l) && !labels.includes(l));
+            for (const label of stale) {
+              await github.rest.issues.deleteLabel({
+                owner, repo, issue_number: number, label,
               });
             }
 
