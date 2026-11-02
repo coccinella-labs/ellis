@@ -83,3 +83,25 @@ describe('server index', () => {
     exitSpy.mockRestore();
   });
 });
+
+describe('server index helpers', () => {
+  it('sanitizes log input', async () => {
+    const mod = await import('./index');
+    expect(mod.sanitizeForLog('a\nb\rc')).toBe('abc');
+  });
+
+  it('runs request logger middleware', async () => {
+    const mod = await import('./index');
+    const res: any = {
+      statusCode: 200,
+      on: vi.fn((event, cb) => {
+        if (event === 'finish') cb();
+      }),
+      json: vi.fn(),
+    };
+    const next = vi.fn();
+    const req: any = { method: 'GET', path: '/api/health' };
+    mod.requestLogger(req, res, next);
+    expect(next).toHaveBeenCalled();
+  });
+});
