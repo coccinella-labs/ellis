@@ -39,9 +39,8 @@ jobs:
             const body = (issue.body || '').toLowerCase();
             const title = issue.title.toLowerCase();
 
-            const { data: open } = await github.rest.issues.list({
-              owner, repo, state: 'open',
-              filter: 'all', sort: 'created', direction: 'desc',
+            const { data: open } = await github.rest.issues.listForRepo({
+              owner, repo, state: 'open', sort: 'created', direction: 'desc',
             });
 
             const dupes = open.filter((i) => {
