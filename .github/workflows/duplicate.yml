@@ -61,11 +61,12 @@ jobs:
             }
 
             const original = dupes[0];
-            await github.rest.issues.update({
-              owner, repo, number: issue.number,
-              state: 'closed',
-              state_reason: 'duplicate',
-            });
+            await github.request(
+              'PATCH /repos/{owner}/{repo}/issues/{number}', {
+                owner, repo, number: issue.number,
+                state: 'closed',
+              }
+            );
             await github.rest.issues.createComment({
               owner, repo, number: issue.number,
               body: `This issue is a duplicate of #${original.number}, which has been closed. Please add any new information there.`
@@ -98,9 +99,11 @@ jobs:
             }
 
             const original = dupes[0];
-            await github.rest.pulls.update({
-              owner, repo, number: pr.number, state: 'closed',
-            });
+            await github.request(
+              'PATCH /repos/{owner}/{repo}/pulls/{number}', {
+                owner, repo, number: pr.number, state: 'closed',
+              }
+            );
             await github.rest.issues.createComment({
               owner, repo, number: pr.number,
               body: `This pull request is a duplicate of #${original.number}, which has been closed. Please add any new information there.`
