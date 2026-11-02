@@ -62,7 +62,8 @@ jobs:
           REPO: ${{ github.repository }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
-          set -euo pipefail
+          set -eu
+          set -o pipefail
 
           if [ "${{ steps.preflight.outcome }}" = "success" ]; then
             CONCLUSION='success'
