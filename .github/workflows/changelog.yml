@@ -50,12 +50,7 @@ jobs:
           commit-message: "chore: regenerate CHANGELOG from git tags"
           title: "chore: regenerate CHANGELOG"
           body: |
-            The CHANGELOG was stale relative to the git tags. This PR
-            regenerates it from `scripts/regenerate-changelog.sh`, which
-            walks every version tag and groups commits between consecutive
-            releases with correct `coccinella-labs/ellis` links.
-
-            Review the diff and merge to keep the changelog current.
+            The CHANGELOG was stale relative to the git tags, so this PR regenerates it from scripts/regenerate-changelog.sh, which walks every version tag and groups commits between consecutive releases with correct coccinella-labs/ellis commit and compare links. Review the diff and merge to keep the changelog current.
           branch: chore/regenerate-changelog
           base: main
           labels: chore
