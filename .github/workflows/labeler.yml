@@ -37,6 +37,6 @@ jobs:
       - name: Apply labels
         uses: actions/labeler@v6
         with:
-          github_token: ${{ steps.app-token.outputs.token }}
+          repo-token: ${{ steps.app-token.outputs.token }}
           configuration-path: .github/labeler.yml
           sync-labels: true
