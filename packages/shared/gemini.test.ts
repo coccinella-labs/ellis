@@ -261,3 +261,38 @@ describe('shared gemini additional branches', () => {
     expect(result).toBe('');
   });
 });
+
+describe('shared gemini missed branches', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    process.env.GEMINI_API_KEY = 'test-key';
+  });
+
+  it('returns empty for an empty auto-mode suggestion', async () => {
+    const { GoogleGenAI } = await import('@google/genai');
+    const instance = new (GoogleGenAI as any)();
+    instance.models.generateContent.mockResolvedValueOnce({ text: '' });
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'sentence',
+      'casual',
+      'auto'
+    );
+    expect(result).toBe('');
+  });
+
+  it('returns a word suggestion without a leading space in auto mode', async () => {
+    const { GoogleGenAI } = await import('@google/genai');
+    const instance = new (GoogleGenAI as any)();
+    instance.models.generateContent.mockResolvedValueOnce({ text: 'next' });
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello',
+      'word',
+      'casual',
+      'auto'
+    );
+    expect(result).toBe('next');
+  });
+});
