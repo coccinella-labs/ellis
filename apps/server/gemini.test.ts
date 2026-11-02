@@ -50,3 +50,29 @@ describe('server gemini wrappers', () => {
     expect(await testSambaNovaApiKey()).toBe(true);
   });
 });
+
+describe('server gemini failure branches', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns false when Gemini test throws', async () => {
+    process.env.GEMINI_API_KEY = 'test';
+    const gemini = await import('@shared/gemini.js');
+    vi.mocked(gemini.ai.models.generateContent).mockRejectedValueOnce(
+      new Error('fail')
+    );
+    const { testApiKey } = await import('./gemini.js');
+    expect(await testApiKey()).toBe(false);
+  });
+
+  it('returns false when SambaNova test throws', async () => {
+    process.env.SAMBANOVA_API_KEY = 'test';
+    const sambanova = await import('@shared/sambanova.js');
+    vi.mocked(sambanova.generateTextCompletionSambaNova).mockRejectedValueOnce(
+      new Error('fail')
+    );
+    const { testSambaNovaApiKey } = await import('./gemini.js');
+    expect(await testSambaNovaApiKey()).toBe(false);
+  });
+});
