@@ -1,0 +1,83 @@
+name: Ellis
+
+on:
+  push:
+    branches: [main]
+  pull_request_target:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+jobs:
+  preflight:
+    name: Ellis
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'coccinella-labs'
+    permissions:
+      contents: read
+      pull-requests: read
+      checks: write
+    steps:
+      - id: app-token
+        name: Create Ellis app token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ELLIS_APP_ID }}
+          private-key: ${{ secrets.ELLIS_APP_PRIVATE_KEY }}
+          permission-checks: write
+          permission-pull-requests: read
+          permission-contents: read
+
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package.json
+            package-lock.json
+            apps/cli/package-lock.json
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install CLI dependencies
+        working-directory: apps/cli
+        run: npm ci
+
+      - name: Run preflight checks
+        id: preflight
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: npm run preflight
+
+      - name: Report check result
+        if: always()
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+
+          if [ "${{ steps.preflight.outcome }}" = "success" ]; then
+            CONCLUSION='success'
+            SUMMARY='Preflight checks passed: lint, typecheck, duplicate-check, test coverage, and build all green.'
+          else
+            CONCLUSION='failure'
+            SUMMARY='Preflight checks failed. Review the job log for the first failing step (lint, typecheck, duplicate-check, test coverage, or build).'
+          fi
+
+          gh api "repos/$REPO/check-runs" \
+            -X POST \
+            -f name='Ellis' \
+            -f head_sha="$HEAD_SHA" \
+            -f status='completed' \
+            -f conclusion="$CONCLUSION" \
+            -f output[title]='Ellis preflight' \
+            -f output[summary]="$SUMMARY" \
+            --silent
