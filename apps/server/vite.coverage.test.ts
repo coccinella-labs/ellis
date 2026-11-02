@@ -56,3 +56,39 @@ describe('vite missed branches', () => {
     );
   });
 });
+
+describe('vite missed branches', () => {
+  it('invokes the custom logger error callback', async () => {
+    const { createServer } = await import('vite');
+    vi.mocked(createServer).mockImplementation(async (options: any) => {
+      options.customLogger.error('boom');
+      return {
+        middlewares: {},
+        transformIndexHtml: vi.fn(),
+        ssrFixStacktrace: vi.fn(),
+      } as any;
+    });
+    const exitSpy = vi
+      .spyOn(process, 'exit')
+      .mockImplementation(() => undefined as never);
+    const { setupVite } = await import('./vite');
+    const app: any = {
+      use: vi.fn(),
+      get: vi.fn().mockReturnValue('development'),
+    };
+    await setupVite(app, {} as any);
+    expect(exitSpy).toHaveBeenCalledWith(1);
+    exitSpy.mockRestore();
+  });
+
+  it('throws when the build directory is missing', async () => {
+    const fs = await import('fs');
+    (fs as any).existsSync.mockReturnValue(false);
+    (fs.default as any).existsSync.mockReturnValue(false);
+    const { serveStatic } = await import('./vite');
+    const app: any = { use: vi.fn() };
+    expect(() => serveStatic(app)).toThrow(
+      /Could not find the build directory/
+    );
+  });
+});
