@@ -154,4 +154,64 @@ describe('TextEditor interactions', () => {
     fireEvent.keyDown(textarea, { key: '1' });
     expect(onGeminiModelChange).toHaveBeenCalledWith('gemini-3.8-flash');
   });
+
+  it('ignores a stale response when text changes during generation', async () => {
+    let resolveFirst: ((v: any) => void) | null = null;
+    fetchMock.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveFirst = resolve;
+        })
+    );
+
+    const onTextChange = vi.fn();
+    render(<TextEditor onTextChange={onTextChange} />);
+
+    const textarea = screen.getByTestId('input-editor');
+    fireEvent.change(textarea, {
+      target: { value: 'Hello world this is a longer text' },
+    });
+
+    // Start the first generation (it will hang because we control resolution)
+    await act(async () => {
+      vi.advanceTimersByTime(500);
+      await Promise.resolve();
+    });
+
+    // Type more text - this increments the request sequence
+    fireEvent.change(textarea, {
+      target: {
+        value: 'Hello world this is a longer text with even more characters',
+      },
+    });
+
+    // Now resolve the first (stale) response
+    await act(async () => {
+      resolveFirst?.({
+        json: async () => ({ suggestion: ' stale' }),
+      });
+      await Promise.resolve();
+    });
+
+    // The stale suggestion should NOT appear
+    expect(screen.queryByTestId('text-suggestion')).not.toBeInTheDocument();
+  });
+
+  it('clears loading state when text drops below threshold', async () => {
+    render(<TextEditor />);
+
+    const textarea = screen.getByTestId('input-editor');
+    fireEvent.change(textarea, {
+      target: { value: 'Hello world this is a longer text' },
+    });
+
+    await act(async () => {
+      vi.advanceTimersByTime(500);
+      await Promise.resolve();
+    });
+
+    // Now type a short text - should clear generating state
+    fireEvent.change(textarea, { target: { value: 'Hi' } });
+    expect(screen.queryByTestId('status-generating')).not.toBeInTheDocument();
+  });
 });

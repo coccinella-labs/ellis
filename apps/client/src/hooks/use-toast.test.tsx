@@ -114,6 +114,21 @@ describe('toast helpers', () => {
     });
     expect(result.current.toasts[0]?.open).toBe(false);
   });
+
+  it('dismisses all toasts when no toastId is provided', () => {
+    const { result } = renderHook(() => useToast());
+    act(() => {
+      toast({ title: 'first' });
+    });
+    act(() => {
+      toast({ title: 'second' });
+    });
+    act(() => {
+      result.current.dismiss();
+    });
+    expect(result.current.toasts.length).toBe(2);
+    expect(result.current.toasts.every((t) => t.open === false)).toBe(true);
+  });
 });
 
 describe('toast timers', () => {
