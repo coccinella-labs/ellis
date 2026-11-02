@@ -41,9 +41,11 @@ jobs:
             let page = 1;
             let fetched;
             do {
-              fetched = await github.rest.pulls.getFiles({
-                owner, repo, pull_number: number, per_page: 100, page,
-              });
+              fetched = await github.request(
+                'GET /repos/{owner}/{repo}/pulls/{pull_number}/files', {
+                  owner, repo, pull_number: number, per_page: 100, page,
+                }
+              );
               files.push(...(fetched.data || []));
               page += 1;
             } while (fetched.data && fetched.data.length === 100);
