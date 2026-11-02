@@ -4,7 +4,6 @@
 
 # ellis
 
-[![CI](https://github.com/coccinella-labs/ellis/actions/workflows/ci.yml/badge.svg)](https://github.com/coccinella-labs/ellis/actions/workflows/ci.yml)
 [![Ellis](https://github.com/coccinella-labs/ellis/actions/workflows/ellis.yml/badge.svg)](https://github.com/coccinella-labs/ellis/actions/workflows/ellis.yml)
 [![Validate Workflows](https://github.com/coccinella-labs/ellis/actions/workflows/validate.yml/badge.svg)](https://github.com/coccinella-labs/ellis/actions/workflows/validate.yml)
 [![Docker](https://github.com/coccinella-labs/ellis/actions/workflows/docker.yml/badge.svg)](https://github.com/coccinella-labs/ellis/actions/workflows/docker.yml)
