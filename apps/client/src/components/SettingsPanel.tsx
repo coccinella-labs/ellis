@@ -84,7 +84,11 @@ export function SettingsPanel({
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="writing" className="space-y-4 mt-6">
+              <TabsContent
+                forceMount
+                value="writing"
+                className="space-y-4 mt-6"
+              >
                 <div className="space-y-3">
                   <label
                     htmlFor="completion-mode"
@@ -139,7 +143,7 @@ export function SettingsPanel({
                 </div>
               </TabsContent>
 
-              <TabsContent value="ai" className="space-y-4 mt-6">
+              <TabsContent forceMount value="ai" className="space-y-4 mt-6">
                 <div className="space-y-3">
                   <label htmlFor="ai-provider" className="text-sm font-medium">
                     ai provider
@@ -170,6 +174,7 @@ export function SettingsPanel({
                     value={geminiModel}
                     onChange={(e) => onGeminiModelChange(e.target.value)}
                     className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    data-testid="select-gemini-model"
                   >
                     <option value="gemini-3.8-flash">gemini-3.8-flash</option>
                     <option value="gemini-3.5-flash-lite">
