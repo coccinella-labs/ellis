@@ -16,6 +16,18 @@
         "npmPublish": false
       }
     ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "CHANGELOG.md",
+          "package.json",
+          "package-lock.json",
+          "apps/cli/package.json"
+        ],
+        "message": "chore(release): ${nextRelease.version} [skip ci]"
+      }
+    ],
     "@semantic-release/github"
   ]
 }
