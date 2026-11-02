@@ -1,0 +1,108 @@
+name: Duplicate
+
+on:
+  issues:
+    types: [opened, edited, reopened]
+  pull_request:
+    types: [opened, edited, reopened]
+
+concurrency:
+  group: duplicate-${{ github.event.issue.number || github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  duplicate:
+    name: Close duplicate issues and PRs
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'coccinella-labs'
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Create app token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ELLIS_APP_ID }}
+          private-key: ${{ secrets.ELLIS_APP_PRIVATE_KEY }}
+          permission-issues: write
+          permission-pull-requests: write
+
+      - name: Close duplicate issues
+        if: github.event_name == 'issues'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: |
+            const { owner, repo } = context.repo;
+            const issue = context.payload.issue;
+            const body = (issue.body || '').toLowerCase();
+            const title = issue.title.toLowerCase();
+
+            const { data: open } = await github.rest.issues.list({
+              owner, repo, state: 'open',
+              filter: 'all', sort: 'created', direction: 'desc',
+            });
+
+            const dupes = open.filter((i) => {
+              if (i.number === issue.number) return false;
+              const iBody = (i.body || '').toLowerCase();
+              const iTitle = i.title.toLowerCase();
+              const titleMatch = iTitle === title || iTitle.includes(title) || title.includes(iTitle);
+              const bodyMatch = iBody && body && (
+                iBody.includes(body.slice(0, 80)) || body.includes(iBody.slice(0, 80))
+              );
+              return titleMatch || bodyMatch;
+            });
+
+            if (dupes.length === 0) {
+              console.log('No duplicate issues found.');
+              return;
+            }
+
+            const original = dupes[0];
+            await github.rest.issues.update({
+              owner, repo, number: issue.number,
+              state: 'closed',
+              state_reason: 'duplicate',
+            });
+            await github.rest.issues.createComment({
+              owner, repo, number: issue.number,
+              body: `This issue is a duplicate of #${original.number}, which has been closed. Please add any new information there.`
+            });
+            console.log(`Closed #${issue.number} as duplicate of #${original.number}.`);
+
+      - name: Close duplicate pull requests
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: |
+            const { owner, repo } = context.repo;
+            const pr = context.payload.pull_request;
+            const title = pr.title.toLowerCase();
+
+            const { data: open } = await github.rest.pulls.list({
+              owner, repo, state: 'open', sort: 'created', direction: 'desc',
+            });
+
+            const dupes = open.filter((p) => {
+              if (p.number === pr.number) return false;
+              const pTitle = p.title.toLowerCase();
+              return pTitle === title || pTitle.includes(title) || title.includes(pTitle);
+            });
+
+            if (dupes.length === 0) {
+              console.log('No duplicate pull requests found.');
+              return;
+            }
+
+            const original = dupes[0];
+            await github.rest.pulls.update({
+              owner, repo, number: pr.number, state: 'closed',
+            });
+            await github.rest.issues.createComment({
+              owner, repo, number: pr.number,
+              body: `This pull request is a duplicate of #${original.number}, which has been closed. Please add any new information there.`
+            });
+            console.log(`Closed #${pr.number} as duplicate of #${original.number}.`);
