@@ -79,6 +79,6 @@ jobs:
             -f head_sha="$HEAD_SHA" \
             -f status='completed' \
             -f conclusion="$CONCLUSION" \
-            -f output[title]='Ellis preflight' \
-            -f output[summary]="$SUMMARY" \
+            -f 'output[title]=Ellis preflight' \
+            -f "output[summary]=$SUMMARY" \
             --silent
