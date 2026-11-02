@@ -28,7 +28,7 @@ import { logger } from '@shared/logger';
 import { generateTextCompletion } from '@shared/gemini';
 ```
 
-The relaxed commit-msg hook in `scripts/commit-msg` together with the commitlint configuration, and the README structure adapted from the original repository template, are also reusable. For example, the commit-msg hook:
+The commit-msg hook in `scripts/commit-msg` enforces a subject line of 80 characters or fewer and, for changes touching more than five files or more than two new tests, requires a body of at least two lines. The `commitlint.config.js` file relaxes the `type-enum` and `subject-case` rules so commit subjects can use natural language, and the README structure is adapted from the original repository template. For example, the commit-msg hook:
 
 ```sh
 #!/bin/bash
