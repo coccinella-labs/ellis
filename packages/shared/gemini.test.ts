@@ -146,6 +146,43 @@ describe('generateTextCompletion additional branches', () => {
   });
 });
 
+describe('shared gemini missed branches', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    process.env.GEMINI_API_KEY = 'test-key';
+  });
+
+  it('logs a SambaNova failure without a Gemini key', async () => {
+    process.env.GEMINI_API_KEY = '';
+    const sambanova = await import('./sambanova.js');
+    vi.mocked(sambanova.generateTextCompletionSambaNova).mockRejectedValueOnce(
+      new Error('fail')
+    );
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'sentence',
+      'casual',
+      'auto'
+    );
+    expect(result).toBe('');
+  });
+
+  it('returns a Gemini suggestion in auto mode', async () => {
+    const { GoogleGenAI } = await import('@google/genai');
+    const instance = new (GoogleGenAI as any)();
+    instance.models.generateContent.mockResolvedValueOnce({ text: ' hello' });
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'sentence',
+      'casual',
+      'auto'
+    );
+    expect(result).toBe(' hello');
+  });
+});
+
 describe('shared gemini additional branches', () => {
   beforeEach(() => {
     vi.clearAllMocks();

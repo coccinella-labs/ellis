@@ -26,6 +26,23 @@ describe('buildSystemPrompt', () => {
   });
 });
 
+describe('CLI gemini prompt branches', () => {
+  it('builds a formal prompt', () => {
+    expect(buildSystemPrompt('sentence', 'formal')).toContain(
+      'formal, professional language'
+    );
+  });
+
+  it('uses the word token limit', async () => {
+    const { GoogleGenAI } = await import('@google/genai');
+    const instance = new (GoogleGenAI as any)();
+    instance.models.generateContent.mockResolvedValueOnce({ text: 'next' });
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion('hello', 'word', 'casual');
+    expect(result).toBe('next');
+  });
+});
+
 describe('generateTextCompletion CLI', () => {
   beforeEach(() => {
     vi.clearAllMocks();
