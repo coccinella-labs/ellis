@@ -26,7 +26,7 @@ export function findEnvFile(startDir: string): string | null {
 const envPath = findEnvFile(process.cwd()) || path.join(__dirname, '../.env');
 config({ path: envPath });
 
-const program = new Command();
+export const program = new Command();
 
 program
   .name('fx')
@@ -80,12 +80,12 @@ program
     if (!process.env.GEMINI_API_KEY) {
       console.error('❌ GEMINI_API_KEY required');
       console.error('Set in .env file or export GEMINI_API_KEY=your_key');
-      process.exit(1);
+      return process.exit(1);
     }
 
     if (!fs.existsSync(file)) {
       console.error(`❌ File not found: ${file}`);
-      process.exit(1);
+      return process.exit(1);
     }
 
     const content = fs.readFileSync(file, 'utf-8');
