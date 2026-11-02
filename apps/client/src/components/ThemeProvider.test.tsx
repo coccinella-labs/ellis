@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import { ThemeProvider, useTheme } from './ThemeProvider';
 
 const localStorageMock = {
-  getItem: vi.fn(() => null),
+  getItem: vi.fn((): string | null => null),
   setItem: vi.fn(),
   removeItem: vi.fn(),
   clear: vi.fn(),
