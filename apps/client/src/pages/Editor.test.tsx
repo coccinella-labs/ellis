@@ -11,14 +11,12 @@ const localStorageMock = {
 };
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
-const matchMediaMock = vi
-  .fn()
-  .mockImplementation((q: string) => ({
-    matches: false,
-    media: q,
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-  }));
+const matchMediaMock = vi.fn().mockImplementation((q: string) => ({
+  matches: false,
+  media: q,
+  addEventListener: vi.fn(),
+  removeEventListener: vi.fn(),
+}));
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: matchMediaMock,

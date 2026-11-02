@@ -125,3 +125,26 @@ describe('generateTextCompletion CLI', () => {
     expect(result).toBe(' next');
   });
 });
+
+describe('CLI gemini extra branches', () => {
+  it('builds a formal prompt', () => {
+    expect(buildSystemPrompt('sentence', 'formal')).toContain(
+      'formal, professional language'
+    );
+  });
+
+  it('uses the paragraph token limit', async () => {
+    const { GoogleGenAI } = await import('@google/genai');
+    const instance = new (GoogleGenAI as any)();
+    instance.models.generateContent.mockResolvedValueOnce({
+      text: 'paragraph',
+    });
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'paragraph',
+      'casual'
+    );
+    expect(result).toBe(' paragraph');
+  });
+});
