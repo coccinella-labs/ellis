@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import { ThemeProvider } from './ThemeProvider';
+import { ThemeProvider, useTheme } from './ThemeProvider';
 
 const localStorageMock = {
   getItem: vi.fn(() => null),
@@ -18,5 +18,27 @@ describe('ThemeProvider', () => {
       </ThemeProvider>
     );
     expect(container.textContent).toContain('child');
+  });
+
+  it('applies the theme to the document root', () => {
+    localStorageMock.getItem.mockReturnValue('light');
+    render(
+      <ThemeProvider>
+        <span>child</span>
+      </ThemeProvider>
+    );
+    expect(document.documentElement.classList.contains('light')).toBe(true);
+  });
+
+  it('throws when useTheme is used outside a ThemeProvider', () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    function Test() {
+      useTheme();
+      return null;
+    }
+    expect(() => render(<Test />)).toThrow(
+      'useTheme must be used within a ThemeProvider'
+    );
+    spy.mockRestore();
   });
 });
