@@ -71,11 +71,12 @@ jobs:
               .map((l) => l.trim())
               .filter((l) => l.startsWith('## '))
               .map((l) => l.replace(/^##\s+/, ''));
-            for (const section of required) {
+for (const section of required) {
               if (!body.includes(`## ${section}`)) {
                 labels.push('missing:' + section.toLowerCase());
-                comments.push(`Missing required section: \`\`## ${section}\``);
+                comments.push(`Missing required section: \`${section}\``);
               }
+            }
             }
 
             // Check title starts with a capital letter
