@@ -1,0 +1,61 @@
+name: Changelog
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Weekly Monday 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  changelog:
+    name: Regenerate CHANGELOG
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'coccinella-labs'
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Regenerate CHANGELOG
+        run: bash scripts/regenerate-changelog.sh
+
+      - name: Check for changes
+        id: diff
+        run: |
+          if git diff --quiet CHANGELOG.md .releaserc.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changelog changes."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Changelog is stale."
+          fi
+
+      - name: Create pull request
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: regenerate CHANGELOG from git tags"
+          title: "chore: regenerate CHANGELOG"
+          body: |
+            The CHANGELOG was stale relative to the git tags. This PR
+            regenerates it from `scripts/regenerate-changelog.sh`, which
+            walks every version tag and groups commits between consecutive
+            releases with correct `coccinella-labs/ellis` links.
+
+            Review the diff and merge to keep the changelog current.
+          branch: chore/regenerate-changelog
+          base: main
+          labels: chore

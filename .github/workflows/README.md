@@ -4,15 +4,16 @@ This directory contains the GitHub Actions workflows for the Ellis repository. E
 
 ## Workflow overview
 
-| File           | Trigger                                                                        | Purpose                                                                   |
-| -------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
-| `cli.yml`      | push to `apps/cli/**`, `packages/shared/**`, `package-lock.json`; pull request | Build and smoke-test the CLI package                                      |
-| `codeql.yml`   | push to `main`, pull request, manual dispatch                                  | Run CodeQL security analysis                                              |
-| `docker.yml`   | push to `main`, pull request, manual dispatch                                  | Build and push the Docker image                                           |
-| `e2e.yml`      | push to `main`, pull request                                                   | Run preflight checks and Playwright end-to-end tests                      |
-| `ellis.yml`    | push to `main`, pull request target events                                     | Run preflight checks through the Ellis GitHub App and publish a check run |
-| `release.yml`  | push to `main`                                                                 | Run preflight checks, build the CLI, run E2E tests, and publish a release |
-| `validate.yml` | pull request, manual dispatch                                                  | Validate workflow YAML with super-linter                                  |
+| File            | Trigger                                                                        | Purpose                                                                   |
+| --------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| `cli.yml`       | push to `apps/cli/**`, `packages/shared/**`, `package-lock.json`; pull request | Build and smoke-test the CLI package                                      |
+| `changelog.yml` | weekly cron, manual dispatch                                                   | Regenerate CHANGELOG from git tags and open a PR when it is stale         |
+| `codeql.yml`    | push to `main`, pull request, manual dispatch                                  | Run CodeQL security analysis                                              |
+| `docker.yml`    | push to `main`, pull request, manual dispatch                                  | Build and push the Docker image                                           |
+| `e2e.yml`       | push to `main`, pull request                                                   | Run preflight checks and Playwright end-to-end tests                      |
+| `ellis.yml`     | push to `main`, pull request target events                                     | Run preflight checks through the Ellis GitHub App and publish a check run |
+| `release.yml`   | push to `main`                                                                 | Run preflight checks, build the CLI, run E2E tests, and publish a release |
+| `validate.yml`  | pull request, manual dispatch                                                  | Validate workflow YAML with super-linter                                  |
 
 ## Common configuration
 
