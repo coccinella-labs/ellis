@@ -96,4 +96,32 @@ describe('generateTextCompletion CLI', () => {
     );
     expect(result).toBe('');
   });
+
+  it('returns a paragraph suggestion', async () => {
+    const { GoogleGenAI } = await import('@google/genai');
+    const instance = new (GoogleGenAI as any)();
+    instance.models.generateContent.mockResolvedValueOnce({
+      text: 'paragraph continuation',
+    });
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'paragraph',
+      'casual'
+    );
+    expect(result).toBe(' paragraph continuation');
+  });
+
+  it('returns an unspaced suggestion', async () => {
+    const { GoogleGenAI } = await import('@google/genai');
+    const instance = new (GoogleGenAI as any)();
+    instance.models.generateContent.mockResolvedValueOnce({ text: 'next' });
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'sentence',
+      'casual'
+    );
+    expect(result).toBe(' next');
+  });
 });
