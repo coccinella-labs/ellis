@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import express, { type Express } from 'express';
 import request from 'supertest';
-import { registerRoutes, clearStatusCache } from './routes';
+import { registerRoutes, clearStatusCache, setStatusCache } from './routes';
 
 // Mock the gemini module so we don't hit real APIs
 vi.mock('./gemini', () => ({
@@ -167,6 +167,46 @@ describe('Express routes', () => {
       const res = await request(app).get('/api/status');
       expect(res.status).toBe(500);
       expect(res.body).toEqual({ status: 'error' });
+    });
+
+    it('returns cached status on a second request', async () => {
+      process.env.NODE_ENV = 'production';
+      process.env.GEMINI_API_KEY = 'test-key';
+      vi.mocked(testApiKey).mockResolvedValue(true);
+      vi.mocked(testSambaNovaApiKey).mockResolvedValue(false);
+
+      const first = await request(app).get('/api/status');
+      expect(first.body.providers.gemini).toBe(true);
+
+      // Second request should hit the cache without calling the providers again.
+      vi.mocked(testApiKey).mockResolvedValue(false);
+      const second = await request(app).get('/api/status');
+      expect(second.body.providers.gemini).toBe(true);
+      expect(testApiKey).toHaveBeenCalledTimes(1);
+    });
+
+    it('returns cached status when cache is set directly', async () => {
+      setStatusCache({
+        status: 'ok',
+        providers: { gemini: true, sambanova: false },
+      });
+      const res = await request(app).get('/api/status');
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({
+        status: 'ok',
+        providers: { gemini: true, sambanova: false },
+      });
+    });
+
+    it('skips Gemini check when DISABLE_GEMINI is true', async () => {
+      process.env.NODE_ENV = 'production';
+      process.env.GEMINI_API_KEY = 'test-key';
+      process.env.DISABLE_GEMINI = 'true';
+      vi.mocked(testApiKey).mockResolvedValue(true);
+
+      const res = await request(app).get('/api/status');
+      expect(res.status).toBe(200);
+      expect(testApiKey).not.toHaveBeenCalled();
     });
   });
 });

@@ -29,6 +29,10 @@ export function clearStatusCache(): void {
   statusCache = null;
 }
 
+export function setStatusCache(data: unknown): void {
+  statusCache = { data, expires: Date.now() + 60000 };
+}
+
 export function registerRoutes(app: Express): Express {
   app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok' });
