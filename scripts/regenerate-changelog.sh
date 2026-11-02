@@ -118,4 +118,8 @@ for TAG in $TAGS; do
   COUNT=$((COUNT + 1))
 done
 
+# Strip trailing blank lines so a stale diff (a single newline) does not
+# trigger an empty commit in the pull-request action.
+sed -i -e :a -e '/^\n*$/{$d;N;ba}' -e 'P;D' "$OUT"
+
 echo "Wrote $COUNT tag sections to $OUT"

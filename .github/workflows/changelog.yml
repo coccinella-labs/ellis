@@ -32,6 +32,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Create app token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ELLIS_APP_ID }}
+          private-key: ${{ secrets.ELLIS_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
       - name: Regenerate CHANGELOG
         run: bash scripts/regenerate-changelog.sh
 
@@ -50,7 +59,7 @@ jobs:
         if: steps.diff.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ secrets.ELLIS_APP_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           commit-message: "Regenerate CHANGELOG from git tags"
           title: "Regenerate CHANGELOG from git tags"
           body: |
