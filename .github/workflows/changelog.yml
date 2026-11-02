@@ -5,6 +5,10 @@ on:
     - cron: '0 6 * * 1'  # Weekly Monday 06:00 UTC
   workflow_dispatch:
 
+concurrency:
+  group: changelog
+  cancel-in-progress: true
+
 jobs:
   changelog:
     name: Regenerate CHANGELOG
@@ -46,9 +50,9 @@ jobs:
         if: steps.diff.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: regenerate CHANGELOG from git tags"
-          title: "chore: regenerate CHANGELOG"
+          token: ${{ secrets.ELLIS_APP_TOKEN }}
+          commit-message: "Regenerate CHANGELOG from git tags"
+          title: "Regenerate CHANGELOG from git tags"
           body: |
             The CHANGELOG was stale relative to the git tags, so this PR regenerates it from scripts/regenerate-changelog.sh, which walks every version tag and groups commits between consecutive releases with correct coccinella-labs/ellis commit and compare links. Review the diff and merge to keep the changelog current.
           branch: chore/regenerate-changelog

@@ -5,6 +5,10 @@ on:
     - cron: '0 3 * * 0'  # Weekly Sunday 03:00 UTC
   workflow_dispatch:
 
+concurrency:
+  group: stale
+  cancel-in-progress: true
+
 jobs:
   stale:
     name: Close stale issues and PRs
