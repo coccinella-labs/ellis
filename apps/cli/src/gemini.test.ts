@@ -13,3 +13,26 @@ describe('buildSystemPrompt', () => {
     expect(prompt).toContain('Do NOT repeat');
   });
 });
+
+import { vi } from 'vitest';
+
+vi.mock('@google/genai', () => {
+  const generateContent = vi.fn().mockResolvedValue({ text: ' hello' });
+  return {
+    GoogleGenAI: vi
+      .fn()
+      .mockImplementation(() => ({ models: { generateContent } })),
+  };
+});
+
+describe('generateTextCompletion CLI', () => {
+  it('returns suggestion', async () => {
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'sentence',
+      'casual'
+    );
+    expect(result).toBe(' hello');
+  });
+});
