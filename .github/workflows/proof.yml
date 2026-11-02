@@ -76,7 +76,9 @@ jobs:
               .filter((f) => {
                 const patch = f.patch || '';
                 const hasSPDX = /SPDX-License-Identifier/.test(patch);
-                const hasSeparator = /^---$/m.test(patch);
+                // In a unified diff, added lines are prefixed with '+', so a YAML
+                // document separator appears as a line containing exactly '+---'.
+                const hasSeparator = /^\+---$/m.test(patch);
                 return hasSPDX || hasSeparator;
               });
 
