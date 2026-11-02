@@ -67,7 +67,7 @@ jobs:
               }
             );
             await github.rest.issues.createComment({
-              owner, repo, number: issue.number,
+              owner, repo, issue_number: issue.number,
               body: `This issue is a duplicate of #${original.number}, which has been closed. Please add any new information there.`
             });
             console.log(`Closed #${issue.number} as duplicate of #${original.number}.`);
@@ -104,7 +104,7 @@ jobs:
               }
             );
             await github.rest.issues.createComment({
-              owner, repo, number: pr.number,
+              owner, repo, issue_number: pr.number,
               body: `This pull request is a duplicate of #${original.number}, which has been closed. Please add any new information there.`
             });
             console.log(`Closed #${pr.number} as duplicate of #${original.number}.`);
