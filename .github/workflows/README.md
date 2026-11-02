@@ -10,6 +10,7 @@ This directory contains the GitHub Actions workflows for the Ellis repository. E
 | `cli.yml`       | push to `apps/cli/**`, `packages/shared/**`, `package-lock.json`; pull request | Build and smoke-test the CLI package                                      |
 | `codeql.yml`    | push to `main`, pull request, manual dispatch                                  | Run CodeQL security analysis                                              |
 | `docker.yml`    | push to `main`, pull request, manual dispatch                                  | Build and push the Docker image                                           |
+| `duplicate.yml` | issues, pull request                                                           | Close duplicate issues and pull requests via the Ellis bot                |
 | `e2e.yml`       | push to `main`, pull request                                                   | Run preflight checks and Playwright end-to-end tests                      |
 | `ellis.yml`     | push to `main`, pull request target events                                     | Run preflight checks through the Ellis GitHub App and publish a check run |
 | `labeler.yml`   | pull request, issues                                                           | Auto-label PRs and issues from changed files and metadata                 |
@@ -26,7 +27,8 @@ All workflows use Node.js 22 and the `ubuntu-latest` runner. The root and CLI in
 ## Triggering workflows
 
 - **Push to `main`**: runs `changelog.yml`, `cli.yml`, `codeql.yml`, `docker.yml`, `e2e.yml`, `ellis.yml`, `release.yml`, and `stale.yml`.
-- **Pull request**: runs `cli.yml`, `codeql.yml`, `docker.yml`, `e2e.yml`, `validate.yml`, `ellis.yml`, `labeler.yml`, `merge.yml`, and `size.yml`.
+- **Pull request**: runs `cli.yml`, `codeql.yml`, `docker.yml`, `e2e.yml`, `validate.yml`, `ellis.yml`, `duplicate.yml`, `labeler.yml`, `merge.yml`, and `size.yml`.
+- **Issues**: runs `duplicate.yml` and `labeler.yml`.
 - **Manual dispatch**: available on `changelog.yml`, `codeql.yml`, `docker.yml`, `stale.yml`, and `validate.yml`.
 
 ## Required secrets
