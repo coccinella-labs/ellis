@@ -94,3 +94,54 @@ describe('generateTextCompletion', () => {
     expect(result).toBe('');
   });
 });
+
+describe('generateTextCompletion additional branches', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    process.env.GEMINI_API_KEY = 'test-key';
+  });
+
+  it('uses SambaNova directly without a Gemini key', async () => {
+    process.env.GEMINI_API_KEY = '';
+    const sambanova = await import('./sambanova.js');
+    vi.mocked(sambanova.generateTextCompletionSambaNova).mockResolvedValueOnce(
+      ' direct'
+    );
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'sentence',
+      'casual',
+      'auto'
+    );
+    expect(result).toBe(' direct');
+  });
+
+  it('returns word suggestion without a leading space', async () => {
+    const { GoogleGenAI } = await import('@google/genai');
+    const instance = new (GoogleGenAI as any)();
+    instance.models.generateContent.mockResolvedValueOnce({ text: 'next' });
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello',
+      'word',
+      'casual',
+      'gemini'
+    );
+    expect(result).toBe('next');
+  });
+
+  it('returns empty for a non-rate-limit Gemini failure', async () => {
+    const { GoogleGenAI } = await import('@google/genai');
+    const instance = new (GoogleGenAI as any)();
+    instance.models.generateContent.mockRejectedValueOnce(new Error('network'));
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'sentence',
+      'casual',
+      'auto'
+    );
+    expect(result).toBe('');
+  });
+});
