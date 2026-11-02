@@ -56,7 +56,21 @@ jobs:
             const comments = [];
 
             // Check required sections from the PR template
-            const required = ['Summary', 'Changes', 'Verification', 'Checklist'];
+            // Compare the PR body against .github/PULL_REQUEST_TEMPLATE.md so a
+            // drifted or missing template is detected, not just a missing header.
+            const templateResp = await github.request(
+              'GET /repos/{owner}/{repo}/contents/.github/PULL_REQUEST_TEMPLATE.md', {
+                owner, repo,
+              }
+            );
+            const template = Buffer.from(
+              templateResp.data.content, 'base64'
+            ).toString('utf8');
+            const required = template
+              .split('\n')
+              .map((l) => l.trim())
+              .filter((l) => l.startsWith('## '))
+              .map((l) => l.replace(/^##\s+/, ''));
             for (const section of required) {
               if (!body.includes(`## ${section}`)) {
                 labels.push('missing:' + section.toLowerCase());
@@ -148,10 +162,42 @@ jobs:
             }
 
             if (comments.length > 0) {
-              await github.rest.issues.createComment({
+              const body = `The Ellis bot found the following issues with this PR:\n\n` +
+                comments.map((c) => `- ${c}`).join('\n') +
+                '\n\nFix these and the labels will be cleared automatically.';
+              // Update the bot's previous comment instead of posting a new one
+              // on every run, so the PR doesn't accumulate duplicate messages.
+              const { data: existing } = await github.rest.issues.listComments({
                 owner, repo, issue_number: number,
-                body: `The Ellis bot found the following issues with this PR:\n\n` +
-                  comments.map((c) => `- ${c}`).join('\n') +
-                  '\n\nFix these and the labels will be cleared automatically.',
               });
+              const mine = existing.find(
+                (c) => c.user.login === 'coccinella-labs-ellis[bot]' &&
+                  c.body.startsWith('The Ellis bot found the following issues')
+              );
+              if (mine) {
+                await github.rest.issues.updateComment({
+                  owner, repo, comment_id: mine.id, body,
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: number, body,
+                });
+              }
+            } else {
+              // No issues remain: remove the bot's previous comment so the PR
+              // doesn't keep a stale message after everything is fixed.
+              const { data: existing } = await github.rest.issues.listComments({
+                owner, repo, issue_number: number,
+              });
+              const mine = existing.find(
+                (c) => c.user.login === 'coccinella-labs-ellis[bot]' &&
+                  c.body.startsWith('The Ellis bot found the following issues')
+              );
+              if (mine) {
+                await github.request(
+                  'DELETE /repos/{owner}/{repo}/issues/comments/{comment_id}', {
+                    owner, repo, comment_id: mine.id,
+                  }
+                );
+              }
             }
