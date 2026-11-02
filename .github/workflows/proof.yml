@@ -1,0 +1,113 @@
+name: Proof
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, ready_for_review]
+
+concurrency:
+  group: proof-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  proof:
+    name: Proof
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'coccinella-labs' && github.event.pull_request.user.login != 'dependabot[bot]'
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Create app token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ELLIS_APP_ID }}
+          private-key: ${{ secrets.ELLIS_APP_PRIVATE_KEY }}
+          permission-contents: read
+          permission-pull-requests: write
+
+      - name: Review PR against template and conventions
+        uses: coccinella-labs/proof@v1
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          max-words: "900"
+
+      - name: Label non-compliant PRs
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: |
+            const { owner, repo } = context.repo;
+            const number = context.payload.pull_request.number;
+            const title = context.payload.pull_request.title;
+            const body = context.payload.pull_request.body || '';
+            const files = context.payload.pull_request.files || [];
+
+            const labels = [];
+            const comments = [];
+
+            // Check required sections
+            const required = ['Summary', 'Changes', 'Verification', 'Checklist'];
+            for (const section of required) {
+              if (!body.includes(`## ${section}`)) {
+                labels.push('missing:' + section.toLowerCase());
+                comments.push(`Missing required section: ## ${section}`);
+              }
+            }
+
+            // Check title convention
+            if (!/^[A-Z]/.test(title)) {
+              labels.push('title:needs-capitalization');
+              comments.push('PR title should start with a capital letter.');
+            }
+
+            // Check commit messages
+            const { data: commits } = await github.rest.pulls.listCommits({
+              owner, repo, pull_number: number,
+            });
+            const badCommits = commits.filter(
+              (c) => c.commit.message.split('\n')[0].length > 80
+            );
+            if (badCommits.length > 0) {
+              labels.push('commit:subject-too-long');
+              comments.push(
+                `${badCommits.length} commit(s) have subjects over 80 characters. ` +
+                'Shorten the first line of each commit message.'
+              );
+            }
+
+            // Check for SPDX header and --- separator in workflow files
+            const headerViolations = files
+              .filter((f) => f.filename.startsWith('.github/workflows/') && f.filename.endsWith('.yml'))
+              .filter((f) => {
+                const patch = f.patch || '';
+                const hasSPDX = /SPDX-License-Identifier/.test(patch);
+                const hasSeparator = /^---$/m.test(patch);
+                return hasSPDX || hasSeparator;
+              });
+
+            if (headerViolations.length > 0) {
+              labels.push('header:needs-fix');
+              comments.push(
+                `${headerViolations.length} workflow file(s) contain an SPDX header ` +
+                'or a YAML document separator (---). The repo convention is to omit both ' +
+                'from workflow files, matching the existing workflows. ' +
+                `Affected files: ${headerViolations.map((f) => f.filename).join(', ')}.`
+              );
+            }
+
+            if (labels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner, repo, issue_number: number, labels,
+              });
+            }
+
+            if (comments.length > 0) {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: number,
+                body: `The Ellis bot found the following issues with this PR:\n\n` +
+                  comments.map((c) => `- ${c}`).join('\n') +
+                  '\n\nFix these and the labels will be cleared automatically.',
+              });
+            }

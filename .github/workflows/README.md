@@ -15,6 +15,7 @@ This directory contains the GitHub Actions workflows for the Ellis repository. E
 | `ellis.yml`     | push to `main`, pull request target events                                     | Run preflight checks through the Ellis GitHub App and publish a check run |
 | `labeler.yml`   | pull request, issues                                                           | Auto-label PRs and issues from changed files and metadata                 |
 | `merge.yml`     | pull request                                                                   | Auto-merge PRs carrying the merge:ready label after review                |
+| `proof.yml`     | pull request                                                                   | Verify PR body against template, title conventions, and commit messages   |
 | `release.yml`   | push to `main`                                                                 | Run preflight checks, build the CLI, run E2E tests, and publish a release |
 | `size.yml`      | pull request                                                                   | Label PRs by size and comment on oversized changes                        |
 | `stale.yml`     | weekly cron, manual dispatch                                                   | Close stale issues and pull requests                                      |
