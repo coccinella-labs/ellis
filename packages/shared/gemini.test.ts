@@ -146,6 +146,57 @@ describe('generateTextCompletion additional branches', () => {
   });
 });
 
+describe('shared gemini branch coverage', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    process.env.GEMINI_API_KEY = 'test-key';
+  });
+
+  it('returns a spaced Gemini suggestion', async () => {
+    const { GoogleGenAI } = await import('@google/genai');
+    const instance = new (GoogleGenAI as any)();
+    instance.models.generateContent.mockResolvedValueOnce({ text: ' hello' });
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'sentence',
+      'casual',
+      'gemini'
+    );
+    expect(result).toBe(' hello');
+  });
+
+  it('returns an unspaced Gemini auto suggestion', async () => {
+    const { GoogleGenAI } = await import('@google/genai');
+    const instance = new (GoogleGenAI as any)();
+    instance.models.generateContent.mockResolvedValueOnce({ text: 'hello' });
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'sentence',
+      'casual',
+      'auto'
+    );
+    expect(result).toBe(' hello');
+  });
+
+  it('returns a spaced SambaNova direct suggestion', async () => {
+    process.env.GEMINI_API_KEY = '';
+    const sambanova = await import('./sambanova.js');
+    vi.mocked(sambanova.generateTextCompletionSambaNova).mockResolvedValueOnce(
+      ' direct'
+    );
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'sentence',
+      'casual',
+      'auto'
+    );
+    expect(result).toBe(' direct');
+  });
+});
+
 describe('shared gemini missed branches', () => {
   beforeEach(() => {
     vi.clearAllMocks();
