@@ -21,6 +21,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Create app token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ELLIS_APP_ID }}
+          private-key: ${{ secrets.ELLIS_APP_PRIVATE_KEY }}
+          permission-pull-requests: write
+
       - name: Calculate changed lines
         id: changed
         run: |
@@ -31,30 +39,30 @@ jobs:
 
       - name: Label as size:small
         if: steps.changed.outputs.added_deleted <= 100 && steps.changed.outputs.files <= 100
-        uses: actions-ecosystem/action-add-labels@v1
+        uses: actions-ecosystem/action-add-labels@v1.1.0
         with:
-          github_token: ${{ secrets.ELLIS_APP_TOKEN }}
+          github_token: ${{ steps.app-token.outputs.token }}
           labels: size:small
 
       - name: Label as size:medium
         if: steps.changed.outputs.added_deleted > 100 && steps.changed.outputs.added_deleted <= 300 && steps.changed.outputs.files <= 300
-        uses: actions-ecosystem/action-add-labels@v1
+        uses: actions-ecosystem/action-add-labels@v1.1.0
         with:
-          github_token: ${{ secrets.ELLIS_APP_TOKEN }}
+          github_token: ${{ steps.app-token.outputs.token }}
           labels: size:medium
 
       - name: Label as size:large
         if: steps.changed.outputs.added_deleted > 300 || steps.changed.outputs.files > 300
-        uses: actions-ecosystem/action-add-labels@v1
+        uses: actions-ecosystem/action-add-labels@v1.1.0
         with:
-          github_token: ${{ secrets.ELLIS_APP_TOKEN }}
+          github_token: ${{ steps.app-token.outputs.token }}
           labels: size:large
 
       - name: Comment on oversized PR
         if: steps.changed.outputs.added_deleted > 1000 || steps.changed.outputs.files > 100
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.ELLIS_APP_TOKEN }}
+          github-token: ${{ steps.app-token.outputs.token }}
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
