@@ -25,9 +25,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Create app token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ELLIS_APP_ID }}
+          private-key: ${{ secrets.ELLIS_APP_PRIVATE_KEY }}
+          permission-issues: write
+          permission-pull-requests: write
+
       - name: Apply labels
         uses: actions/labeler@v6
         with:
-          repo-token: ${{ secrets.ELLIS_APP_TOKEN }}
-          configuration-file: .github/labeler.yml
+          github_token: ${{ steps.app-token.outputs.token }}
+          configuration-path: .github/labeler.yml
           sync-labels: true
