@@ -34,13 +34,13 @@ All workflows use Node.js 22 and the `ubuntu-latest` runner. The root and CLI in
 
 ## Required secrets
 
-| Secret                  | Used by                                                    |
-| ----------------------- | ---------------------------------------------------------- |
-| `GEMINI_API_KEY`        | `e2e.yml`, `release.yml`, `cli.yml`, `ellis.yml`           |
-| `GITHUB_TOKEN`          | `release.yml` (auto-generated)                             |
-| `NPM_TOKEN`             | `release.yml` (for npm publish)                            |
-| `ELLIS_APP_ID`          | `ellis.yml`, `stale.yml`, `merge.yml` (GitHub App ID)      |
-| `ELLIS_APP_PRIVATE_KEY` | `ellis.yml`, `stale.yml`, `merge.yml` (GitHub App PEM key) |
+| Secret                  | Used by                                                                                  |
+| ----------------------- | ---------------------------------------------------------------------------------------- |
+| `GEMINI_API_KEY`        | `e2e.yml`, `release.yml`, `cli.yml`, `ellis.yml`                                         |
+| `GITHUB_TOKEN`          | `release.yml` (auto-generated)                                                           |
+| `NPM_TOKEN`             | `release.yml` (for npm publish)                                                          |
+| `ELLIS_APP_ID`          | `ellis.yml`, `stale.yml`, `merge.yml`, `changelog.yml`, `proof.yml` (GitHub App ID)      |
+| `ELLIS_APP_PRIVATE_KEY` | `ellis.yml`, `stale.yml`, `merge.yml`, `changelog.yml`, `proof.yml` (GitHub App PEM key) |
 
 The CLI smoke test skips when `GEMINI_API_KEY` is not set.
 
