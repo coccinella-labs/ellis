@@ -145,3 +145,119 @@ describe('generateTextCompletion additional branches', () => {
     expect(result).toBe('');
   });
 });
+
+describe('shared gemini additional branches', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    process.env.GEMINI_API_KEY = 'test-key';
+  });
+
+  it('returns a SambaNova suggestion', async () => {
+    const sambanova = await import('./sambanova.js');
+    vi.mocked(sambanova.generateTextCompletionSambaNova).mockResolvedValueOnce(
+      ' direct'
+    );
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'sentence',
+      'casual',
+      'sambanova'
+    );
+    expect(result).toBe(' direct');
+  });
+
+  it('returns empty for an empty SambaNova suggestion', async () => {
+    const sambanova = await import('./sambanova.js');
+    vi.mocked(sambanova.generateTextCompletionSambaNova).mockResolvedValueOnce(
+      ''
+    );
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'sentence',
+      'casual',
+      'sambanova'
+    );
+    expect(result).toBe('');
+  });
+
+  it('returns empty for a SambaNova failure', async () => {
+    const sambanova = await import('./sambanova.js');
+    vi.mocked(sambanova.generateTextCompletionSambaNova).mockRejectedValueOnce(
+      new Error('fail')
+    );
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'sentence',
+      'casual',
+      'sambanova'
+    );
+    expect(result).toBe('');
+  });
+
+  it('returns empty for a non-rate-limit Gemini failure', async () => {
+    const { GoogleGenAI } = await import('@google/genai');
+    const instance = new (GoogleGenAI as any)();
+    instance.models.generateContent.mockRejectedValueOnce(new Error('network'));
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'sentence',
+      'casual',
+      'gemini'
+    );
+    expect(result).toBe('');
+  });
+
+  it('returns a word suggestion without a leading space', async () => {
+    const { GoogleGenAI } = await import('@google/genai');
+    const instance = new (GoogleGenAI as any)();
+    instance.models.generateContent.mockResolvedValueOnce({ text: 'next' });
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello',
+      'word',
+      'casual',
+      'gemini'
+    );
+    expect(result).toBe('next');
+  });
+
+  it('returns a paragraph suggestion', async () => {
+    const { GoogleGenAI } = await import('@google/genai');
+    const instance = new (GoogleGenAI as any)();
+    instance.models.generateContent.mockResolvedValueOnce({
+      text: 'paragraph',
+    });
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'paragraph',
+      'casual',
+      'gemini'
+    );
+    expect(result).toBe(' paragraph');
+  });
+
+  it('handles a failed SambaNova fallback', async () => {
+    const err = new Error('quota exceeded');
+    (err as any).status = 429;
+    const { GoogleGenAI } = await import('@google/genai');
+    const instance = new (GoogleGenAI as any)();
+    instance.models.generateContent.mockRejectedValueOnce(err);
+    const sambanova = await import('./sambanova.js');
+    vi.mocked(sambanova.generateTextCompletionSambaNova).mockRejectedValueOnce(
+      new Error('fail')
+    );
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'sentence',
+      'casual',
+      'auto'
+    );
+    expect(result).toBe('');
+  });
+});
