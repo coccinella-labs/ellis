@@ -11,7 +11,7 @@ vi.mock('./vite', () => ({
 
 vi.mock('http', () => ({
   createServer: vi.fn(() => ({
-    listen: vi.fn((_port: number, _opts: unknown, cb?: () => void) => {
+    listen: vi.fn((_opts: unknown, cb?: () => void) => {
       if (cb) cb();
       return undefined;
     }),
