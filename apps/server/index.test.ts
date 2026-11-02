@@ -54,6 +54,7 @@ describe('server index', () => {
     const next = vi.fn();
     const req: any = { method: 'GET', path: '/api/health' };
     mod.requestLogger(req, res, next);
+    res.json({ ok: true });
     res.emit('finish');
     expect(next).toHaveBeenCalled();
   });
