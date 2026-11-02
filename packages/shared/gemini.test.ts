@@ -1,13 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-vi.mock('@google/genai', () => {
-  const generateContent = vi.fn();
-  return {
-    GoogleGenAI: vi.fn().mockImplementation(() => ({
-      models: { generateContent },
-    })),
-  };
-});
+const generateContent = vi.fn();
+
+vi.mock('@google/genai', () => ({
+  GoogleGenAI: vi.fn().mockImplementation(() => ({
+    models: { generateContent },
+  })),
+}));
 
 vi.mock('./sambanova.js', () => ({
   generateTextCompletionSambaNova: vi.fn().mockResolvedValue(' fallback'),
@@ -17,19 +16,80 @@ vi.mock('./logger.js', () => ({
   logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn(), debug: vi.fn() },
 }));
 
+vi.mock('./prompts.js', () => ({
+  buildSystemPrompt: vi.fn().mockReturnValue('prompt'),
+}));
+
 describe('generateTextCompletion', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    process.env.GEMINI_API_KEY = '';
+    process.env.GEMINI_API_KEY = 'test-key';
   });
 
-  it('returns empty when gemini has no key and provider gemini', async () => {
+  it('returns empty without key for gemini provider', async () => {
+    process.env.GEMINI_API_KEY = '';
+    const { generateTextCompletion } = await import('./gemini.js');
+    expect(
+      await generateTextCompletion(
+        'hello world text',
+        'sentence',
+        'casual',
+        'gemini'
+      )
+    ).toBe('');
+  });
+
+  it('returns suggestion for gemini provider', async () => {
+    generateContent.mockResolvedValueOnce({ text: 'hello' });
     const { generateTextCompletion } = await import('./gemini.js');
     const result = await generateTextCompletion(
       'hello world text',
       'sentence',
       'casual',
       'gemini'
+    );
+    expect(result).toBe(' hello');
+  });
+
+  it('returns empty for gemini provider with no suggestion', async () => {
+    generateContent.mockResolvedValueOnce({ text: '' });
+    const { generateTextCompletion } = await import('./gemini.js');
+    expect(
+      await generateTextCompletion(
+        'hello world text',
+        'sentence',
+        'casual',
+        'gemini'
+      )
+    ).toBe('');
+  });
+
+  it('falls back to sambanova in auto mode', async () => {
+    const err = new Error('quota exceeded');
+    (err as any).status = 429;
+    generateContent.mockRejectedValueOnce(err);
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'sentence',
+      'casual',
+      'auto'
+    );
+    expect(result).toBe(' fallback');
+  });
+
+  it('returns empty in auto mode when no key and no fallback', async () => {
+    process.env.GEMINI_API_KEY = '';
+    const sambanova = await import('./sambanova.js');
+    vi.mocked(sambanova.generateTextCompletionSambaNova).mockResolvedValueOnce(
+      ''
+    );
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'sentence',
+      'casual',
+      'auto'
     );
     expect(result).toBe('');
   });
