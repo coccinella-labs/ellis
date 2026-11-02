@@ -26,7 +26,7 @@ jobs:
             --header "Accept: application/vnd.github+json" \
             --input .github/rulesets/main-protection.json
         env:
-          GITHUB_TOKEN: ${{ secrets.BYPASS_TOKEN || secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Apply main-merge-queue ruleset
         run: |
@@ -36,4 +36,4 @@ jobs:
             --header "Accept: application/vnd.github+json" \
             --input .github/rulesets/main-merge-queue.json
         env:
-          GITHUB_TOKEN: ${{ secrets.BYPASS_TOKEN || secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
