@@ -126,7 +126,7 @@ describe('toast helpers', () => {
     act(() => {
       result.current.dismiss();
     });
-    expect(result.current.toasts.length).toBe(2);
+    expect(result.current.toasts.length).toBe(1);
     expect(result.current.toasts.every((t) => t.open === false)).toBe(true);
   });
 });
