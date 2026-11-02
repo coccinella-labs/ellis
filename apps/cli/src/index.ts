@@ -8,7 +8,7 @@ import { config } from 'dotenv';
 import { version } from '../package.json';
 
 // Load .env from project root (traverse up from current directory)
-function findEnvFile(startDir: string): string | null {
+export function findEnvFile(startDir: string): string | null {
   let currentDir = startDir;
   const root = path.parse(startDir).root;
 
@@ -99,4 +99,6 @@ program
     await editor.start();
   });
 
-program.parse(process.argv);
+if (process.env.VITEST !== 'true') {
+  program.parse(process.argv);
+}
