@@ -123,15 +123,24 @@ jobs:
             }
 
             // Remove managed labels that are present but no longer apply.
+            // A 404 means the label was already removed (e.g. the title was
+            // fixed on a previous run), which is the desired end state, so
+            // ignore it rather than failing the whole check.
             const { data: issue } = await github.rest.issues.get({
               owner, repo, issue_number: number,
             });
             const current = new Set((issue.labels || []).map((l) => l.name));
             const stale = managed.filter((l) => current.has(l) && !labels.includes(l));
             for (const label of stale) {
-              await github.rest.issues.deleteLabel({
-                owner, repo, issue_number: number, label,
-              });
+              try {
+                await github.rest.issues.deleteLabel({
+                  owner, repo, issue_number: number, label,
+                });
+              } catch (err) {
+                if (err.status !== 404) {
+                  throw err;
+                }
+              }
             }
 
             if (comments.length > 0) {
