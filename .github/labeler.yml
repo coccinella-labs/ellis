@@ -1,53 +1,71 @@
 # Label configuration for PRs and issues.
 # Used by .github/workflows/labeler.yml to auto-apply labels based on
 # changed file paths and PR metadata.
+#
+# Format: actions/labeler v5+ match objects. Each label maps to a list of
+# match rules; a rule matches when ANY of its options match (OR-ed), and
+# multiple rules for a label are OR-ed together. The `size:small` and
+# `size:medium` labels are applied by .github/workflows/size.yml based on
+# added/deleted lines and file counts, so they are intentionally absent here
+# (the labeler no longer supports the legacy `changed-files:<=N` syntax).
 
 documentation:
-  - "docs/**"
-  - "**/*.md"
-  - "README.md"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "docs/**"
+          - "**/*.md"
+          - "README.md"
 
 frontend:
-  - "apps/client/**"
+  - changed-files:
+      - any-glob-to-any-file: "apps/client/**"
 
 backend:
-  - "apps/server/**"
-  - "api/**"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "apps/server/**"
+          - "api/**"
 
 cli:
-  - "apps/cli/**"
+  - changed-files:
+      - any-glob-to-any-file: "apps/cli/**"
 
 shared:
-  - "packages/shared/**"
+  - changed-files:
+      - any-glob-to-any-file: "packages/shared/**"
 
 dependencies:
-  - "package.json"
-  - "package-lock.json"
-  - "apps/cli/package.json"
-  - "apps/cli/package-lock.json"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "package.json"
+          - "package-lock.json"
+          - "apps/cli/package.json"
+          - "apps/cli/package-lock.json"
 
 ci:
-  - ".github/workflows/**"
-  - ".github/labeler.yml"
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/workflows/**"
+          - ".github/labeler.yml"
 
 test:
-  - "**/*.test.*"
-  - "**/*.spec.*"
-  - "tests/**"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.test.*"
+          - "**/*.spec.*"
+          - "tests/**"
 
 config:
-  - ".releaserc.json"
-  - "vitest.config.ts"
-  - "tsconfig*.json"
-  - "eslint.config.js"
-  - "commitlint.config.js"
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".releaserc.json"
+          - "vitest.config.ts"
+          - "tsconfig*.json"
+          - "eslint.config.js"
+          - "commitlint.config.js"
 
 docker:
-  - "Dockerfile"
-  - "docker/**"
-
-size:small:
-  - "changed-files:<=100"
-
-size:medium:
-  - "changed-files:<=300"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "Dockerfile"
+          - "docker/**"
