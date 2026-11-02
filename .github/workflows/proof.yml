@@ -135,9 +135,11 @@ jobs:
             const stale = managed.filter((l) => current.has(l) && !labels.includes(l));
             for (const label of stale) {
               try {
-                await github.rest.issues.deleteLabel({
-                  owner, repo, issue_number: number, label,
-                });
+                await github.request(
+                  'DELETE /repos/{owner}/{repo}/issues/{issue_number}/labels/{label}', {
+                    owner, repo, issue_number: number, label,
+                  }
+                );
               } catch (err) {
                 if (err.status !== 404) {
                   throw err;
