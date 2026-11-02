@@ -30,7 +30,7 @@ jobs:
 
       - name: Apply main-merge-queue ruleset
         run: |
-          RULESET_ID=26353193
+          RULESET_ID=26353638
           gh api repos/${{ github.repository }}/rulesets/$RULESET_ID \
             --method PUT \
             --header "Accept: application/vnd.github+json" \
