@@ -41,3 +41,29 @@ describe('CLI edit command', () => {
     logSpy.mockRestore();
   });
 });
+
+describe('CLI new command', () => {
+  beforeEach(() => {
+    vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('requires an API key', () => {
+    delete process.env.GEMINI_API_KEY;
+    program.parse(['new'], { from: 'user' });
+    expect(process.exit).toHaveBeenCalledWith(1);
+  });
+
+  it('starts a new document', () => {
+    process.env.GEMINI_API_KEY = 'test';
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    program.parse(['new'], { from: 'user' });
+    expect(logSpy).toHaveBeenCalled();
+    logSpy.mockRestore();
+  });
+});
