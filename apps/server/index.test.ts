@@ -115,3 +115,13 @@ describe('server index missed branches', () => {
     expect(res.json).toHaveBeenCalledWith({ message: 'Internal Server Error' });
   });
 });
+
+describe('server index error handler', () => {
+  it('uses the default error message', async () => {
+    const mod = await import('./index');
+    const res: any = { status: vi.fn().mockReturnThis(), json: vi.fn() };
+    mod.errorHandler({ status: 400 }, {} as any, res, vi.fn());
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ message: 'Internal Server Error' });
+  });
+});
