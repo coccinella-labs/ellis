@@ -74,7 +74,7 @@ jobs:
             for (const section of required) {
               if (!body.includes(`## ${section}`)) {
                 labels.push('missing:' + section.toLowerCase());
-                comments.push(`Missing required section: ## ${section}`);
+                comments.push(`Missing required section: \`\`## ${section}\``);
               }
             }
 
@@ -115,9 +115,9 @@ jobs:
               labels.push('header:needs-fix');
               comments.push(
                 `${headerViolations.length} workflow file(s) contain an SPDX header ` +
-                'or a YAML document separator (---). The repo convention is to omit both ' +
+                'or a YAML document separator (`---`). The repo convention is to omit both ' +
                 'from workflow files, matching the existing workflows. ' +
-                `Affected files: ${headerViolations.map((f) => f.filename).join(', ')}.`
+                `Affected files: ${headerViolations.map((f) => `\`${f.filename}\``).join(', ')}.`
               );
             }
 
