@@ -35,7 +35,15 @@ jobs:
             const number = context.payload.pull_request.number;
             const title = context.payload.pull_request.title;
             const body = context.payload.pull_request.body || '';
-            const files = context.payload.pull_request.files || [];
+            // The pull_request webhook payload does not include the changed
+            // files, so fetch them via the API.
+            const files = [];
+            for await (const file of github.paginate.iterator(
+              github.rest.pulls.getFiles,
+              { owner, repo, pull_number: number, per_page: 100 }
+            )) {
+              files.push(file);
+            }
 
             const labels = [];
             const comments = [];
