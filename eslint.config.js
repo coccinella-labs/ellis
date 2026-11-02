@@ -58,7 +58,7 @@ export default [
     },
   },
   {
-    files: ['tests/**/*.ts'],
+    files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
     languageOptions: {
       parser: tsparser,
       parserOptions: {
@@ -79,7 +79,9 @@ export default [
         'error',
         { argsIgnorePattern: '^_' },
       ],
-      '@typescript-eslint/no-explicit-any': 'warn',
+      // `any` is idiomatic in test code (mocks, assertions, fixture data),
+      // so it is allowed here rather than enforced as a warning.
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
   {
