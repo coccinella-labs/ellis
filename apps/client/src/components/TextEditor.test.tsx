@@ -79,3 +79,79 @@ describe('TextEditor', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('TextEditor interactions', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.useFakeTimers();
+    fetchMock.mockResolvedValue({
+      json: vi.fn().mockResolvedValue({ suggestion: ' suggestion' }),
+    });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('accepts suggestion with Tab', async () => {
+    const onTextChange = vi.fn();
+    const onSuggestionAccept = vi.fn();
+    render(
+      <TextEditor
+        onTextChange={onTextChange}
+        onSuggestionAccept={onSuggestionAccept}
+      />
+    );
+
+    const textarea = screen.getByTestId('input-editor');
+    fireEvent.change(textarea, {
+      target: { value: 'Hello world this is a longer text' },
+    });
+
+    await act(async () => {
+      vi.advanceTimersByTime(500);
+      await Promise.resolve();
+    });
+
+    fireEvent.keyDown(textarea, { key: 'Tab' });
+    expect(onSuggestionAccept).toHaveBeenCalled();
+  });
+
+  it('dismisses suggestion with Escape', async () => {
+    render(<TextEditor />);
+
+    const textarea = screen.getByTestId('input-editor');
+    fireEvent.change(textarea, {
+      target: { value: 'Hello world this is a longer text' },
+    });
+
+    await act(async () => {
+      vi.advanceTimersByTime(500);
+      await Promise.resolve();
+    });
+
+    fireEvent.keyDown(textarea, { key: 'Escape' });
+    expect(screen.queryByTestId('text-suggestion')).not.toBeInTheDocument();
+  });
+
+  it('switches model with key 1', async () => {
+    fetchMock.mockResolvedValue({
+      json: vi.fn().mockResolvedValue({ suggestion: '' }),
+    });
+    const onGeminiModelChange = vi.fn();
+    render(<TextEditor onGeminiModelChange={onGeminiModelChange} />);
+
+    const textarea = screen.getByTestId('input-editor');
+    fireEvent.change(textarea, {
+      target: { value: 'Hello world this is a longer text' },
+    });
+
+    await act(async () => {
+      vi.advanceTimersByTime(500);
+      await Promise.resolve();
+    });
+
+    fireEvent.keyDown(textarea, { key: '1' });
+    expect(onGeminiModelChange).toHaveBeenCalledWith('gemini-3.8-flash');
+  });
+});
