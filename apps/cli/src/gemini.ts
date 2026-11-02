@@ -1,6 +1,6 @@
 import { GoogleGenAI } from '@google/genai';
 
-function buildSystemPrompt(
+export function buildSystemPrompt(
   mode: 'word' | 'sentence' | 'paragraph',
   style: 'casual' | 'formal' | 'creative' | 'technical'
 ): string {
