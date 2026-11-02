@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useToast, toast } from './use-toast';
 
@@ -113,5 +113,23 @@ describe('toast helpers', () => {
       result.current.toasts[0]?.onOpenChange?.(false);
     });
     expect(result.current.toasts[0]?.open).toBe(false);
+  });
+});
+
+describe('toast timers', () => {
+  it('removes a toast after the delay', () => {
+    vi.useFakeTimers();
+    const { result } = renderHook(() => useToast());
+    act(() => {
+      toast({ title: 'original' });
+    });
+    act(() => {
+      result.current.dismiss();
+    });
+    act(() => {
+      vi.advanceTimersByTime(1000000);
+    });
+    expect(result.current.toasts).toHaveLength(0);
+    vi.useRealTimers();
   });
 });
