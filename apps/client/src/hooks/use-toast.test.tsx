@@ -84,3 +84,34 @@ describe('toast reducer', () => {
     expect(state.toasts).toHaveLength(0);
   });
 });
+
+describe('toast helpers', () => {
+  it('updates a toast', () => {
+    const { result } = renderHook(() => useToast());
+    const created = toast({ title: 'original' });
+    act(() => {
+      created.update({ title: 'updated' } as any);
+    });
+    expect(result.current.toasts[0]?.title).toBe('updated');
+  });
+
+  it('dismisses all toasts', () => {
+    const { result } = renderHook(() => useToast());
+    toast({ title: 'original' });
+    act(() => {
+      result.current.dismiss();
+    });
+    expect(result.current.toasts[0]?.open).toBe(false);
+  });
+
+  it('dismisses through onOpenChange', () => {
+    const { result } = renderHook(() => useToast());
+    act(() => {
+      toast({ title: 'original' });
+    });
+    act(() => {
+      result.current.toasts[0]?.onOpenChange?.(false);
+    });
+    expect(result.current.toasts[0]?.open).toBe(false);
+  });
+});
