@@ -17,13 +17,11 @@ vi.mock('fs', () => ({
 }));
 
 vi.mock('vite', () => ({
-  createServer: vi
-    .fn()
-    .mockResolvedValue({
-      middlewares: {},
-      transformIndexHtml: vi.fn().mockResolvedValue('<html></html>'),
-      ssrFixStacktrace: vi.fn(),
-    }),
+  createServer: vi.fn().mockResolvedValue({
+    middlewares: {},
+    transformIndexHtml: vi.fn().mockResolvedValue('<html></html>'),
+    ssrFixStacktrace: vi.fn(),
+  }),
   createLogger: vi.fn().mockReturnValue({ error: vi.fn() }),
 }));
 
@@ -53,19 +51,76 @@ describe('vite helpers', () => {
     spy.mockRestore();
   });
 
-  it('sets up vite middleware', async () => {
+  it('sets up vite middleware and handles index request', async () => {
+    const callbacks: any[] = [];
     const app: any = {
-      use: vi.fn(),
+      use: vi.fn((...args: any[]) => {
+        const fn = [...args].reverse().find((arg) => typeof arg === 'function');
+        if (fn) callbacks.push(fn);
+      }),
       get: vi.fn().mockReturnValue('development'),
     };
     const server: any = {};
     await setupVite(app, server);
-    expect(app.use).toHaveBeenCalled();
+
+    const handler = callbacks.find((fn) => fn.length >= 3);
+    expect(handler).toBeTruthy();
+
+    const res: any = {
+      status: vi.fn().mockReturnThis(),
+      set: vi.fn().mockReturnThis(),
+      end: vi.fn(),
+    };
+    const next = vi.fn();
+    await handler({ originalUrl: '/' }, res, next);
+    expect(res.end).toHaveBeenCalled();
+  });
+
+  it('handles vite middleware errors', async () => {
+    const fs = await import('fs');
+    (fs.default.promises.readFile as any).mockRejectedValueOnce(
+      new Error('read failed')
+    );
+
+    const callbacks: any[] = [];
+    const app: any = {
+      use: vi.fn((...args: any[]) => {
+        const fn = [...args].reverse().find((arg) => typeof arg === 'function');
+        if (fn) callbacks.push(fn);
+      }),
+      get: vi.fn().mockReturnValue('development'),
+    };
+    const server: any = {};
+    await setupVite(app, server);
+
+    const handler = callbacks.find((fn) => fn.length >= 3);
+    const res: any = {
+      status: vi.fn().mockReturnThis(),
+      set: vi.fn().mockReturnThis(),
+      end: vi.fn(),
+    };
+    const next = vi.fn();
+    await handler({ originalUrl: '/' }, res, next);
+    expect(next).toHaveBeenCalled();
   });
 
   it('serves static files', () => {
-    const app: any = { use: vi.fn() };
-    expect(() => serveStatic(app)).not.toThrow();
+    const callbacks: any[] = [];
+    const app: any = {
+      use: vi.fn((...args: any[]) => {
+        const fn = [...args].reverse().find((arg) => typeof arg === 'function');
+        if (fn) callbacks.push(fn);
+      }),
+    };
+
+    serveStatic(app);
     expect(app.use).toHaveBeenCalled();
+
+    const handler = callbacks[callbacks.length - 1];
+    expect(handler).toBeTruthy();
+
+    const res: any = { sendFile: vi.fn() };
+    handler({}, res);
+    expect(res.sendFile).toHaveBeenCalled();
   });
 });
