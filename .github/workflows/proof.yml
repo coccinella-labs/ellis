@@ -38,12 +38,15 @@ jobs:
             // The pull_request webhook payload does not include the changed
             // files, so fetch them via the API.
             const files = [];
-            for await (const file of github.paginate.iterator(
-              github.rest.pulls.getFiles,
-              { owner, repo, pull_number: number, per_page: 100 }
-            )) {
-              files.push(file);
-            }
+            let page = 1;
+            let fetched;
+            do {
+              fetched = await github.rest.pulls.getFiles({
+                owner, repo, pull_number: number, per_page: 100, page,
+              });
+              files.push(...(fetched.data || []));
+              page += 1;
+            } while (fetched.data && fetched.data.length === 100);
 
             const labels = [];
             const comments = [];
