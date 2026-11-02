@@ -16,4 +16,24 @@ describe('TextEditor CLI', () => {
     expect(logSpy).toHaveBeenCalled();
     logSpy.mockRestore();
   });
+
+  it('handles save without output file', async () => {
+    const editor = new TextEditor({ mode: 'sentence', style: 'casual' });
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    await (editor as any).handleInput('.save');
+    expect(logSpy).toHaveBeenCalledWith('No output file. Use --output flag.');
+    logSpy.mockRestore();
+  });
+
+  it('shows initial content on start', async () => {
+    const editor = new TextEditor({
+      mode: 'sentence',
+      style: 'casual',
+      initialContent: 'hello',
+    });
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    await (editor as any).start();
+    expect(logSpy).toHaveBeenCalled();
+    logSpy.mockRestore();
+  });
 });
