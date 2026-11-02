@@ -9,11 +9,11 @@ app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: false, limit: '1mb' }));
 
 // Sanitization helper: strips newlines from a string
-function sanitizeForLog(input: string): string {
+export function sanitizeForLog(input: string): string {
   return input.replace(/[\n\r]/g, '');
 }
 
-app.use((req, res, next) => {
+export function requestLogger(req: Request, res: Response, next: NextFunction) {
   const start = Date.now();
   const path = sanitizeForLog(req.path);
 
@@ -32,7 +32,9 @@ app.use((req, res, next) => {
   });
 
   next();
-});
+}
+
+app.use(requestLogger);
 
 const configuredApp = registerRoutes(app);
 

@@ -40,6 +40,24 @@ describe('server index', () => {
     expect(res.json).toHaveBeenCalledWith({ message: 'bad' });
   });
 
+  it('sanitizes log input', async () => {
+    const mod = await import('./index');
+    expect(mod.sanitizeForLog('a\nb\rc')).toBe('abc');
+  });
+
+  it('runs request logger middleware', async () => {
+    const mod = await import('./index');
+    const { EventEmitter } = await import('events');
+    const res: any = new EventEmitter();
+    res.statusCode = 200;
+    res.json = vi.fn(() => res);
+    const next = vi.fn();
+    const req: any = { method: 'GET', path: '/api/health' };
+    mod.requestLogger(req, res, next);
+    res.emit('finish');
+    expect(next).toHaveBeenCalled();
+  });
+
   it('uses the production branch with Vercel', async () => {
     vi.resetModules();
     process.env.NODE_ENV = 'production';
