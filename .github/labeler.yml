@@ -1,0 +1,53 @@
+# Label configuration for PRs and issues.
+# Used by .github/workflows/labeler.yml to auto-apply labels based on
+# changed file paths and PR metadata.
+
+documentation:
+  - "docs/**"
+  - "**/*.md"
+  - "README.md"
+
+frontend:
+  - "apps/client/**"
+
+backend:
+  - "apps/server/**"
+  - "api/**"
+
+cli:
+  - "apps/cli/**"
+
+shared:
+  - "packages/shared/**"
+
+dependencies:
+  - "package.json"
+  - "package-lock.json"
+  - "apps/cli/package.json"
+  - "apps/cli/package-lock.json"
+
+ci:
+  - ".github/workflows/**"
+  - ".github/labeler.yml"
+
+test:
+  - "**/*.test.*"
+  - "**/*.spec.*"
+  - "tests/**"
+
+config:
+  - ".releaserc.json"
+  - "vitest.config.ts"
+  - "tsconfig*.json"
+  - "eslint.config.js"
+  - "commitlint.config.js"
+
+docker:
+  - "Dockerfile"
+  - "docker/**"
+
+size:small:
+  - "changed-files:<=100"
+
+size:medium:
+  - "changed-files:<=300"

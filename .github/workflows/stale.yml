@@ -1,0 +1,84 @@
+name: Stale
+
+on:
+  schedule:
+    - cron: '0 3 * * 0'  # Weekly Sunday 03:00 UTC
+  workflow_dispatch:
+
+jobs:
+  stale:
+    name: Close stale issues and PRs
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'coccinella-labs'
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Create app token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ELLIS_APP_ID }}
+          private-key: ${{ secrets.ELLIS_APP_PRIVATE_KEY }}
+          permission-issues: write
+          permission-pull-requests: write
+
+      - name: Close stale issues and PRs
+        uses: actions/stale@v10
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          stale-issue-message: |
+            This issue has been inactive for 30 days and will be closed in 7
+            days unless updated. If this is still relevant, please comment or
+            reopen it to keep it active.
+          close-issue-message: |
+            This issue was automatically closed after 37 days of inactivity.
+            Reopen it if you would like to continue the discussion.
+          days-before-stale: 30
+          days-before-close: 7
+          operations-per-run: 100
+          stale-issue-label: stale
+
+          stale-pr-message: |
+            This pull request has been inactive for 14 days and will be
+            closed in 7 days unless updated. If you are still working on it,
+            update the branch or add a comment to keep it active.
+          close-pr-message: |
+            This pull request was automatically closed after 21 days of
+            inactivity. Reopen it or start a new one based on this branch.
+          days-before-pr-stale: 14
+          days-before-pr-close: 7
+          stale-pr-label: stale
+
+      - name: Add merge badge to stale PRs
+        if: always()
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          github_token: ${{ steps.app-token.outputs.token }}
+          labels: merge:ready
+
+      - name: Comment on inactive PRs
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: |
+            const { owner, repo } = context.repo;
+            const { data: prs } = await github.rest.pulls.list({
+              owner, repo, state: 'open', sort: 'updated', direction: 'asc',
+            });
+            const cutoff = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+            for (const pr of prs) {
+              if (new Date(pr.updated_at) > cutoff) continue;
+              const { data: comments } = await github.rest.issues.listComments({
+                owner, repo, issue_number: pr.number,
+              });
+              const alreadyCommented = comments.some(
+                (c) => c.user.type === 'Bot' && c.body.includes('inactive')
+              );
+              if (alreadyCommented) continue;
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: pr.number,
+                body: `This pull request has been inactive for over 14 days. The Ellis bot will mark it stale and may close it unless updated. If this work is still relevant, please update the branch or add a comment to keep it active.`
+              });
+            }

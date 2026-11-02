@@ -1,0 +1,52 @@
+name: Merge
+
+on:
+  pull_request:
+    types: [labeled, synchronize, ready_for_review]
+
+jobs:
+  merge:
+    name: Auto-merge with badge
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'coccinella-labs' && contains(github.event.pull_request.labels.*.name, 'merge:ready')
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
+    steps:
+      - name: Create app token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ELLIS_APP_ID }}
+          private-key: ${{ secrets.ELLIS_APP_PRIVATE_KEY }}
+          permission-checks: write
+          permission-contents: write
+          permission-pull-requests: write
+
+      - name: Enable auto-merge
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: |
+            const { owner, repo, number } = context.repo;
+            const pr = context.payload.pull_request;
+
+            // Require a review and passing checks before merging
+            const reviews = await github.rest.pulls.listReviews({
+              owner, repo, pull_number: number,
+            });
+            const approved = reviews.data.some(
+              (r) => r.state === 'APPROVED' && r.user.login !== pr.user.login
+            );
+
+            if (!approved) {
+              console.log('No approval from another contributor; skipping merge.');
+              return;
+            }
+
+            await github.rest.pulls.merge({
+              owner, repo, pull_number: number,
+              merge_method: 'squash',
+              commit_title: `${pr.title} (#${number})`,
+            });

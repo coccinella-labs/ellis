@@ -1,0 +1,29 @@
+name: Labeler
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+  issues:
+    types: [opened, edited]
+
+jobs:
+  label:
+    name: Auto-label
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'coccinella-labs'
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Apply labels
+        uses: github/labeler@v6
+        with:
+          repo-token: ${{ secrets.ELLIS_APP_TOKEN }}
+          configuration-file: .github/labeler.yml
+          sync-labels: true

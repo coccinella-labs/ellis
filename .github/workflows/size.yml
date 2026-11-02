@@ -1,0 +1,60 @@
+name: Size Check
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+jobs:
+  size:
+    name: Check PR size
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'coccinella-labs'
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Calculate changed lines
+        id: changed
+        run: |
+          ADDED=$(git diff --diff-filter=AM --numstat origin/main...HEAD | awk '{add+=$1; del+=$2} END {print add+del}')
+          FILES=$(git diff --diff-filter=AM --name-only origin/main...HEAD | wc -l)
+          echo "added_deleted=$ADDED" >> "$GITHUB_OUTPUT"
+          echo "files=$FILES" >> "$GITHUB_OUTPUT"
+
+      - name: Label as size:small
+        if: steps.changed.outputs.added_deleted <= 100 && steps.changed.outputs.files <= 100
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          github_token: ${{ secrets.ELLIS_APP_TOKEN }}
+          labels: size:small
+
+      - name: Label as size:medium
+        if: steps.changed.outputs.added_deleted > 100 && steps.changed.outputs.added_deleted <= 300 && steps.changed.outputs.files <= 300
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          github_token: ${{ secrets.ELLIS_APP_TOKEN }}
+          labels: size:medium
+
+      - name: Label as size:large
+        if: steps.changed.outputs.added_deleted > 300 || steps.changed.outputs.files > 300
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          github_token: ${{ secrets.ELLIS_APP_TOKEN }}
+          labels: size:large
+
+      - name: Comment on oversized PR
+        if: steps.changed.outputs.added_deleted > 1000 || steps.changed.outputs.files > 100
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.ELLIS_APP_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `This PR is large: ${context.payload.pull_request.added} lines across ${context.payload.pull_request.changed_files} files. Consider splitting it into smaller PRs for easier review.`
+            })

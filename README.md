@@ -4,6 +4,17 @@
 
 # ellis
 
+[![CI](https://github.com/coccinella-labs/ellis/actions/workflows/ci.yml/badge.svg)](https://github.com/coccinella-labs/ellis/actions/workflows/ci.yml)
+[![Ellis](https://github.com/coccinella-labs/ellis/actions/workflows/ellis.yml/badge.svg)](https://github.com/coccinella-labs/ellis/actions/workflows/ellis.yml)
+[![Validate Workflows](https://github.com/coccinella-labs/ellis/actions/workflows/validate.yml/badge.svg)](https://github.com/coccinella-labs/ellis/actions/workflows/validate.yml)
+[![Docker](https://github.com/coccinella-labs/ellis/actions/workflows/docker.yml/badge.svg)](https://github.com/coccinella-labs/ellis/actions/workflows/docker.yml)
+[![E2E Tests](https://github.com/coccinella-labs/ellis/actions/workflows/e2e.yml/badge.svg)](https://github.com/coccinella-labs/ellis/actions/workflows/e2e.yml)
+[![CLI](https://github.com/coccinella-labs/ellis/actions/workflows/cli.yml/badge.svg)](https://github.com/coccinella-labs/ellis/actions/workflows/cli.yml)
+[![CodeQL](https://github.com/coccinella-labs/ellis/actions/workflows/codeql.yml/badge.svg)](https://github.com/coccinella-labs/ellis/actions/workflows/codeql.yml)
+[![Stale](https://img.shields.io/badge/stale-closed-blue)](https://github.com/coccinella-labs/ellis/actions/workflows/stale.yml)
+[![Labeler](https://img.shields.io/badge/labeler-active-green)](https://github.com/coccinella-labs/ellis/actions/workflows/labeler.yml)
+[![Merge](https://img.shields.io/badge/merge-ready-green)](https://github.com/coccinella-labs/ellis/actions/workflows/merge.yml)
+
 ellis is an AI-powered text editor that ships as both a web application and a command-line tool. It offers inline AI text completion as you type: suggestions appear as ghost text over your writing, and you press Tab to accept one or Escape to dismiss it. Completions can be generated at three granularities, word, sentence, or paragraph, and in four writing styles, casual, formal, creative, or technical. Mode and style are independent, so a technical paragraph or a casual sentence can be requested without changing anything else about the setup.
 
 The web app is a React single-page application with dark and light themes, a settings panel, and keyboard shortcuts. It runs on an Express server with Vite handling the frontend build and development experience. The CLI provides a simpler, line-based editing workflow through the `fx` command: start a fresh document with `fx new --mode sentence --style casual`, or open an existing file with `fx edit draft.txt --mode paragraph --style technical`. The web app supports Gemini and SambaNova. The CLI currently requires a Gemini API key.
