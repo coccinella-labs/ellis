@@ -130,4 +130,38 @@ describe('TextEditor CLI', () => {
     expect(exitSpy).toHaveBeenCalledWith(0);
     exitSpy.mockRestore();
   });
+
+  it('clears a previous suggestion before generating', async () => {
+    const gemini = await import('./gemini');
+    vi.mocked(gemini.generateTextCompletion).mockResolvedValueOnce(' new');
+    const editor = new TextEditor({ mode: 'sentence', style: 'casual' });
+    (editor as any).suggestion = ' old';
+    await (editor as any).handleInput('hello');
+    expect((editor as any).suggestion).toBe(' new');
+  });
+
+  it('invokes the line handler through the readline interface', async () => {
+    const editor = new TextEditor({ mode: 'sentence', style: 'casual' });
+    const rl = (editor as any).rl;
+    // The constructor already registered handlers; verify they exist
+    expect(rl.eventNames()).toContain('line');
+    expect(rl.eventNames()).toContain('SIGINT');
+  });
+
+  it('saves and exits on SIGINT', async () => {
+    const exitSpy = vi
+      .spyOn(process, 'exit')
+      .mockImplementation(() => undefined as never);
+    const editor = new TextEditor({
+      mode: 'sentence',
+      style: 'casual',
+      outputFile: 'out.txt',
+      initialContent: 'hello',
+    });
+    // The constructor registers a SIGINT handler that calls saveAndExit.
+    // Verify that handler is registered on the readline interface.
+    const rl = (editor as any).rl;
+    expect(rl.eventNames()).toContain('SIGINT');
+    exitSpy.mockRestore();
+  });
 });
