@@ -127,7 +127,7 @@ export async function generateTextCompletion(
     }
 
     logger.info(`Generated Gemini suggestion (${model}): ${suggestion}`);
-    return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
+    return ' ' + suggestion;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     logger.error('Gemini generation failed');
