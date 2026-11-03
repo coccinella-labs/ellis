@@ -1,49 +1,52 @@
-import { describe, it, expect, vi } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { renderHook, act } from '@testing-library/react';
 import { useIsMobile } from './use-mobile';
 
 describe('useIsMobile', () => {
-  it('returns boolean', () => {
-    const spy = vi.spyOn(window, 'matchMedia').mockImplementation(
-      (q: string) =>
-        ({
-          matches: false,
-          media: q,
-          addEventListener: vi.fn(),
-          removeEventListener: vi.fn(),
-          dispatchEvent: vi.fn(),
-          onchange: null,
-          addListener: vi.fn(),
-          removeListener: vi.fn(),
-        }) as unknown as MediaQueryList
-    );
+  const originalInnerWidth = window.innerWidth;
+  let changeHandler: (() => void) | undefined;
 
-    const { result } = renderHook(() => useIsMobile());
-    expect(typeof result.current).toBe('boolean');
-    expect(result.current).toBe(false);
-
-    spy.mockRestore();
+  beforeEach(() => {
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: vi.fn().mockImplementation((query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn((_event: string, handler: () => void) => {
+          changeHandler = handler;
+        }),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
   });
 
-  it('registers a change listener', () => {
-    const addSpy = vi.fn();
-    const spy = vi.spyOn(window, 'matchMedia').mockImplementation(
-      (q: string) =>
-        ({
-          matches: false,
-          media: q,
-          addEventListener: addSpy,
-          removeEventListener: vi.fn(),
-          dispatchEvent: vi.fn(),
-          onchange: null,
-          addListener: vi.fn(),
-          removeListener: vi.fn(),
-        }) as unknown as MediaQueryList
-    );
+  afterEach(() => {
+    Object.defineProperty(window, 'innerWidth', {
+      writable: true,
+      value: originalInnerWidth,
+    });
+  });
 
-    renderHook(() => useIsMobile());
-    expect(addSpy).toHaveBeenCalledWith('change', expect.any(Function));
+  it('returns true on a mobile viewport', () => {
+    Object.defineProperty(window, 'innerWidth', { writable: true, value: 500 });
+    const { result } = renderHook(() => useIsMobile());
+    expect(result.current).toBe(true);
+  });
 
-    spy.mockRestore();
+  it('updates when the viewport changes', () => {
+    Object.defineProperty(window, 'innerWidth', {
+      writable: true,
+      value: 1024,
+    });
+    const { result } = renderHook(() => useIsMobile());
+    Object.defineProperty(window, 'innerWidth', { writable: true, value: 500 });
+    act(() => {
+      changeHandler?.();
+    });
+    expect(result.current).toBe(true);
   });
 });
