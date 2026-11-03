@@ -209,7 +209,7 @@ describe('shared gemini missed branches', () => {
       'casual',
       'auto'
     );
-    expect(result).toBe(' direct');
+    expect(result).toBe('direct');
   });
 
   it('returns a paragraph suggestion in auto mode', async () => {

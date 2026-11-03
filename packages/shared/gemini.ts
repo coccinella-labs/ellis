@@ -67,7 +67,7 @@ export async function generateTextCompletion(
       }
 
       logger.info(`Generated Gemini suggestion (${model}): ${suggestion}`);
-      return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
+      return ' ' + suggestion;
     } catch {
       logger.error('Gemini generation failed');
       return '';
@@ -88,7 +88,7 @@ export async function generateTextCompletion(
       );
       if (suggestion) {
         logger.info('Generated SambaNova suggestion (direct)');
-        return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
+        return suggestion;
       }
     } catch {
       logger.error('SambaNova generation failed');
