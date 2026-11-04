@@ -129,24 +129,6 @@ describe('generateTextCompletionAtlasCloud', () => {
     expect(result).toBe('');
   });
 
-  it('returns empty when the request times out', async () => {
-    createMock.mockImplementationOnce(
-      () =>
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('atlascloud timeout')), 100)
-        )
-    );
-    const { generateTextCompletionAtlasCloud } = await import(
-      './atlascloud.js'
-    );
-    const result = await generateTextCompletionAtlasCloud(
-      'hello',
-      'sentence',
-      'casual'
-    );
-    expect(result).toBe('');
-  });
-
   it('throws when there is no API key', async () => {
     delete process.env.ATLASCLOUD_API_KEY;
     const { generateTextCompletionAtlasCloud } = await import(

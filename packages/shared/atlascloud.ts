@@ -20,6 +20,8 @@ export async function generateTextCompletionAtlasCloud(
   currentText: string,
   mode: 'word' | 'sentence' | 'paragraph' = 'sentence',
   style: 'casual' | 'formal' | 'creative' | 'technical' = 'casual',
+  // AtlasCloud's direct catalog ID. OpenRouter lists the same model as
+  // dots-studio/dots-3-note-preview:free, which is not AtlasCloud's ID.
   model: string = 'dots-studio/dots-3-note-prev-free'
 ): Promise<string> {
   const client = getAtlasCloudClient();
