@@ -3,8 +3,15 @@ import { buildSystemPrompt } from './prompts.js';
 import { logger } from './logger.js';
 
 function getOpenRouterClient() {
+  const apiKey = process.env.OPENROUTER_API_KEY || '';
+  if (!apiKey) {
+    throw new Error(
+      'OPENROUTER_API_KEY is not set. OpenRouter requires an API key ' +
+        'even for its free models. Get one at https://openrouter.ai/keys.'
+    );
+  }
   return new OpenAI({
-    apiKey: process.env.OPENROUTER_API_KEY || '',
+    apiKey,
     baseURL: 'https://openrouter.ai/api/v1',
     defaultHeaders: {
       // Optional attribution so the app appears on the OpenRouter leaderboards.
@@ -55,7 +62,7 @@ export async function generateTextCompletionOpenRouter(
       return content;
     }
 
-    logger.info(`Generated OpenRouter suggestion (${model}): ${content}`);
+    logger.info(`Generated OpenRouter suggestion (${model})`);
     return content.startsWith(' ') ? content : ' ' + content;
   } catch {
     logger.error('OpenRouter generation failed');

@@ -143,7 +143,7 @@ async function generateTextCompletionSambaNova(
     if (mode === 'word' && !currentText.endsWith(' ')) {
       return suggestion;
     }
-    logger.info(`Generated SambaNova suggestion: ${suggestion}`);
+    logger.info(`Generated SambaNova suggestion`);
     return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
   } catch {
     logger.error('SambaNova generation failed');
@@ -154,8 +154,14 @@ async function generateTextCompletionSambaNova(
 // packages/shared/openrouter.ts
 import OpenAI2 from 'openai';
 function getOpenRouterClient() {
+  const apiKey = process.env.OPENROUTER_API_KEY || '';
+  if (!apiKey) {
+    throw new Error(
+      'OPENROUTER_API_KEY is not set. OpenRouter requires an API key even for its free models. Get one at https://openrouter.ai/keys.'
+    );
+  }
   return new OpenAI2({
-    apiKey: process.env.OPENROUTER_API_KEY || '',
+    apiKey,
     baseURL: 'https://openrouter.ai/api/v1',
     defaultHeaders: {
       // Optional attribution so the app appears on the OpenRouter leaderboards.
@@ -198,7 +204,7 @@ async function generateTextCompletionOpenRouter(
     if (mode === 'word' && !currentText.endsWith(' ')) {
       return content;
     }
-    logger.info(`Generated OpenRouter suggestion (${model}): ${content}`);
+    logger.info(`Generated OpenRouter suggestion (${model})`);
     return content.startsWith(' ') ? content : ' ' + content;
   } catch {
     logger.error('OpenRouter generation failed');
@@ -225,7 +231,7 @@ async function generateTextCompletion(
         style
       );
       if (suggestion) {
-        console.log('Generated SambaNova suggestion:', suggestion);
+        logger.info('Generated SambaNova suggestion');
         return suggestion;
       }
     } catch (error) {
@@ -275,7 +281,7 @@ async function generateTextCompletion(
       if (mode === 'word' && !currentText.endsWith(' ')) {
         return suggestion;
       }
-      logger.info(`Generated Gemini suggestion (${model}): ${suggestion}`);
+      logger.info(`Generated Gemini suggestion (${model})`);
       return ' ' + suggestion;
     } catch {
       logger.error('Gemini generation failed');
@@ -312,7 +318,7 @@ async function generateTextCompletion(
     if (mode === 'word' && !currentText.endsWith(' ')) {
       return suggestion;
     }
-    logger.info(`Generated Gemini suggestion (${model}): ${suggestion}`);
+    logger.info(`Generated Gemini suggestion (${model})`);
     return ' ' + suggestion;
   } catch (error) {
     logger.error('Gemini generation failed');
@@ -397,15 +403,13 @@ var WINDOW_MS = 6e4;
 var MAX_REQUESTS = 30;
 async function getRatelimit() {
   if (ratelimit) return ratelimit;
-  const redisUrl = process.env.UPSTASH_REDIS_URL;
-  if (redisUrl) {
+  const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
+  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (redisUrl && redisToken) {
     try {
       const { Ratelimit } = await import('@upstash/ratelimit');
       const { Redis } = await import('@upstash/redis');
-      const redis = new Redis({
-        url: process.env.UPSTASH_REDIS_REST_URL || redisUrl,
-        token: process.env.UPSTASH_REDIS_REST_TOKEN || '',
-      });
+      const redis = new Redis({ url: redisUrl, token: redisToken });
       ratelimit = new Ratelimit({
         redis,
         limiter: Ratelimit.slidingWindow(MAX_REQUESTS, `${WINDOW_MS} ms`),

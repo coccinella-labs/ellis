@@ -143,7 +143,7 @@ async function generateTextCompletionSambaNova(
     if (mode === 'word' && !currentText.endsWith(' ')) {
       return suggestion;
     }
-    logger.info(`Generated SambaNova suggestion: ${suggestion}`);
+    logger.info(`Generated SambaNova suggestion`);
     return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
   } catch {
     logger.error('SambaNova generation failed');
@@ -153,6 +153,64 @@ async function generateTextCompletionSambaNova(
 
 // packages/shared/openrouter.ts
 import OpenAI2 from 'openai';
+function getOpenRouterClient() {
+  const apiKey = process.env.OPENROUTER_API_KEY || '';
+  if (!apiKey) {
+    throw new Error(
+      'OPENROUTER_API_KEY is not set. OpenRouter requires an API key even for its free models. Get one at https://openrouter.ai/keys.'
+    );
+  }
+  return new OpenAI2({
+    apiKey,
+    baseURL: 'https://openrouter.ai/api/v1',
+    defaultHeaders: {
+      // Optional attribution so the app appears on the OpenRouter leaderboards.
+      'HTTP-Referer':
+        process.env.HTTP_REFERER || 'https://github.com/coccinella-labs/ellis',
+      'X-OpenRouter-Title': 'Ellis',
+    },
+  });
+}
+async function generateTextCompletionOpenRouter(
+  currentText,
+  mode = 'sentence',
+  style = 'casual',
+  model = 'openrouter/free'
+) {
+  const client = getOpenRouterClient();
+  try {
+    const systemPrompt = buildSystemPrompt(mode, style);
+    const messages = [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: currentText },
+    ];
+    const response = await Promise.race([
+      client.chat.completions.create({
+        model,
+        messages,
+        max_tokens: mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
+        temperature: 0.7,
+        stream: false,
+      }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('openrouter timeout')), 3e4)
+      ),
+    ]);
+    const content = response.choices[0]?.message?.content?.trim() || '';
+    if (!content) {
+      console.log('No suggestion extracted from OpenRouter response');
+      return '';
+    }
+    if (mode === 'word' && !currentText.endsWith(' ')) {
+      return content;
+    }
+    logger.info(`Generated OpenRouter suggestion (${model})`);
+    return content.startsWith(' ') ? content : ' ' + content;
+  } catch {
+    logger.error('OpenRouter generation failed');
+    return '';
+  }
+}
 
 // packages/shared/gemini.ts
 var ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
@@ -203,6 +261,26 @@ async function testSambaNovaApiKey() {
     return false;
   }
 }
+async function testOpenRouterApiKey() {
+  try {
+    logger.info('Testing OpenRouter API key...');
+    if (!process.env.OPENROUTER_API_KEY) {
+      logger.warn('No OpenRouter API key set');
+      return false;
+    }
+    const result = await generateTextCompletionOpenRouter(
+      'Hello',
+      'word',
+      'casual'
+    );
+    const success = !!result?.trim();
+    logger.info(`OpenRouter test result: ${success}`);
+    return success;
+  } catch {
+    logger.error('OpenRouter test failed');
+    return false;
+  }
+}
 
 // apps/server/functions/status.ts
 async function handler(req, res) {
@@ -213,8 +291,10 @@ async function handler(req, res) {
   try {
     const hasGeminiKey = !!process.env.GEMINI_API_KEY;
     const hasSambaNovaKey = !!process.env.SAMBANOVA_API_KEY;
+    const hasOpenRouterKey = !!process.env.OPENROUTER_API_KEY;
     let geminiWorking = false;
     let sambaNovaWorking = false;
+    let openRouterWorking = false;
     const skipGemini = process.env.DISABLE_GEMINI === 'true';
     if (hasGeminiKey && !skipGemini) {
       geminiWorking = await testApiKey();
@@ -222,15 +302,19 @@ async function handler(req, res) {
     if (hasSambaNovaKey) {
       sambaNovaWorking = await testSambaNovaApiKey();
     }
+    if (hasOpenRouterKey) {
+      openRouterWorking = await testOpenRouterApiKey();
+    }
     const isWorking =
       process.env.NODE_ENV === 'development'
         ? true
-        : geminiWorking || sambaNovaWorking;
+        : geminiWorking || sambaNovaWorking || openRouterWorking;
     res.json({
       status: isWorking ? 'ok' : 'error',
       providers: {
         gemini: geminiWorking,
         sambanova: sambaNovaWorking,
+        openrouter: openRouterWorking,
       },
     });
   } catch (error) {

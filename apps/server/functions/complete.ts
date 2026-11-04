@@ -2,8 +2,9 @@ import { generateTextCompletion } from '../gemini';
 import { textCompletionRequestSchema } from '../../../packages/shared/schema';
 
 // Rate limit: 30 requests per 60-second window per IP.
-// Uses Upstash Redis when UPSTASH_REDIS_URL is configured, which works across
-// Vercel serverless instances. Falls back to an in-memory store for local
+// Uses Upstash Redis when UPSTASH_REDIS_REST_URL and
+// UPSTASH_REDIS_REST_TOKEN are configured, which works across Vercel
+// serverless instances. Falls back to an in-memory store for local
 // development where Redis is not available.
 let ratelimit: any = null;
 let fallbackStore: Map<string, { count: number; resetAt: number }> | null =
@@ -15,17 +16,13 @@ const MAX_REQUESTS = 30;
 async function getRatelimit() {
   if (ratelimit) return ratelimit;
 
-  const redisUrl = process.env.UPSTASH_REDIS_URL;
-  if (redisUrl) {
+  const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
+  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (redisUrl && redisToken) {
     try {
       const { Ratelimit } = await import('@upstash/ratelimit');
       const { Redis } = await import('@upstash/redis');
-      // Redis.fromEnv() reads UPSTASH_REDIS_REST_URL and
-      // UPSTASH_REDIS_REST_TOKEN from the environment.
-      const redis = new Redis({
-        url: process.env.UPSTASH_REDIS_REST_URL || redisUrl,
-        token: process.env.UPSTASH_REDIS_REST_TOKEN || '',
-      });
+      const redis = new Redis({ url: redisUrl, token: redisToken });
       ratelimit = new Ratelimit({
         redis,
         limiter: Ratelimit.slidingWindow(MAX_REQUESTS, `${WINDOW_MS} ms`),

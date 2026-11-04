@@ -26,7 +26,7 @@ export async function generateTextCompletion(
         style
       );
       if (suggestion) {
-        console.log('Generated SambaNova suggestion:', suggestion);
+        logger.info('Generated SambaNova suggestion');
         return suggestion;
       }
     } catch (error) {
@@ -85,7 +85,7 @@ export async function generateTextCompletion(
         return suggestion;
       }
 
-      logger.info(`Generated Gemini suggestion (${model}): ${suggestion}`);
+      logger.info(`Generated Gemini suggestion (${model})`);
       return ' ' + suggestion;
     } catch {
       logger.error('Gemini generation failed');
@@ -132,7 +132,7 @@ export async function generateTextCompletion(
       return suggestion;
     }
 
-    logger.info(`Generated Gemini suggestion (${model}): ${suggestion}`);
+    logger.info(`Generated Gemini suggestion (${model})`);
     return ' ' + suggestion;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {

@@ -1,4 +1,8 @@
-import { testApiKey, testSambaNovaApiKey } from '../gemini';
+import {
+  testApiKey,
+  testSambaNovaApiKey,
+  testOpenRouterApiKey,
+} from '../gemini';
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'GET') {
@@ -9,9 +13,11 @@ export default async function handler(req: any, res: any) {
   try {
     const hasGeminiKey = !!process.env.GEMINI_API_KEY;
     const hasSambaNovaKey = !!process.env.SAMBANOVA_API_KEY;
+    const hasOpenRouterKey = !!process.env.OPENROUTER_API_KEY;
 
     let geminiWorking = false;
     let sambaNovaWorking = false;
+    let openRouterWorking = false;
 
     const skipGemini = process.env.DISABLE_GEMINI === 'true';
     if (hasGeminiKey && !skipGemini) {
@@ -20,17 +26,21 @@ export default async function handler(req: any, res: any) {
     if (hasSambaNovaKey) {
       sambaNovaWorking = await testSambaNovaApiKey();
     }
+    if (hasOpenRouterKey) {
+      openRouterWorking = await testOpenRouterApiKey();
+    }
 
     const isWorking =
       process.env.NODE_ENV === 'development'
         ? true
-        : geminiWorking || sambaNovaWorking;
+        : geminiWorking || sambaNovaWorking || openRouterWorking;
 
     res.json({
       status: isWorking ? 'ok' : 'error',
       providers: {
         gemini: geminiWorking,
         sambanova: sambaNovaWorking,
+        openrouter: openRouterWorking,
       },
     });
   } catch (error) {
