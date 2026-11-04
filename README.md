@@ -30,7 +30,7 @@ Fork the repository, create a feature branch, and run the app locally with `npm 
 
 Suggestions depend on a network call to an AI provider, so the editor needs connectivity and a valid API key to be useful. Automatic fallback only triggers on rate-limit or quota-related Gemini errors. A timeout or other general API error does not by itself switch providers. The CLI is a terminal editor intended for headless and lightweight workflows, not a full replacement for the web interface's ghost-text interaction, settings panel, or theming. The server exposes a health check at `/api/health` and provider status at `/api/status`, alongside the completion endpoint at `/api/complete`. It also enforces request size limits and handles graceful shutdown.
 
-Reusable parts of this repository include the shared package at `packages/shared`, which contains Zod schemas, prompt builders, a logger, and Gemini and SambaNova client wrappers. For example:
+Reusable parts of this repository include the shared package at `packages/shared`, which contains Zod schemas, prompt builders, a logger, and Gemini, SambaNova, and OpenRouter client wrappers. For example:
 
 ```ts
 import { textCompletionRequestSchema } from '@shared/schema';
