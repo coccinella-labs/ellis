@@ -77,7 +77,7 @@ export async function generateTextCompletion(
     }
 
     console.log('Generated suggestion:', suggestion);
-    return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
+    return ' ' + suggestion;
   } catch (error) {
     console.error('Generation error:', error);
     return '';

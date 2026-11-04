@@ -61,8 +61,8 @@ export async function generateTextCompletionSambaNova(
       return suggestion;
     }
 
-    logger.info('Generated SambaNova suggestion');
-    return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
+    logger.info(`Generated SambaNova suggestion: ${suggestion}`);
+    return ' ' + suggestion;
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
       logger.error('SambaNova request timed out');
