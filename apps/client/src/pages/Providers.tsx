@@ -66,9 +66,9 @@ export function ProvidersPage({ isOpen, onOpenChange }: ProvidersPageProps) {
                 API Keys
               </h4>
               <div className="space-y-2 text-sm">
-                <p>Enter your own keys in Settings.</p>
-                <p>Upgrade to paid plans for higher limits.</p>
-                <p>Keys are stored locally and securely.</p>
+                <p>Keys are configured via environment variables.</p>
+                <p>OpenRouter requires a key even for free models.</p>
+                <p>Get one at openrouter.ai/keys.</p>
               </div>
             </div>
 
