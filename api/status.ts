@@ -1,4 +1,4 @@
-import { testApiKey, testSambaNovaApiKey } from '../apps/server/gemini.ts';
+import { testApiKey, testSambaNovaApiKey } from '../apps/server/gemini';
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'GET') {
