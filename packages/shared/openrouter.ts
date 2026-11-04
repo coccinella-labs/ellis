@@ -49,7 +49,7 @@ export async function generateTextCompletionOpenRouter(
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error('openrouter timeout')), 30000)
       ),
-    ])) as any;
+    ])) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     const content = response.choices[0]?.message?.content?.trim() || '';
 

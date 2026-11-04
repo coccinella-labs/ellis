@@ -55,7 +55,10 @@ export function ProvidersPage({ isOpen, onOpenChange }: ProvidersPageProps) {
               <div className="space-y-2 text-sm">
                 <p>OpenRouter Free</p>
                 <p className="text-muted-foreground">
-                  Last resort in auto mode. Requires an `OPENROUTER_API_KEY`,
+                  Last resort in auto mode. Requires an{' '}
+                  <code className="text-xs bg-muted px-1 rounded">
+                    OPENROUTER_API_KEY
+                  </code>{' '}
                   which is needed even for free models. Zero cost when a free
                   model is selected.
                 </p>
