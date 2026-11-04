@@ -17,6 +17,7 @@ Set provider keys in your shell or in a local `.env` file:
 ```sh
 GEMINI_API_KEY=your_gemini_key
 SAMBANOVA_API_KEY=your_sambanova_key
+OPENROUTER_API_KEY=your_openrouter_key
 ```
 
 Before opening a pull request, run:

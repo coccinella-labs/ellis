@@ -27,7 +27,7 @@ Fields:
 `style` may be `casual`, `formal`, `creative`, or `technical`. The default is
 `casual`.
 
-`provider` may be `auto`, `gemini`, or `sambanova`. The default is `auto`.
+`provider` may be `auto`, `gemini`, `sambanova`, or `openrouter`. The default is `auto`.
 
 API keys are not accepted per request; the server uses environment variables
 only.
@@ -66,7 +66,8 @@ Response:
   "status": "ok",
   "providers": {
     "gemini": true,
-    "sambanova": true
+    "sambanova": true,
+    "openrouter": true
   }
 }
 ```
