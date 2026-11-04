@@ -13,9 +13,9 @@ interface SettingsPanelProps {
   onWritingStyleChange: (
     style: 'casual' | 'formal' | 'creative' | 'technical'
   ) => void;
-  aiProvider: 'auto' | 'gemini' | 'sambanova' | 'openrouter';
+  aiProvider: 'auto' | 'gemini' | 'sambanova' | 'openrouter' | 'atlascloud';
   onAiProviderChange: (
-    provider: 'auto' | 'gemini' | 'sambanova' | 'openrouter'
+    provider: 'auto' | 'gemini' | 'sambanova' | 'openrouter' | 'atlascloud'
   ) => void;
   geminiModel: string;
   onGeminiModelChange: (model: string) => void;
@@ -155,7 +155,12 @@ export function SettingsPanel({
                     value={aiProvider}
                     onChange={(e) =>
                       onAiProviderChange(
-                        e.target.value as 'auto' | 'gemini' | 'sambanova'
+                        e.target.value as
+                          | 'auto'
+                          | 'gemini'
+                          | 'sambanova'
+                          | 'openrouter'
+                          | 'atlascloud'
                       )
                     }
                     className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -165,6 +170,7 @@ export function SettingsPanel({
                     <option value="gemini">gemini</option>
                     <option value="sambanova">sambanova</option>
                     <option value="openrouter">openrouter</option>
+                    <option value="atlascloud">atlascloud</option>
                   </select>
                 </div>
 

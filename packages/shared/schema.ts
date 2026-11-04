@@ -26,7 +26,7 @@ export const textCompletionRequestSchema = z.object({
     .enum(['casual', 'formal', 'creative', 'technical'])
     .default('casual'),
   provider: z
-    .enum(['auto', 'gemini', 'sambanova', 'openrouter'])
+    .enum(['auto', 'gemini', 'sambanova', 'openrouter', 'atlascloud'])
     .default('auto'),
   geminiModel: z.string().default('gemini-3.8-flash'),
 });

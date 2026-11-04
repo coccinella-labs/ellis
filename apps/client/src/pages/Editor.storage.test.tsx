@@ -14,14 +14,12 @@ const localStorageMock = {
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi
-    .fn()
-    .mockImplementation((q: string) => ({
-      matches: false,
-      media: q,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-    })),
+  value: vi.fn().mockImplementation((q: string) => ({
+    matches: false,
+    media: q,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+  })),
 });
 Object.defineProperty(URL, 'createObjectURL', {
   value: vi.fn(() => 'blob:url'),

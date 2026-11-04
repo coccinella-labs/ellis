@@ -8,7 +8,7 @@ export function useWritingSettings() {
     'casual' | 'formal' | 'creative' | 'technical'
   >('casual');
   const [aiProvider, setAiProvider] = useState<
-    'auto' | 'gemini' | 'sambanova' | 'openrouter'
+    'auto' | 'gemini' | 'sambanova' | 'openrouter' | 'atlascloud'
   >('auto');
   const [geminiModel, setGeminiModel] = useState('gemini-3.8-flash');
 

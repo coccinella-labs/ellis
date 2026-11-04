@@ -149,8 +149,8 @@ async function generateTextCompletionSambaNova(
     if (mode === 'word' && !currentText.endsWith(' ')) {
       return suggestion;
     }
-    logger.info('Generated SambaNova suggestion');
-    return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
+    logger.info(`Generated SambaNova suggestion: ${suggestion}`);
+    return ' ' + suggestion;
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
       logger.error('SambaNova request timed out');
@@ -230,6 +230,67 @@ async function generateTextCompletionOpenRouter(
   }
 }
 
+// packages/shared/atlascloud.ts
+import OpenAI3 from 'openai';
+function getAtlasCloudClient() {
+  const apiKey = process.env.ATLASCLOUD_API_KEY || '';
+  if (!apiKey) {
+    throw new Error(
+      'ATLASCLOUD_API_KEY is not set. AtlasCloud requires an API key. Get one at https://www.atlascloud.ai/.'
+    );
+  }
+  return new OpenAI3({
+    apiKey,
+    baseURL: 'https://api.atlascloud.ai/v1',
+  });
+}
+async function generateTextCompletionAtlasCloud(
+  currentText,
+  mode = 'sentence',
+  style = 'casual',
+  model = 'dots-studio/dots-3-note-prev-free'
+) {
+  const client = getAtlasCloudClient();
+  const systemPrompt = buildSystemPrompt(mode, style);
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: currentText },
+  ];
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 3e4);
+  try {
+    const response = await client.chat.completions.create(
+      {
+        model,
+        messages,
+        max_tokens: mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
+        temperature: 0.7,
+        stream: false,
+      },
+      { signal: controller.signal }
+    );
+    const content = response.choices[0]?.message?.content?.trim() || '';
+    if (!content) {
+      logger.warn('No suggestion extracted from AtlasCloud response');
+      return '';
+    }
+    if (mode === 'word' && !currentText.endsWith(' ')) {
+      return content;
+    }
+    logger.info(`Generated AtlasCloud suggestion (${model})`);
+    return content.startsWith(' ') ? content : ' ' + content;
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      logger.error('AtlasCloud request timed out');
+    } else {
+      logger.error('AtlasCloud generation failed');
+    }
+    return '';
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 // packages/shared/gemini.ts
 var ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 async function generateTextCompletion(
@@ -270,6 +331,22 @@ async function generateTextCompletion(
       }
     } catch {
       logger.error('OpenRouter generation failed');
+    }
+    return '';
+  }
+  if (provider === 'atlascloud') {
+    try {
+      const suggestion = await generateTextCompletionAtlasCloud(
+        currentText,
+        mode,
+        style
+      );
+      if (suggestion) {
+        logger.info('Generated AtlasCloud suggestion');
+        return suggestion;
+      }
+    } catch {
+      logger.error('AtlasCloud generation failed');
     }
     return '';
   }
@@ -416,7 +493,7 @@ var textCompletionRequestSchema = z.object({
     .enum(['casual', 'formal', 'creative', 'technical'])
     .default('casual'),
   provider: z
-    .enum(['auto', 'gemini', 'sambanova', 'openrouter'])
+    .enum(['auto', 'gemini', 'sambanova', 'openrouter', 'atlascloud'])
     .default('auto'),
   geminiModel: z.string().default('gemini-3.8-flash'),
 });

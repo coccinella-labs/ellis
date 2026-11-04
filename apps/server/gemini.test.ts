@@ -9,6 +9,14 @@ vi.mock('../../packages/shared/sambanova.js', () => ({
   generateTextCompletionSambaNova: vi.fn(),
 }));
 
+vi.mock('../../packages/shared/openrouter.js', () => ({
+  generateTextCompletionOpenRouter: vi.fn(),
+}));
+
+vi.mock('../../packages/shared/atlascloud.js', () => ({
+  generateTextCompletionAtlasCloud: vi.fn(),
+}));
+
 vi.mock('../../packages/shared/logger.js', () => ({
   logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn(), debug: vi.fn() },
 }));
@@ -49,6 +57,22 @@ describe('server gemini wrappers', () => {
     const { testSambaNovaApiKey } = await import('./gemini.js');
     expect(await testSambaNovaApiKey()).toBe(true);
   });
+
+  it('testAtlasCloudApiKey returns false without key', async () => {
+    delete process.env.ATLASCLOUD_API_KEY;
+    const { testAtlasCloudApiKey } = await import('./gemini.js');
+    expect(await testAtlasCloudApiKey()).toBe(false);
+  });
+
+  it('testAtlasCloudApiKey returns true when key works', async () => {
+    process.env.ATLASCLOUD_API_KEY = 'test';
+    const atlascloud = await import('../../packages/shared/atlascloud.js');
+    vi.mocked(
+      atlascloud.generateTextCompletionAtlasCloud
+    ).mockResolvedValueOnce(' ok');
+    const { testAtlasCloudApiKey } = await import('./gemini.js');
+    expect(await testAtlasCloudApiKey()).toBe(true);
+  });
 });
 
 describe('server gemini failure branches', () => {
@@ -74,5 +98,15 @@ describe('server gemini failure branches', () => {
     );
     const { testSambaNovaApiKey } = await import('./gemini.js');
     expect(await testSambaNovaApiKey()).toBe(false);
+  });
+
+  it('returns false when AtlasCloud test throws', async () => {
+    process.env.ATLASCLOUD_API_KEY = 'test';
+    const atlascloud = await import('@shared/atlascloud.js');
+    vi.mocked(
+      atlascloud.generateTextCompletionAtlasCloud
+    ).mockRejectedValueOnce(new Error('fail'));
+    const { testAtlasCloudApiKey } = await import('./gemini.js');
+    expect(await testAtlasCloudApiKey()).toBe(false);
   });
 });

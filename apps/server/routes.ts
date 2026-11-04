@@ -6,6 +6,7 @@ import {
   testApiKey,
   testSambaNovaApiKey,
   testOpenRouterApiKey,
+  testAtlasCloudApiKey,
 } from './gemini';
 import { textCompletionRequestSchema } from '@shared/schema';
 import { logger } from '@shared/logger';
@@ -47,10 +48,12 @@ export function registerRoutes(app: Express): Express {
       const hasGeminiKey = !!process.env.GEMINI_API_KEY;
       const hasSambaNovaKey = !!process.env.SAMBANOVA_API_KEY;
       const hasOpenRouterKey = !!process.env.OPENROUTER_API_KEY;
+      const hasAtlasCloudKey = !!process.env.ATLASCLOUD_API_KEY;
 
       let geminiWorking = false;
       let sambaNovaWorking = false;
       let openRouterWorking = false;
+      let atlasCloudWorking = false;
 
       const skipGemini = process.env.DISABLE_GEMINI === 'true';
       if (hasGeminiKey && !skipGemini) {
@@ -62,13 +65,19 @@ export function registerRoutes(app: Express): Express {
       if (hasOpenRouterKey) {
         openRouterWorking = await testOpenRouterApiKey();
       }
+      if (hasAtlasCloudKey) {
+        atlasCloudWorking = await testAtlasCloudApiKey();
+      }
 
       const isWorking =
         process.env.NODE_ENV === 'development'
           ? true
-          : geminiWorking || sambaNovaWorking || openRouterWorking;
+          : geminiWorking ||
+            sambaNovaWorking ||
+            openRouterWorking ||
+            atlasCloudWorking;
       logger.info(
-        `Status check result - Gemini: ${geminiWorking}, SambaNova: ${sambaNovaWorking}, OpenRouter: ${openRouterWorking}`
+        `Status check result - Gemini: ${geminiWorking}, SambaNova: ${sambaNovaWorking}, OpenRouter: ${openRouterWorking}, AtlasCloud: ${atlasCloudWorking}`
       );
       const payload = {
         status: isWorking ? 'ok' : 'error',
@@ -76,6 +85,7 @@ export function registerRoutes(app: Express): Express {
           gemini: geminiWorking,
           sambanova: sambaNovaWorking,
           openrouter: openRouterWorking,
+          atlascloud: atlasCloudWorking,
         },
       };
       statusCache = { data: payload, expires: Date.now() + 60000 };

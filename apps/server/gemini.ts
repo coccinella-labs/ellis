@@ -1,6 +1,7 @@
 import { ai, generateTextCompletion } from '@shared/gemini';
 import { generateTextCompletionSambaNova } from '@shared/sambanova';
 import { generateTextCompletionOpenRouter } from '@shared/openrouter';
+import { generateTextCompletionAtlasCloud } from '@shared/atlascloud';
 import { logger } from '@shared/logger';
 
 export async function testApiKey(): Promise<boolean> {
@@ -68,6 +69,27 @@ export async function testOpenRouterApiKey(): Promise<boolean> {
     return success;
   } catch {
     logger.error('OpenRouter test failed');
+    return false;
+  }
+}
+
+export async function testAtlasCloudApiKey(): Promise<boolean> {
+  try {
+    logger.info('Testing AtlasCloud API key...');
+    if (!process.env.ATLASCLOUD_API_KEY) {
+      logger.warn('No AtlasCloud API key set');
+      return false;
+    }
+    const result = await generateTextCompletionAtlasCloud(
+      'Hello',
+      'word',
+      'casual'
+    );
+    const success = !!result?.trim();
+    logger.info(`AtlasCloud test result: ${success}`);
+    return success;
+  } catch {
+    logger.error('AtlasCloud test failed');
     return false;
   }
 }

@@ -2,6 +2,7 @@ import { GoogleGenAI } from '@google/genai';
 import { buildSystemPrompt } from './prompts.js';
 import { generateTextCompletionSambaNova } from './sambanova.js';
 import { generateTextCompletionOpenRouter } from './openrouter.js';
+import { generateTextCompletionAtlasCloud } from './atlascloud.js';
 import { logger } from './logger.js';
 
 export const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
@@ -10,7 +11,12 @@ export async function generateTextCompletion(
   currentText: string,
   mode: 'word' | 'sentence' | 'paragraph' = 'sentence',
   style: 'casual' | 'formal' | 'creative' | 'technical' = 'casual',
-  provider: 'auto' | 'gemini' | 'sambanova' | 'openrouter' = 'auto',
+  provider:
+    | 'auto'
+    | 'gemini'
+    | 'sambanova'
+    | 'openrouter'
+    | 'atlascloud' = 'auto',
   geminiModel: string = 'gemini-3.8-flash'
 ): Promise<string> {
   logger.info(`Generating text completion with ${provider} (${geminiModel})`);
@@ -49,6 +55,24 @@ export async function generateTextCompletion(
       }
     } catch {
       logger.error('OpenRouter generation failed');
+    }
+    return '';
+  }
+
+  if (provider === 'atlascloud') {
+    // Only try AtlasCloud
+    try {
+      const suggestion = await generateTextCompletionAtlasCloud(
+        currentText,
+        mode,
+        style
+      );
+      if (suggestion) {
+        logger.info('Generated AtlasCloud suggestion');
+        return suggestion;
+      }
+    } catch {
+      logger.error('AtlasCloud generation failed');
     }
     return '';
   }

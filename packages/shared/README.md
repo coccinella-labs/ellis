@@ -14,6 +14,7 @@ consumed through the `@shared` alias configured in `vite.config.ts` and
 | `gemini.ts`     | `ai`, `generateTextCompletion`                                                             | server, client            |
 | `sambanova.ts`  | `generateTextCompletionSambaNova`                                                          | server                    |
 | `openrouter.ts` | `generateTextCompletionOpenRouter`                                                         | server                    |
+| `atlascloud.ts` | `generateTextCompletionAtlasCloud`                                                         | server                    |
 
 ## Provider selection
 
@@ -23,6 +24,7 @@ consumed through the `@shared` alias configured in `vite.config.ts` and
 - `gemini` — Gemini only, no fallback.
 - `sambanova` — SambaNova only, no fallback.
 - `openrouter` — OpenRouter only, no fallback.
+- `atlascloud` — AtlasCloud only, no fallback.
 
 Explicit selection never falls back. `auto` falls back only on rate-limit
 or quota errors from Gemini; timeouts and other errors do not trigger
@@ -36,6 +38,8 @@ fallback.
    unset.
 3. **OpenRouter** — `openrouter/free` (free auto-router). Skipped when
    `OPENROUTER_API_KEY` is unset.
+4. **AtlasCloud** — `dots-studio/dots-3-note-prev-free`. Opt-in only; not
+   part of `auto` fallback.
 
 Each provider throws when its API key is missing, so `auto` mode must have
 at least one key configured to return a suggestion.
@@ -47,6 +51,7 @@ at least one key configured to return a suggestion.
 | `GEMINI_API_KEY`           | Gemini        | Default provider                        |
 | `SAMBANOVA_API_KEY`        | SambaNova     | Fallback                                |
 | `OPENROUTER_API_KEY`       | OpenRouter    | Required even for free models           |
+| `ATLASCLOUD_API_KEY`       | AtlasCloud    | Optional; explicit provider only        |
 | `UPSTASH_REDIS_REST_URL`   | rate limiting | Both URL and token needed               |
 | `UPSTASH_REDIS_REST_TOKEN` | rate limiting | Both URL and token needed               |
 | `LOG_LEVEL`                | logger        | `error`, `warn`, `info`, `log`, `debug` |

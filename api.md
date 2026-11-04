@@ -27,7 +27,7 @@ Fields:
 `style` may be `casual`, `formal`, `creative`, or `technical`. The default is
 `casual`.
 
-`provider` may be `auto`, `gemini`, `sambanova`, or `openrouter`. The default is `auto`.
+`provider` may be `auto`, `gemini`, `sambanova`, `openrouter`, or `atlascloud`. The default is `auto`.
 
 API keys are not accepted per request; the server uses environment variables
 only.
@@ -80,6 +80,7 @@ production, at least one provider must work for `status` to be `ok`.
 ```sh
 GEMINI_API_KEY=your_gemini_key
 SAMBANOVA_API_KEY=your_sambanova_key
+ATLASCLOUD_API_KEY=your_atlascloud_key
 ```
 
 `DISABLE_GEMINI=true` skips the Gemini status check.

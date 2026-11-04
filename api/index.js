@@ -113,8 +113,14 @@ var logger = {
 
 // packages/shared/sambanova.ts
 function getSambaNovaClient() {
+  const apiKey = process.env.SAMBANOVA_API_KEY || '';
+  if (!apiKey) {
+    throw new Error(
+      'SAMBANOVA_API_KEY is not set. Get one at https://sambanova.ai/.'
+    );
+  }
   return new OpenAI({
-    apiKey: process.env.SAMBANOVA_API_KEY || '',
+    apiKey,
     baseURL: 'https://api.sambanova.ai/v1',
   });
 }
@@ -124,28 +130,28 @@ async function generateTextCompletionSambaNova(
   style = 'casual'
 ) {
   const client = getSambaNovaClient();
+  const systemPrompt = buildSystemPrompt(mode, style);
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: currentText },
+  ];
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 3e4);
   try {
-    const systemPrompt = buildSystemPrompt(mode, style);
-    const messages = [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: currentText },
-    ];
-    const response = await Promise.race([
-      client.chat.completions.create({
+    const response = await client.chat.completions.create(
+      {
         model: 'gpt-oss-120b',
         messages,
         max_tokens: mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
         temperature: 0.7,
         stream: false,
-      }),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('sambanova timeout')), 3e4)
-      ),
-    ]);
+      },
+      { signal: controller.signal }
+    );
     const content = response.choices[0]?.message?.content?.trim() || '';
     const suggestion = content;
     if (!suggestion) {
-      console.log('No suggestion extracted from SambaNova response');
+      logger.warn('No suggestion extracted from SambaNova response');
       return '';
     }
     if (mode === 'word' && !currentText.endsWith(' ')) {
@@ -153,9 +159,143 @@ async function generateTextCompletionSambaNova(
     }
     logger.info(`Generated SambaNova suggestion: ${suggestion}`);
     return ' ' + suggestion;
-  } catch {
-    logger.error('SambaNova generation failed');
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      logger.error('SambaNova request timed out');
+    } else {
+      logger.error('SambaNova generation failed');
+    }
     return '';
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+// packages/shared/openrouter.ts
+import OpenAI2 from 'openai';
+function getOpenRouterClient() {
+  const apiKey = process.env.OPENROUTER_API_KEY || '';
+  if (!apiKey) {
+    throw new Error(
+      'OPENROUTER_API_KEY is not set. OpenRouter requires an API key even for its free models. Get one at https://openrouter.ai/keys.'
+    );
+  }
+  return new OpenAI2({
+    apiKey,
+    baseURL: 'https://openrouter.ai/api/v1',
+    defaultHeaders: {
+      // Optional attribution so the app appears on the OpenRouter leaderboards.
+      'HTTP-Referer':
+        process.env.HTTP_REFERER || 'https://github.com/coccinella-labs/ellis',
+      'X-OpenRouter-Title': 'Ellis',
+    },
+  });
+}
+async function generateTextCompletionOpenRouter(
+  currentText,
+  mode = 'sentence',
+  style = 'casual',
+  model = 'openrouter/free'
+) {
+  const client = getOpenRouterClient();
+  const systemPrompt = buildSystemPrompt(mode, style);
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: currentText },
+  ];
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 3e4);
+  try {
+    const response = await client.chat.completions.create(
+      {
+        model,
+        messages,
+        max_tokens: mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
+        temperature: 0.7,
+        stream: false,
+      },
+      { signal: controller.signal }
+    );
+    const content = response.choices[0]?.message?.content?.trim() || '';
+    if (!content) {
+      logger.warn('No suggestion extracted from OpenRouter response');
+      return '';
+    }
+    if (mode === 'word' && !currentText.endsWith(' ')) {
+      return content;
+    }
+    logger.info(`Generated OpenRouter suggestion (${model})`);
+    return content.startsWith(' ') ? content : ' ' + content;
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      logger.error('OpenRouter request timed out');
+    } else {
+      logger.error('OpenRouter generation failed');
+    }
+    return '';
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+// packages/shared/atlascloud.ts
+import OpenAI3 from 'openai';
+function getAtlasCloudClient() {
+  const apiKey = process.env.ATLASCLOUD_API_KEY || '';
+  if (!apiKey) {
+    throw new Error(
+      'ATLASCLOUD_API_KEY is not set. AtlasCloud requires an API key. Get one at https://www.atlascloud.ai/.'
+    );
+  }
+  return new OpenAI3({
+    apiKey,
+    baseURL: 'https://api.atlascloud.ai/v1',
+  });
+}
+async function generateTextCompletionAtlasCloud(
+  currentText,
+  mode = 'sentence',
+  style = 'casual',
+  model = 'dots-studio/dots-3-note-prev-free'
+) {
+  const client = getAtlasCloudClient();
+  const systemPrompt = buildSystemPrompt(mode, style);
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: currentText },
+  ];
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 3e4);
+  try {
+    const response = await client.chat.completions.create(
+      {
+        model,
+        messages,
+        max_tokens: mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
+        temperature: 0.7,
+        stream: false,
+      },
+      { signal: controller.signal }
+    );
+    const content = response.choices[0]?.message?.content?.trim() || '';
+    if (!content) {
+      logger.warn('No suggestion extracted from AtlasCloud response');
+      return '';
+    }
+    if (mode === 'word' && !currentText.endsWith(' ')) {
+      return content;
+    }
+    logger.info(`Generated AtlasCloud suggestion (${model})`);
+    return content.startsWith(' ') ? content : ' ' + content;
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      logger.error('AtlasCloud request timed out');
+    } else {
+      logger.error('AtlasCloud generation failed');
+    }
+    return '';
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
@@ -178,58 +318,7 @@ async function generateTextCompletion(
         style
       );
       if (suggestion) {
-        console.log('Generated SambaNova suggestion:', suggestion);
-        return suggestion;
-      }
-    } catch (error) {
-      console.error('SambaNova generation error:', error);
-    }
-    return '';
-  }
-  if (provider === 'gemini') {
-    try {
-      const systemPrompt = buildSystemPrompt(mode, style);
-      const model = geminiModel;
-      const response = await Promise.race([
-        geminiClient.models.generateContent({
-          model,
-          config: {
-            systemInstruction: systemPrompt,
-            temperature: 0.7,
-            maxOutputTokens:
-              mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
-          },
-          contents: currentText,
-        }),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('gemini timeout')), 3e4)
-        ),
-      ]);
-      const suggestion = response.text?.trim() || '';
-      if (!suggestion) {
-        return '';
-      }
-      if (mode === 'word' && !currentText.endsWith(' ')) {
-        return suggestion;
-      }
-      logger.info(`Generated Gemini suggestion (${model}): ${suggestion}`);
-      return ' ' + suggestion;
-    } catch {
-      logger.error('Gemini generation failed');
-      return '';
-    }
-  }
-  const hasGeminiKey = !!process.env.GEMINI_API_KEY;
-  if (!hasGeminiKey) {
-    logger.info('No Gemini API key, using SambaNova directly');
-    try {
-      const suggestion = await generateTextCompletionSambaNova(
-        currentText,
-        mode,
-        style
-      );
-      if (suggestion) {
-        logger.info('Generated SambaNova suggestion (direct)');
+        logger.info('Generated SambaNova suggestion');
         return suggestion;
       }
     } catch {
@@ -237,57 +326,156 @@ async function generateTextCompletion(
     }
     return '';
   }
+  if (provider === 'openrouter') {
+    try {
+      const suggestion = await generateTextCompletionOpenRouter(
+        currentText,
+        mode,
+        style
+      );
+      if (suggestion) {
+        logger.info('Generated OpenRouter suggestion');
+        return suggestion;
+      }
+    } catch {
+      logger.error('OpenRouter generation failed');
+    }
+    return '';
+  }
+  if (provider === 'atlascloud') {
+    try {
+      const suggestion = await generateTextCompletionAtlasCloud(
+        currentText,
+        mode,
+        style
+      );
+      if (suggestion) {
+        logger.info('Generated AtlasCloud suggestion');
+        return suggestion;
+      }
+    } catch {
+      logger.error('AtlasCloud generation failed');
+    }
+    return '';
+  }
+  if (provider === 'gemini') {
+    try {
+      const systemPrompt = buildSystemPrompt(mode, style);
+      const model = geminiModel;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3e4);
+      try {
+        const response = await geminiClient.models.generateContent({
+          model,
+          config: {
+            systemInstruction: systemPrompt,
+            temperature: 0.7,
+            maxOutputTokens:
+              mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
+            abortSignal: controller.signal,
+          },
+          contents: currentText,
+        });
+        const suggestion = response.text?.trim() || '';
+        if (!suggestion) {
+          return '';
+        }
+        if (mode === 'word' && !currentText.endsWith(' ')) {
+          return suggestion;
+        }
+        logger.info(`Generated Gemini suggestion (${model})`);
+        return ' ' + suggestion;
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        logger.error('Gemini request timed out');
+      } else {
+        logger.error('Gemini generation failed');
+      }
+      return '';
+    }
+  }
+  const hasGeminiKey = !!process.env.GEMINI_API_KEY;
+  if (!hasGeminiKey) {
+    logger.info('No Gemini API key, trying SambaNova then OpenRouter');
+    return tryFallbackChain(currentText, mode, style);
+  }
   try {
     const systemPrompt = buildSystemPrompt(mode, style);
     const model = geminiModel;
-    const response = await Promise.race([
-      geminiClient.models.generateContent({
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3e4);
+    try {
+      const response = await geminiClient.models.generateContent({
         model,
         config: {
           systemInstruction: systemPrompt,
           temperature: 0.7,
           maxOutputTokens:
             mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
+          abortSignal: controller.signal,
         },
         contents: currentText,
-      }),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('gemini timeout')), 3e4)
-      ),
-    ]);
-    const suggestion = response.text?.trim() || '';
-    if (!suggestion) {
-      return '';
+      });
+      const suggestion = response.text?.trim() || '';
+      if (!suggestion) {
+        return '';
+      }
+      if (mode === 'word' && !currentText.endsWith(' ')) {
+        return suggestion;
+      }
+      logger.info(`Generated Gemini suggestion (${model})`);
+      return ' ' + suggestion;
+    } finally {
+      clearTimeout(timeoutId);
     }
-    if (mode === 'word' && !currentText.endsWith(' ')) {
-      return suggestion;
-    }
-    logger.info(`Generated Gemini suggestion (${model}): ${suggestion}`);
-    return ' ' + suggestion;
   } catch (error) {
     logger.error('Gemini generation failed');
+    const status = error.status;
+    const message = error instanceof Error ? error.message : String(error);
     if (
-      error?.status === 429 ||
-      error?.message?.includes('quota') ||
-      error?.message?.includes('RESOURCE_EXHAUSTED')
+      status === 429 ||
+      message.includes('quota') ||
+      message.includes('RESOURCE_EXHAUSTED')
     ) {
-      logger.warn('Rate limit hit, falling back to SambaNova...');
-      try {
-        const fallbackSuggestion = await generateTextCompletionSambaNova(
-          currentText,
-          mode,
-          style
-        );
-        if (fallbackSuggestion) {
-          logger.info('Successfully used SambaNova fallback');
-          return fallbackSuggestion;
-        }
-      } catch {
-        logger.error('SambaNova fallback failed');
-      }
+      logger.warn(
+        'Rate limit hit, falling back to SambaNova then OpenRouter...'
+      );
+      return tryFallbackChain(currentText, mode, style);
     }
     return '';
   }
+}
+async function tryFallbackChain(currentText, mode, style) {
+  try {
+    const suggestion = await generateTextCompletionSambaNova(
+      currentText,
+      mode,
+      style
+    );
+    if (suggestion) {
+      logger.info('Successfully used SambaNova fallback');
+      return suggestion;
+    }
+  } catch {
+    logger.error('SambaNova fallback failed');
+  }
+  try {
+    const suggestion = await generateTextCompletionOpenRouter(
+      currentText,
+      mode,
+      style
+    );
+    if (suggestion) {
+      logger.info('Successfully used OpenRouter fallback');
+      return suggestion;
+    }
+  } catch {
+    logger.error('OpenRouter fallback failed');
+  }
+  return '';
 }
 
 // apps/server/gemini.ts
@@ -336,6 +524,46 @@ async function testSambaNovaApiKey() {
     return false;
   }
 }
+async function testOpenRouterApiKey() {
+  try {
+    logger.info('Testing OpenRouter API key...');
+    if (!process.env.OPENROUTER_API_KEY) {
+      logger.warn('No OpenRouter API key set');
+      return false;
+    }
+    const result = await generateTextCompletionOpenRouter(
+      'Hello',
+      'word',
+      'casual'
+    );
+    const success = !!result?.trim();
+    logger.info(`OpenRouter test result: ${success}`);
+    return success;
+  } catch {
+    logger.error('OpenRouter test failed');
+    return false;
+  }
+}
+async function testAtlasCloudApiKey() {
+  try {
+    logger.info('Testing AtlasCloud API key...');
+    if (!process.env.ATLASCLOUD_API_KEY) {
+      logger.warn('No AtlasCloud API key set');
+      return false;
+    }
+    const result = await generateTextCompletionAtlasCloud(
+      'Hello',
+      'word',
+      'casual'
+    );
+    const success = !!result?.trim();
+    logger.info(`AtlasCloud test result: ${success}`);
+    return success;
+  } catch {
+    logger.error('AtlasCloud test failed');
+    return false;
+  }
+}
 
 // packages/shared/schema.ts
 import { sql } from 'drizzle-orm';
@@ -359,7 +587,9 @@ var textCompletionRequestSchema = z.object({
   style: z
     .enum(['casual', 'formal', 'creative', 'technical'])
     .default('casual'),
-  provider: z.enum(['auto', 'gemini', 'sambanova']).default('auto'),
+  provider: z
+    .enum(['auto', 'gemini', 'sambanova', 'openrouter', 'atlascloud'])
+    .default('auto'),
   geminiModel: z.string().default('gemini-3.8-flash'),
 });
 var textCompletionResponseSchema = z.object({
@@ -391,8 +621,12 @@ function registerRoutes(app2) {
     try {
       const hasGeminiKey = !!process.env.GEMINI_API_KEY;
       const hasSambaNovaKey = !!process.env.SAMBANOVA_API_KEY;
+      const hasOpenRouterKey = !!process.env.OPENROUTER_API_KEY;
+      const hasAtlasCloudKey = !!process.env.ATLASCLOUD_API_KEY;
       let geminiWorking = false;
       let sambaNovaWorking = false;
+      let openRouterWorking = false;
+      let atlasCloudWorking = false;
       const skipGemini = process.env.DISABLE_GEMINI === 'true';
       if (hasGeminiKey && !skipGemini) {
         geminiWorking = await testApiKey();
@@ -400,18 +634,29 @@ function registerRoutes(app2) {
       if (hasSambaNovaKey) {
         sambaNovaWorking = await testSambaNovaApiKey();
       }
+      if (hasOpenRouterKey) {
+        openRouterWorking = await testOpenRouterApiKey();
+      }
+      if (hasAtlasCloudKey) {
+        atlasCloudWorking = await testAtlasCloudApiKey();
+      }
       const isWorking =
         process.env.NODE_ENV === 'development'
           ? true
-          : geminiWorking || sambaNovaWorking;
+          : geminiWorking ||
+            sambaNovaWorking ||
+            openRouterWorking ||
+            atlasCloudWorking;
       logger.info(
-        `Status check result - Gemini: ${geminiWorking}, SambaNova: ${sambaNovaWorking}`
+        `Status check result - Gemini: ${geminiWorking}, SambaNova: ${sambaNovaWorking}, OpenRouter: ${openRouterWorking}, AtlasCloud: ${atlasCloudWorking}`
       );
       const payload = {
         status: isWorking ? 'ok' : 'error',
         providers: {
           gemini: geminiWorking,
           sambanova: sambaNovaWorking,
+          openrouter: openRouterWorking,
+          atlascloud: atlasCloudWorking,
         },
       };
       statusCache = { data: payload, expires: Date.now() + 6e4 };
