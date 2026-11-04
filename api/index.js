@@ -130,14 +130,14 @@ async function generateTextCompletionSambaNova(
   style = 'casual'
 ) {
   const client = getSambaNovaClient();
+  const systemPrompt = buildSystemPrompt(mode, style);
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: currentText },
+  ];
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 3e4);
   try {
-    const systemPrompt = buildSystemPrompt(mode, style);
-    const messages = [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: currentText },
-    ];
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3e4);
     const response = await client.chat.completions.create(
       {
         model: 'gpt-oss-120b',
@@ -148,7 +148,6 @@ async function generateTextCompletionSambaNova(
       },
       { signal: controller.signal }
     );
-    clearTimeout(timeoutId);
     const content = response.choices[0]?.message?.content?.trim() || '';
     const suggestion = content;
     if (!suggestion) {
@@ -167,6 +166,8 @@ async function generateTextCompletionSambaNova(
       logger.error('SambaNova generation failed');
     }
     return '';
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
@@ -197,14 +198,14 @@ async function generateTextCompletionOpenRouter(
   model = 'openrouter/free'
 ) {
   const client = getOpenRouterClient();
+  const systemPrompt = buildSystemPrompt(mode, style);
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: currentText },
+  ];
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 3e4);
   try {
-    const systemPrompt = buildSystemPrompt(mode, style);
-    const messages = [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: currentText },
-    ];
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3e4);
     const response = await client.chat.completions.create(
       {
         model,
@@ -215,7 +216,6 @@ async function generateTextCompletionOpenRouter(
       },
       { signal: controller.signal }
     );
-    clearTimeout(timeoutId);
     const content = response.choices[0]?.message?.content?.trim() || '';
     if (!content) {
       logger.warn('No suggestion extracted from OpenRouter response');
@@ -233,6 +233,8 @@ async function generateTextCompletionOpenRouter(
       logger.error('OpenRouter generation failed');
     }
     return '';
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
@@ -259,7 +261,7 @@ async function generateTextCompletion(
         return suggestion;
       }
     } catch (error) {
-      console.error('SambaNova generation error:', error);
+      logger.error('SambaNova generation failed', error);
     }
     return '';
   }
@@ -275,7 +277,7 @@ async function generateTextCompletion(
         return suggestion;
       }
     } catch (error) {
-      console.error('OpenRouter generation error:', error);
+      logger.error('OpenRouter generation failed', error);
     }
     return '';
   }
@@ -283,32 +285,38 @@ async function generateTextCompletion(
     try {
       const systemPrompt = buildSystemPrompt(mode, style);
       const model = geminiModel;
-      const response = await Promise.race([
-        geminiClient.models.generateContent({
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3e4);
+      try {
+        const response = await geminiClient.models.generateContent({
           model,
           config: {
             systemInstruction: systemPrompt,
             temperature: 0.7,
             maxOutputTokens:
               mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
+            abortSignal: controller.signal,
           },
           contents: currentText,
-        }),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('gemini timeout')), 3e4)
-        ),
-      ]);
-      const suggestion = response.text?.trim() || '';
-      if (!suggestion) {
-        return '';
+        });
+        const suggestion = response.text?.trim() || '';
+        if (!suggestion) {
+          return '';
+        }
+        if (mode === 'word' && !currentText.endsWith(' ')) {
+          return suggestion;
+        }
+        logger.info(`Generated Gemini suggestion (${model})`);
+        return ' ' + suggestion;
+      } finally {
+        clearTimeout(timeoutId);
       }
-      if (mode === 'word' && !currentText.endsWith(' ')) {
-        return suggestion;
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        logger.error('Gemini request timed out');
+      } else {
+        logger.error('Gemini generation failed', error);
       }
-      logger.info(`Generated Gemini suggestion (${model})`);
-      return ' ' + suggestion;
-    } catch {
-      logger.error('Gemini generation failed');
       return '';
     }
   }

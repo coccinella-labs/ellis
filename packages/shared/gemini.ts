@@ -30,7 +30,7 @@ export async function generateTextCompletion(
         return suggestion;
       }
     } catch (error) {
-      console.error('SambaNova generation error:', error);
+      logger.error('SambaNova generation failed', error);
     }
     return '';
   }
@@ -48,7 +48,7 @@ export async function generateTextCompletion(
         return suggestion;
       }
     } catch (error) {
-      console.error('OpenRouter generation error:', error);
+      logger.error('OpenRouter generation failed', error);
     }
     return '';
   }
@@ -59,36 +59,46 @@ export async function generateTextCompletion(
       const systemPrompt = buildSystemPrompt(mode, style);
       const model = geminiModel;
 
-      const response = (await Promise.race([
-        geminiClient.models.generateContent({
+      // AbortController cancels the underlying HTTP request when the timeout
+      // fires; Promise.race alone would leave the request running in the
+      // background. The timer is cleared in finally so it always runs.
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+      try {
+        const response = await geminiClient.models.generateContent({
           model,
           config: {
             systemInstruction: systemPrompt,
             temperature: 0.7,
             maxOutputTokens:
               mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
+            abortSignal: controller.signal,
           },
           contents: currentText,
-        }),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('gemini timeout')), 30000)
-        ),
-      ])) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+        });
 
-      const suggestion = response.text?.trim() || '';
+        const suggestion = response.text?.trim() || '';
 
-      if (!suggestion) {
-        return '';
+        if (!suggestion) {
+          return '';
+        }
+
+        if (mode === 'word' && !currentText.endsWith(' ')) {
+          return suggestion;
+        }
+
+        logger.info(`Generated Gemini suggestion (${model})`);
+        return ' ' + suggestion;
+      } finally {
+        clearTimeout(timeoutId);
       }
-
-      if (mode === 'word' && !currentText.endsWith(' ')) {
-        return suggestion;
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        logger.error('Gemini request timed out');
+      } else {
+        logger.error('Gemini generation failed', error);
       }
-
-      logger.info(`Generated Gemini suggestion (${model})`);
-      return ' ' + suggestion;
-    } catch {
-      logger.error('Gemini generation failed');
       return '';
     }
   }

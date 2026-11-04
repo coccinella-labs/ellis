@@ -30,20 +30,21 @@ export async function generateTextCompletionOpenRouter(
 ): Promise<string> {
   const client = getOpenRouterClient();
 
+  const systemPrompt = buildSystemPrompt(mode, style);
+
+  const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: currentText },
+  ];
+
+  // AbortController cancels the underlying HTTP request when the timeout
+  // fires; Promise.race alone would leave the request running in the
+  // background. The timer is cleared in finally so it always runs,
+  // whether the request succeeds, fails, or times out.
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000);
+
   try {
-    const systemPrompt = buildSystemPrompt(mode, style);
-
-    const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: currentText },
-    ];
-
-    // AbortController cancels the underlying HTTP request when the timeout
-    // fires; Promise.race alone would leave the request running in the
-    // background.
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
-
     const response = await client.chat.completions.create(
       {
         model,
@@ -54,7 +55,6 @@ export async function generateTextCompletionOpenRouter(
       },
       { signal: controller.signal }
     );
-    clearTimeout(timeoutId);
 
     const content = response.choices[0]?.message?.content?.trim() || '';
 
@@ -76,5 +76,7 @@ export async function generateTextCompletionOpenRouter(
       logger.error('OpenRouter generation failed');
     }
     return '';
+  } finally {
+    clearTimeout(timeoutId);
   }
 }

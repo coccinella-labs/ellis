@@ -22,20 +22,21 @@ export async function generateTextCompletionSambaNova(
 ): Promise<string> {
   const client = getSambaNovaClient();
 
+  const systemPrompt = buildSystemPrompt(mode, style);
+
+  const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: currentText },
+  ];
+
+  // AbortController cancels the underlying HTTP request when the timeout
+  // fires; Promise.race alone would leave the request running in the
+  // background. The timer is cleared in finally so it always runs,
+  // whether the request succeeds, fails, or times out.
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000);
+
   try {
-    const systemPrompt = buildSystemPrompt(mode, style);
-
-    const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: currentText },
-    ];
-
-    // AbortController cancels the underlying HTTP request when the timeout
-    // fires; Promise.race alone would leave the request running in the
-    // background.
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
-
     const response = await client.chat.completions.create(
       {
         model: 'gpt-oss-120b',
@@ -46,7 +47,6 @@ export async function generateTextCompletionSambaNova(
       },
       { signal: controller.signal }
     );
-    clearTimeout(timeoutId);
 
     // SambaNova returns response in 'content' field
     const content = response.choices[0]?.message?.content?.trim() || '';
@@ -70,5 +70,7 @@ export async function generateTextCompletionSambaNova(
       logger.error('SambaNova generation failed');
     }
     return '';
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
