@@ -144,17 +144,11 @@ describe('generateTextCompletionSambaNova', () => {
     expect(result).toBe('');
   });
 
-  it('returns a suggestion when there is no API key', async () => {
+  it('throws when there is no API key', async () => {
     process.env.SAMBANOVA_API_KEY = '';
-    createMock.mockResolvedValueOnce({
-      choices: [{ message: { content: 'world' } }],
-    });
     const { generateTextCompletionSambaNova } = await import('./sambanova.js');
-    const result = await generateTextCompletionSambaNova(
-      'hello',
-      'sentence',
-      'casual'
-    );
-    expect(result).toBe(' world');
+    await expect(
+      generateTextCompletionSambaNova('hello', 'sentence', 'casual')
+    ).rejects.toThrow(/SAMBANOVA_API_KEY is not set/);
   });
 });

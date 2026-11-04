@@ -3,8 +3,14 @@ import { buildSystemPrompt } from './prompts.js';
 import { logger } from './logger.js';
 
 function getSambaNovaClient() {
+  const apiKey = process.env.SAMBANOVA_API_KEY || '';
+  if (!apiKey) {
+    throw new Error(
+      'SAMBANOVA_API_KEY is not set. Get one at https://sambanova.ai/.'
+    );
+  }
   return new OpenAI({
-    apiKey: process.env.SAMBANOVA_API_KEY || '',
+    apiKey,
     baseURL: 'https://api.sambanova.ai/v1',
   });
 }
