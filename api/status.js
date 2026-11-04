@@ -151,6 +151,9 @@ async function generateTextCompletionSambaNova(
   }
 }
 
+// packages/shared/openrouter.ts
+import OpenAI2 from 'openai';
+
 // packages/shared/gemini.ts
 var ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 

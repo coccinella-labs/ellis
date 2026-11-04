@@ -151,6 +151,61 @@ async function generateTextCompletionSambaNova(
   }
 }
 
+// packages/shared/openrouter.ts
+import OpenAI2 from 'openai';
+function getOpenRouterClient() {
+  return new OpenAI2({
+    apiKey: process.env.OPENROUTER_API_KEY || '',
+    baseURL: 'https://openrouter.ai/api/v1',
+    defaultHeaders: {
+      // Optional attribution so the app appears on the OpenRouter leaderboards.
+      'HTTP-Referer':
+        process.env.HTTP_REFERER || 'https://github.com/coccinella-labs/ellis',
+      'X-OpenRouter-Title': 'Ellis',
+    },
+  });
+}
+async function generateTextCompletionOpenRouter(
+  currentText,
+  mode = 'sentence',
+  style = 'casual',
+  model = 'openrouter/free'
+) {
+  const client = getOpenRouterClient();
+  try {
+    const systemPrompt = buildSystemPrompt(mode, style);
+    const messages = [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: currentText },
+    ];
+    const response = await Promise.race([
+      client.chat.completions.create({
+        model,
+        messages,
+        max_tokens: mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
+        temperature: 0.7,
+        stream: false,
+      }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('openrouter timeout')), 3e4)
+      ),
+    ]);
+    const content = response.choices[0]?.message?.content?.trim() || '';
+    if (!content) {
+      console.log('No suggestion extracted from OpenRouter response');
+      return '';
+    }
+    if (mode === 'word' && !currentText.endsWith(' ')) {
+      return content;
+    }
+    logger.info(`Generated OpenRouter suggestion (${model}): ${content}`);
+    return content.startsWith(' ') ? content : ' ' + content;
+  } catch {
+    logger.error('OpenRouter generation failed');
+    return '';
+  }
+}
+
 // packages/shared/gemini.ts
 var ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 async function generateTextCompletion(
@@ -175,6 +230,22 @@ async function generateTextCompletion(
       }
     } catch (error) {
       console.error('SambaNova generation error:', error);
+    }
+    return '';
+  }
+  if (provider === 'openrouter') {
+    try {
+      const suggestion = await generateTextCompletionOpenRouter(
+        currentText,
+        mode,
+        style
+      );
+      if (suggestion) {
+        console.log('Generated OpenRouter suggestion:', suggestion);
+        return suggestion;
+      }
+    } catch (error) {
+      console.error('OpenRouter generation error:', error);
     }
     return '';
   }
@@ -213,21 +284,8 @@ async function generateTextCompletion(
   }
   const hasGeminiKey = !!process.env.GEMINI_API_KEY;
   if (!hasGeminiKey) {
-    logger.info('No Gemini API key, using SambaNova directly');
-    try {
-      const suggestion = await generateTextCompletionSambaNova(
-        currentText,
-        mode,
-        style
-      );
-      if (suggestion) {
-        logger.info('Generated SambaNova suggestion (direct)');
-        return suggestion;
-      }
-    } catch {
-      logger.error('SambaNova generation failed');
-    }
-    return '';
+    logger.info('No Gemini API key, trying SambaNova then OpenRouter');
+    return tryFallbackChain(currentText, mode, style);
   }
   try {
     const systemPrompt = buildSystemPrompt(mode, style);
@@ -263,23 +321,42 @@ async function generateTextCompletion(
       error?.message?.includes('quota') ||
       error?.message?.includes('RESOURCE_EXHAUSTED')
     ) {
-      logger.warn('Rate limit hit, falling back to SambaNova...');
-      try {
-        const fallbackSuggestion = await generateTextCompletionSambaNova(
-          currentText,
-          mode,
-          style
-        );
-        if (fallbackSuggestion) {
-          logger.info('Successfully used SambaNova fallback');
-          return fallbackSuggestion;
-        }
-      } catch {
-        logger.error('SambaNova fallback failed');
-      }
+      logger.warn(
+        'Rate limit hit, falling back to SambaNova then OpenRouter...'
+      );
+      return tryFallbackChain(currentText, mode, style);
     }
     return '';
   }
+}
+async function tryFallbackChain(currentText, mode, style) {
+  try {
+    const suggestion = await generateTextCompletionSambaNova(
+      currentText,
+      mode,
+      style
+    );
+    if (suggestion) {
+      logger.info('Successfully used SambaNova fallback');
+      return suggestion;
+    }
+  } catch {
+    logger.error('SambaNova fallback failed');
+  }
+  try {
+    const suggestion = await generateTextCompletionOpenRouter(
+      currentText,
+      mode,
+      style
+    );
+    if (suggestion) {
+      logger.info('Successfully used OpenRouter fallback');
+      return suggestion;
+    }
+  } catch {
+    logger.error('OpenRouter fallback failed');
+  }
+  return '';
 }
 
 // packages/shared/schema.ts
@@ -304,7 +381,9 @@ var textCompletionRequestSchema = z.object({
   style: z
     .enum(['casual', 'formal', 'creative', 'technical'])
     .default('casual'),
-  provider: z.enum(['auto', 'gemini', 'sambanova']).default('auto'),
+  provider: z
+    .enum(['auto', 'gemini', 'sambanova', 'openrouter'])
+    .default('auto'),
   geminiModel: z.string().default('gemini-3.8-flash'),
 });
 var textCompletionResponseSchema = z.object({

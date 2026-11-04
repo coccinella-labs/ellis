@@ -13,8 +13,10 @@ interface SettingsPanelProps {
   onWritingStyleChange: (
     style: 'casual' | 'formal' | 'creative' | 'technical'
   ) => void;
-  aiProvider: 'auto' | 'gemini' | 'sambanova';
-  onAiProviderChange: (provider: 'auto' | 'gemini' | 'sambanova') => void;
+  aiProvider: 'auto' | 'gemini' | 'sambanova' | 'openrouter';
+  onAiProviderChange: (
+    provider: 'auto' | 'gemini' | 'sambanova' | 'openrouter'
+  ) => void;
   geminiModel: string;
   onGeminiModelChange: (model: string) => void;
 }
@@ -162,6 +164,7 @@ export function SettingsPanel({
                     <option value="auto">auto</option>
                     <option value="gemini">gemini</option>
                     <option value="sambanova">sambanova</option>
+                    <option value="openrouter">openrouter</option>
                   </select>
                 </div>
 

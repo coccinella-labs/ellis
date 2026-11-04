@@ -7,7 +7,7 @@ interface TextEditorProps {
   onSuggestionAccept?: () => void;
   completionMode?: 'word' | 'sentence' | 'paragraph';
   writingStyle?: 'casual' | 'formal' | 'creative' | 'technical';
-  aiProvider?: 'auto' | 'gemini' | 'sambanova';
+  aiProvider?: 'auto' | 'gemini' | 'sambanova' | 'openrouter';
   geminiModel?: string;
   onGeminiModelChange?: (model: string) => void;
 }

@@ -1,6 +1,7 @@
 import { GoogleGenAI } from '@google/genai';
 import { buildSystemPrompt } from './prompts.js';
 import { generateTextCompletionSambaNova } from './sambanova.js';
+import { generateTextCompletionOpenRouter } from './openrouter.js';
 import { logger } from './logger.js';
 
 export const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
@@ -9,7 +10,7 @@ export async function generateTextCompletion(
   currentText: string,
   mode: 'word' | 'sentence' | 'paragraph' = 'sentence',
   style: 'casual' | 'formal' | 'creative' | 'technical' = 'casual',
-  provider: 'auto' | 'gemini' | 'sambanova' = 'auto',
+  provider: 'auto' | 'gemini' | 'sambanova' | 'openrouter' = 'auto',
   geminiModel: string = 'gemini-3.8-flash'
 ): Promise<string> {
   logger.info(`Generating text completion with ${provider} (${geminiModel})`);
@@ -30,6 +31,24 @@ export async function generateTextCompletion(
       }
     } catch (error) {
       console.error('SambaNova generation error:', error);
+    }
+    return '';
+  }
+
+  if (provider === 'openrouter') {
+    // Only try OpenRouter
+    try {
+      const suggestion = await generateTextCompletionOpenRouter(
+        currentText,
+        mode,
+        style
+      );
+      if (suggestion) {
+        console.log('Generated OpenRouter suggestion:', suggestion);
+        return suggestion;
+      }
+    } catch (error) {
+      console.error('OpenRouter generation error:', error);
     }
     return '';
   }
@@ -79,21 +98,8 @@ export async function generateTextCompletion(
 
   // Skip Gemini if no API key available
   if (!hasGeminiKey) {
-    logger.info('No Gemini API key, using SambaNova directly');
-    try {
-      const suggestion = await generateTextCompletionSambaNova(
-        currentText,
-        mode,
-        style
-      );
-      if (suggestion) {
-        logger.info('Generated SambaNova suggestion (direct)');
-        return suggestion;
-      }
-    } catch {
-      logger.error('SambaNova generation failed');
-    }
-    return '';
+    logger.info('No Gemini API key, trying SambaNova then OpenRouter');
+    return tryFallbackChain(currentText, mode, style);
   }
 
   try {
@@ -138,24 +144,53 @@ export async function generateTextCompletion(
       error?.message?.includes('quota') ||
       error?.message?.includes('RESOURCE_EXHAUSTED')
     ) {
-      logger.warn('Rate limit hit, falling back to SambaNova...');
-
-      // Fallback to SambaNova
-      try {
-        const fallbackSuggestion = await generateTextCompletionSambaNova(
-          currentText,
-          mode,
-          style
-        );
-        if (fallbackSuggestion) {
-          logger.info('Successfully used SambaNova fallback');
-          return fallbackSuggestion;
-        }
-      } catch {
-        logger.error('SambaNova fallback failed');
-      }
+      logger.warn(
+        'Rate limit hit, falling back to SambaNova then OpenRouter...'
+      );
+      return tryFallbackChain(currentText, mode, style);
     }
 
     return '';
   }
+}
+
+/**
+ * Fallback chain: SambaNova first, then OpenRouter. Returns '' if all fail.
+ */
+async function tryFallbackChain(
+  currentText: string,
+  mode: 'word' | 'sentence' | 'paragraph',
+  style: 'casual' | 'formal' | 'creative' | 'technical'
+): Promise<string> {
+  // Try SambaNova
+  try {
+    const suggestion = await generateTextCompletionSambaNova(
+      currentText,
+      mode,
+      style
+    );
+    if (suggestion) {
+      logger.info('Successfully used SambaNova fallback');
+      return suggestion;
+    }
+  } catch {
+    logger.error('SambaNova fallback failed');
+  }
+
+  // Try OpenRouter
+  try {
+    const suggestion = await generateTextCompletionOpenRouter(
+      currentText,
+      mode,
+      style
+    );
+    if (suggestion) {
+      logger.info('Successfully used OpenRouter fallback');
+      return suggestion;
+    }
+  } catch {
+    logger.error('OpenRouter fallback failed');
+  }
+
+  return '';
 }

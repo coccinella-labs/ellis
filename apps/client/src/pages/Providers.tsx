@@ -50,6 +50,19 @@ export function ProvidersPage({ isOpen, onOpenChange }: ProvidersPageProps) {
 
             <div>
               <h4 className="font-medium text-sm uppercase tracking-wide mb-3">
+                Free Auto-Router
+              </h4>
+              <div className="space-y-2 text-sm">
+                <p>OpenRouter Free</p>
+                <p className="text-muted-foreground">
+                  Auto-selects a free model when no key is configured or all
+                  others are exhausted. Zero cost.
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-medium text-sm uppercase tracking-wide mb-3">
                 API Keys
               </h4>
               <div className="space-y-2 text-sm">
@@ -66,7 +79,8 @@ export function ProvidersPage({ isOpen, onOpenChange }: ProvidersPageProps) {
               <div className="space-y-2 text-sm">
                 <p>Try Gemini first for speed.</p>
                 <p>Switch to SambaNova on rate limits.</p>
-                <p>Same settings work with both.</p>
+                <p>OpenRouter free router as a last resort.</p>
+                <p>Same settings work with all three.</p>
               </div>
             </div>
 
