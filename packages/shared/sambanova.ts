@@ -30,25 +30,30 @@ export async function generateTextCompletionSambaNova(
       { role: 'user', content: currentText },
     ];
 
-    const response = (await Promise.race([
-      client.chat.completions.create({
+    // AbortController cancels the underlying HTTP request when the timeout
+    // fires; Promise.race alone would leave the request running in the
+    // background.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+    const response = await client.chat.completions.create(
+      {
         model: 'gpt-oss-120b',
         messages,
         max_tokens: mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
         temperature: 0.7,
         stream: false,
-      }),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('sambanova timeout')), 30000)
-      ),
-    ])) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+      },
+      { signal: controller.signal }
+    );
+    clearTimeout(timeoutId);
 
     // SambaNova returns response in 'content' field
     const content = response.choices[0]?.message?.content?.trim() || '';
     const suggestion = content;
 
     if (!suggestion) {
-      console.log('No suggestion extracted from SambaNova response');
+      logger.warn('No suggestion extracted from SambaNova response');
       return '';
     }
 
@@ -56,10 +61,14 @@ export async function generateTextCompletionSambaNova(
       return suggestion;
     }
 
-    logger.info(`Generated SambaNova suggestion`);
+    logger.info('Generated SambaNova suggestion');
     return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
-  } catch {
-    logger.error('SambaNova generation failed');
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      logger.error('SambaNova request timed out');
+    } else {
+      logger.error('SambaNova generation failed');
+    }
     return '';
   }
 }

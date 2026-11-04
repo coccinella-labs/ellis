@@ -38,23 +38,28 @@ export async function generateTextCompletionOpenRouter(
       { role: 'user', content: currentText },
     ];
 
-    const response = (await Promise.race([
-      client.chat.completions.create({
+    // AbortController cancels the underlying HTTP request when the timeout
+    // fires; Promise.race alone would leave the request running in the
+    // background.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+    const response = await client.chat.completions.create(
+      {
         model,
         messages,
         max_tokens: mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
         temperature: 0.7,
         stream: false,
-      }),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('openrouter timeout')), 30000)
-      ),
-    ])) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+      },
+      { signal: controller.signal }
+    );
+    clearTimeout(timeoutId);
 
     const content = response.choices[0]?.message?.content?.trim() || '';
 
     if (!content) {
-      console.log('No suggestion extracted from OpenRouter response');
+      logger.warn('No suggestion extracted from OpenRouter response');
       return '';
     }
 
@@ -64,8 +69,12 @@ export async function generateTextCompletionOpenRouter(
 
     logger.info(`Generated OpenRouter suggestion (${model})`);
     return content.startsWith(' ') ? content : ' ' + content;
-  } catch {
-    logger.error('OpenRouter generation failed');
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      logger.error('OpenRouter request timed out');
+    } else {
+      logger.error('OpenRouter generation failed');
+    }
     return '';
   }
 }

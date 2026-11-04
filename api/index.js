@@ -136,31 +136,36 @@ async function generateTextCompletionSambaNova(
       { role: 'system', content: systemPrompt },
       { role: 'user', content: currentText },
     ];
-    const response = await Promise.race([
-      client.chat.completions.create({
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3e4);
+    const response = await client.chat.completions.create(
+      {
         model: 'gpt-oss-120b',
         messages,
         max_tokens: mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
         temperature: 0.7,
         stream: false,
-      }),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('sambanova timeout')), 3e4)
-      ),
-    ]);
+      },
+      { signal: controller.signal }
+    );
+    clearTimeout(timeoutId);
     const content = response.choices[0]?.message?.content?.trim() || '';
     const suggestion = content;
     if (!suggestion) {
-      console.log('No suggestion extracted from SambaNova response');
+      logger.warn('No suggestion extracted from SambaNova response');
       return '';
     }
     if (mode === 'word' && !currentText.endsWith(' ')) {
       return suggestion;
     }
-    logger.info(`Generated SambaNova suggestion`);
+    logger.info('Generated SambaNova suggestion');
     return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
-  } catch {
-    logger.error('SambaNova generation failed');
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      logger.error('SambaNova request timed out');
+    } else {
+      logger.error('SambaNova generation failed');
+    }
     return '';
   }
 }
@@ -198,21 +203,22 @@ async function generateTextCompletionOpenRouter(
       { role: 'system', content: systemPrompt },
       { role: 'user', content: currentText },
     ];
-    const response = await Promise.race([
-      client.chat.completions.create({
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3e4);
+    const response = await client.chat.completions.create(
+      {
         model,
         messages,
         max_tokens: mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
         temperature: 0.7,
         stream: false,
-      }),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('openrouter timeout')), 3e4)
-      ),
-    ]);
+      },
+      { signal: controller.signal }
+    );
+    clearTimeout(timeoutId);
     const content = response.choices[0]?.message?.content?.trim() || '';
     if (!content) {
-      console.log('No suggestion extracted from OpenRouter response');
+      logger.warn('No suggestion extracted from OpenRouter response');
       return '';
     }
     if (mode === 'word' && !currentText.endsWith(' ')) {
@@ -220,8 +226,12 @@ async function generateTextCompletionOpenRouter(
     }
     logger.info(`Generated OpenRouter suggestion (${model})`);
     return content.startsWith(' ') ? content : ' ' + content;
-  } catch {
-    logger.error('OpenRouter generation failed');
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      logger.error('OpenRouter request timed out');
+    } else {
+      logger.error('OpenRouter generation failed');
+    }
     return '';
   }
 }
