@@ -55,9 +55,11 @@ at least one key configured to return a suggestion.
 
 - Mode defaults to `sentence`, style to `casual`, provider to `auto`.
 - Gemini model defaults to `gemini-3.8-flash`.
-- Each provider request has a 30-second timeout via `Promise.race`.
-- The server rate-limits `/api/complete` to 30 requests per 60-second
-  window per IP.
+- Each provider request has a 30-second timeout via `AbortController`.
+  The signal is passed to the SDK, so the underlying HTTP request is
+  actually cancelled when the timeout fires; the timer is cleared in a
+  `finally` block so it always runs, whether the request succeeds, fails,
+  or times out.
 
 ## Failure handling
 
@@ -65,8 +67,9 @@ at least one key configured to return a suggestion.
   the next provider; explicit selection returns `''`.
 - The server returns an empty suggestion for text shorter than 10 characters
   and for Zod validation failures.
-- Provider errors are logged through the shared logger without the
-  generated text or user input.
+- Provider errors are logged through the shared logger as a safe category
+  and provider name. The raw SDK error object is never forwarded, so no
+  internal SDK details or user-generated content reach the console.
 
 ## Logging
 

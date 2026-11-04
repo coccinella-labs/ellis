@@ -252,8 +252,8 @@ async function generateTextCompletion(
         logger.info('Generated SambaNova suggestion');
         return suggestion;
       }
-    } catch (error) {
-      logger.error('SambaNova generation failed', error);
+    } catch {
+      logger.error('SambaNova generation failed');
     }
     return '';
   }
@@ -268,8 +268,8 @@ async function generateTextCompletion(
         logger.info('Generated OpenRouter suggestion');
         return suggestion;
       }
-    } catch (error) {
-      logger.error('OpenRouter generation failed', error);
+    } catch {
+      logger.error('OpenRouter generation failed');
     }
     return '';
   }
@@ -307,7 +307,7 @@ async function generateTextCompletion(
       if (error instanceof Error && error.name === 'AbortError') {
         logger.error('Gemini request timed out');
       } else {
-        logger.error('Gemini generation failed', error);
+        logger.error('Gemini generation failed');
       }
       return '';
     }
@@ -320,36 +320,40 @@ async function generateTextCompletion(
   try {
     const systemPrompt = buildSystemPrompt(mode, style);
     const model = geminiModel;
-    const response = await Promise.race([
-      geminiClient.models.generateContent({
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3e4);
+    try {
+      const response = await geminiClient.models.generateContent({
         model,
         config: {
           systemInstruction: systemPrompt,
           temperature: 0.7,
           maxOutputTokens:
             mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
+          abortSignal: controller.signal,
         },
         contents: currentText,
-      }),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('gemini timeout')), 3e4)
-      ),
-    ]);
-    const suggestion = response.text?.trim() || '';
-    if (!suggestion) {
-      return '';
+      });
+      const suggestion = response.text?.trim() || '';
+      if (!suggestion) {
+        return '';
+      }
+      if (mode === 'word' && !currentText.endsWith(' ')) {
+        return suggestion;
+      }
+      logger.info(`Generated Gemini suggestion (${model})`);
+      return ' ' + suggestion;
+    } finally {
+      clearTimeout(timeoutId);
     }
-    if (mode === 'word' && !currentText.endsWith(' ')) {
-      return suggestion;
-    }
-    logger.info(`Generated Gemini suggestion (${model})`);
-    return ' ' + suggestion;
   } catch (error) {
     logger.error('Gemini generation failed');
+    const status = error.status;
+    const message = error instanceof Error ? error.message : String(error);
     if (
-      error?.status === 429 ||
-      error?.message?.includes('quota') ||
-      error?.message?.includes('RESOURCE_EXHAUSTED')
+      status === 429 ||
+      message.includes('quota') ||
+      message.includes('RESOURCE_EXHAUSTED')
     ) {
       logger.warn(
         'Rate limit hit, falling back to SambaNova then OpenRouter...'

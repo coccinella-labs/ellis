@@ -12,6 +12,10 @@ vi.mock('./sambanova.js', () => ({
   generateTextCompletionSambaNova: vi.fn().mockResolvedValue(' fallback'),
 }));
 
+vi.mock('./openrouter.js', () => ({
+  generateTextCompletionOpenRouter: vi.fn().mockResolvedValue(''),
+}));
+
 vi.mock('./logger.js', () => ({
   logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn(), debug: vi.fn() },
 }));
@@ -465,5 +469,75 @@ describe('shared gemini missed branches', () => {
       'auto'
     );
     expect(result).toBe('next');
+  });
+});
+
+describe('shared gemini fallback order and cancellation', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    process.env.GEMINI_API_KEY = 'test-key';
+  });
+
+  it('falls back to OpenRouter after SambaNova fails in auto mode', async () => {
+    const err = new Error('quota exceeded');
+    (err as any).status = 429;
+    const { GoogleGenAI } = await import('@google/genai');
+    const instance = new (GoogleGenAI as any)();
+    instance.models.generateContent.mockRejectedValueOnce(err);
+
+    const sambanova = await import('./sambanova.js');
+    vi.mocked(sambanova.generateTextCompletionSambaNova).mockRejectedValueOnce(
+      new Error('fail')
+    );
+
+    const openrouter = await import('./openrouter.js');
+    vi.mocked(
+      openrouter.generateTextCompletionOpenRouter
+    ).mockResolvedValueOnce(' fallback');
+
+    const { generateTextCompletion } = await import('./gemini.js');
+    const result = await generateTextCompletion(
+      'hello world text',
+      'sentence',
+      'casual',
+      'auto'
+    );
+    expect(result).toBe(' fallback');
+    expect(
+      vi.mocked(openrouter.generateTextCompletionOpenRouter)
+    ).toHaveBeenCalled();
+  });
+
+  it('passes an AbortSignal to the SDK and aborts it on timeout in auto mode', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    let capturedSignal: AbortSignal | undefined;
+    // The module-level `ai` instance shares the same generateContent mock,
+    // so capture the signal from any call to it.
+    generateContent.mockImplementation(
+      (params: { config?: { abortSignal?: AbortSignal } }) => {
+        capturedSignal = params.config?.abortSignal;
+        return new Promise((_, reject) => {
+          capturedSignal?.addEventListener('abort', () =>
+            reject(new Error('aborted'))
+          );
+        });
+      }
+    );
+
+    const { generateTextCompletion } = await import('./gemini.js');
+    const promise = generateTextCompletion(
+      'hello world text',
+      'sentence',
+      'casual',
+      'auto'
+    );
+    // Advance past the 30s timeout so the controller fires.
+    await vi.advanceTimersByTimeAsync(31000);
+    const result = await promise;
+
+    expect(result).toBe('');
+    expect(capturedSignal).toBeInstanceOf(AbortSignal);
+    expect(capturedSignal?.aborted).toBe(true);
+    vi.useRealTimers();
   });
 });

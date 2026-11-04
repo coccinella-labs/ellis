@@ -171,4 +171,36 @@ describe('generateTextCompletionOpenRouter', () => {
       generateTextCompletionOpenRouter('hello', 'sentence', 'casual')
     ).rejects.toThrow(/OPENROUTER_API_KEY is not set/);
   });
+
+  it('passes an AbortSignal to the SDK and aborts it on timeout', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    let capturedSignal: AbortSignal | undefined;
+    createMock.mockImplementationOnce(
+      (_body: unknown, options?: { signal?: AbortSignal }) => {
+        capturedSignal = options?.signal;
+        return new Promise((_, reject) => {
+          capturedSignal?.addEventListener('abort', () =>
+            reject(new Error('aborted'))
+          );
+        });
+      }
+    );
+
+    const { generateTextCompletionOpenRouter } = await import(
+      './openrouter.js'
+    );
+    const promise = generateTextCompletionOpenRouter(
+      'hello',
+      'sentence',
+      'casual'
+    );
+    // Advance past the 30s timeout so the controller fires.
+    await vi.advanceTimersByTimeAsync(31000);
+    const result = await promise;
+
+    expect(result).toBe('');
+    expect(capturedSignal).toBeInstanceOf(AbortSignal);
+    expect(capturedSignal?.aborted).toBe(true);
+    vi.useRealTimers();
+  });
 });
