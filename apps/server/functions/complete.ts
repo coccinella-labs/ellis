@@ -6,9 +6,12 @@ import { textCompletionRequestSchema } from '../../../packages/shared/schema';
 // UPSTASH_REDIS_REST_TOKEN are configured, which works across Vercel
 // serverless instances. Falls back to an in-memory store for local
 // development where Redis is not available.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let ratelimit: any = null;
-let fallbackStore: Map<string, { count: number; resetAt: number }> | null =
-  null;
+// In-memory fallback store. Initialized once at module load so the
+// counter persists across calls within the same process; a fresh Map
+// would reset the limit on every request.
+let fallbackStore: Map<string, { count: number; resetAt: number }> = new Map();
 
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS = 30;
@@ -37,8 +40,8 @@ async function getRatelimit() {
     }
   }
 
-  // In-memory fallback for local development.
-  fallbackStore = new Map();
+  // In-memory fallback for local development. The store is created once at
+  // module load so the counter persists across calls.
   return null;
 }
 
@@ -54,7 +57,12 @@ function isRateLimitedFallback(ip: string): boolean {
   return entry.count > MAX_REQUESTS;
 }
 
-export default async function handler(req: any, res: any) {
+export default async function handler(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  req: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  res: any
+) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
@@ -80,8 +88,7 @@ export default async function handler(req: any, res: any) {
       textCompletionRequestSchema.parse(req.body);
 
     if (!text || text.length < 10) {
-      res.json({ suggestion: '' });
-      return;
+      return res.json({ suggestion: '' });
     }
 
     const suggestion = await generateTextCompletion(

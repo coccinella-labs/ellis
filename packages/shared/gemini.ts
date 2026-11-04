@@ -44,7 +44,7 @@ export async function generateTextCompletion(
         style
       );
       if (suggestion) {
-        console.log('Generated OpenRouter suggestion:', suggestion);
+        logger.info('Generated OpenRouter suggestion');
         return suggestion;
       }
     } catch (error) {
