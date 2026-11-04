@@ -1,5 +1,5 @@
-import { generateTextCompletion } from '../apps/server/gemini';
-import { textCompletionRequestSchema } from '../packages/shared/schema';
+import { generateTextCompletion } from '../gemini';
+import { textCompletionRequestSchema } from '../../../packages/shared/schema';
 
 // Rate limit: 30 requests per 60-second window per IP.
 // Uses Upstash Redis when UPSTASH_REDIS_URL is configured, which works across

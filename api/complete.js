@@ -311,7 +311,7 @@ var textCompletionResponseSchema = z.object({
   suggestion: z.string(),
 });
 
-// api/complete.ts
+// apps/server/functions/complete.ts
 var ratelimit = null;
 var fallbackStore = null;
 var WINDOW_MS = 6e4;

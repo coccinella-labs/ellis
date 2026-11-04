@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "dev": "NODE_ENV=development tsx apps/server/index.ts",
-    "build": "vite build --mode production && esbuild apps/server/index.ts --platform=node --packages=external --bundle --format=esm --outfile=api/index.js && esbuild api/complete.ts --platform=node --packages=external --bundle --format=esm --outfile=api/complete.js && esbuild api/status.ts --platform=node --packages=external --bundle --format=esm --outfile=api/status.js",
+    "build": "vite build --mode production && esbuild apps/server/index.ts --platform=node --packages=external --bundle --format=esm --outfile=api/index.js && esbuild apps/server/functions/complete.ts --platform=node --packages=external --bundle --format=esm --outfile=api/complete.js && esbuild apps/server/functions/status.ts --platform=node --packages=external --bundle --format=esm --outfile=api/status.js",
     "build:cli": "cd apps/cli && npm run build",
     "start": "NODE_ENV=production node api/index.js",
     "check": "npx tsc",
