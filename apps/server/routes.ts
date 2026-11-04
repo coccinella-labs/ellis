@@ -5,6 +5,7 @@ import {
   generateTextCompletion,
   testApiKey,
   testSambaNovaApiKey,
+  testOpenRouterApiKey,
 } from './gemini';
 import { textCompletionRequestSchema } from '@shared/schema';
 import { logger } from '@shared/logger';
@@ -45,9 +46,11 @@ export function registerRoutes(app: Express): Express {
     try {
       const hasGeminiKey = !!process.env.GEMINI_API_KEY;
       const hasSambaNovaKey = !!process.env.SAMBANOVA_API_KEY;
+      const hasOpenRouterKey = !!process.env.OPENROUTER_API_KEY;
 
       let geminiWorking = false;
       let sambaNovaWorking = false;
+      let openRouterWorking = false;
 
       const skipGemini = process.env.DISABLE_GEMINI === 'true';
       if (hasGeminiKey && !skipGemini) {
@@ -56,19 +59,23 @@ export function registerRoutes(app: Express): Express {
       if (hasSambaNovaKey) {
         sambaNovaWorking = await testSambaNovaApiKey();
       }
+      if (hasOpenRouterKey) {
+        openRouterWorking = await testOpenRouterApiKey();
+      }
 
       const isWorking =
         process.env.NODE_ENV === 'development'
           ? true
-          : geminiWorking || sambaNovaWorking;
+          : geminiWorking || sambaNovaWorking || openRouterWorking;
       logger.info(
-        `Status check result - Gemini: ${geminiWorking}, SambaNova: ${sambaNovaWorking}`
+        `Status check result - Gemini: ${geminiWorking}, SambaNova: ${sambaNovaWorking}, OpenRouter: ${openRouterWorking}`
       );
       const payload = {
         status: isWorking ? 'ok' : 'error',
         providers: {
           gemini: geminiWorking,
           sambanova: sambaNovaWorking,
+          openrouter: openRouterWorking,
         },
       };
       statusCache = { data: payload, expires: Date.now() + 60000 };

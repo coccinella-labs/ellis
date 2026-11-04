@@ -1,5 +1,6 @@
 import { ai, generateTextCompletion } from '@shared/gemini';
 import { generateTextCompletionSambaNova } from '@shared/sambanova';
+import { generateTextCompletionOpenRouter } from '@shared/openrouter';
 import { logger } from '@shared/logger';
 
 export async function testApiKey(): Promise<boolean> {
@@ -46,6 +47,27 @@ export async function testSambaNovaApiKey(): Promise<boolean> {
     return success;
   } catch {
     logger.error('SambaNova test failed');
+    return false;
+  }
+}
+
+export async function testOpenRouterApiKey(): Promise<boolean> {
+  try {
+    logger.info('Testing OpenRouter API key...');
+    if (!process.env.OPENROUTER_API_KEY) {
+      logger.warn('No OpenRouter API key set');
+      return false;
+    }
+    const result = await generateTextCompletionOpenRouter(
+      'Hello',
+      'word',
+      'casual'
+    );
+    const success = !!result?.trim();
+    logger.info(`OpenRouter test result: ${success}`);
+    return success;
+  } catch {
+    logger.error('OpenRouter test failed');
     return false;
   }
 }
