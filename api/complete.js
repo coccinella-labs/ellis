@@ -149,7 +149,7 @@ async function generateTextCompletionSambaNova(
     if (mode === 'word' && !currentText.endsWith(' ')) {
       return suggestion;
     }
-    logger.info(`Generated SambaNova suggestion: ${suggestion}`);
+    logger.info('Generated SambaNova suggestion');
     return ' ' + suggestion;
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
@@ -521,10 +521,9 @@ async function getRatelimit() {
         analytics: false,
       });
       return ratelimit;
-    } catch (error) {
+    } catch {
       console.error(
-        'Failed to initialize Upstash ratelimit, using in-memory fallback:',
-        error
+        'Failed to initialize Upstash ratelimit, using in-memory fallback'
       );
     }
   }
@@ -582,7 +581,7 @@ async function handler(req, res) {
     if (error instanceof Error && error.name === 'ZodError') {
       return res.status(400).json({ suggestion: '' });
     }
-    console.error('API error:', error);
+    console.error('API error');
     res.status(500).json({ suggestion: '' });
   }
 }

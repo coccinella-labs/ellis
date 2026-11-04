@@ -8,6 +8,8 @@ vi.mock('./gemini', () => ({
   generateTextCompletion: vi.fn(),
   testApiKey: vi.fn(),
   testSambaNovaApiKey: vi.fn(),
+  testOpenRouterApiKey: vi.fn(),
+  testAtlasCloudApiKey: vi.fn(),
 }));
 
 vi.mock('@shared/logger', () => ({
@@ -23,6 +25,7 @@ import {
   generateTextCompletion,
   testApiKey,
   testSambaNovaApiKey,
+  testAtlasCloudApiKey,
 } from './gemini';
 
 describe('Express routes', () => {
@@ -34,6 +37,8 @@ describe('Express routes', () => {
     process.env.NODE_ENV = 'test';
     delete process.env.GEMINI_API_KEY;
     delete process.env.SAMBANOVA_API_KEY;
+    delete process.env.OPENROUTER_API_KEY;
+    delete process.env.ATLASCLOUD_API_KEY;
     app = express();
     app.use(express.json());
     app = registerRoutes(app);
@@ -44,6 +49,8 @@ describe('Express routes', () => {
     process.env.NODE_ENV = 'test';
     delete process.env.GEMINI_API_KEY;
     delete process.env.SAMBANOVA_API_KEY;
+    delete process.env.OPENROUTER_API_KEY;
+    delete process.env.ATLASCLOUD_API_KEY;
     delete process.env.DISABLE_GEMINI;
   });
 
@@ -207,6 +214,17 @@ describe('Express routes', () => {
       const res = await request(app).get('/api/status');
       expect(res.status).toBe(200);
       expect(testApiKey).not.toHaveBeenCalled();
+    });
+
+    it('reports AtlasCloud status when its key is set', async () => {
+      process.env.NODE_ENV = 'production';
+      process.env.ATLASCLOUD_API_KEY = 'test-key';
+      vi.mocked(testAtlasCloudApiKey).mockResolvedValue(true);
+
+      const res = await request(app).get('/api/status');
+      expect(res.status).toBe(200);
+      expect(res.body.status).toBe('ok');
+      expect(res.body.providers.atlascloud).toBe(true);
     });
   });
 });

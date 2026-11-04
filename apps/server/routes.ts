@@ -90,8 +90,8 @@ export function registerRoutes(app: Express): Express {
       };
       statusCache = { data: payload, expires: Date.now() + 60000 };
       res.json(payload);
-    } catch (error) {
-      logger.error('Status check failed', error);
+    } catch {
+      logger.error('Status check failed');
       res.status(500).json({ status: 'error' });
     }
   });
@@ -118,7 +118,7 @@ export function registerRoutes(app: Express): Express {
       if (error instanceof Error && error.name === 'ZodError') {
         return res.status(400).json({ suggestion: '' });
       }
-      logger.error('API error', error);
+      logger.error('API error');
       res.status(500).json({ suggestion: '' });
     }
   });

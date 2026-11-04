@@ -28,7 +28,7 @@ The project is written in TypeScript. The frontend uses React 18, Vite 7, Tailwi
 
 Fork the repository, create a feature branch, and run the app locally with `npm run dev` to try a change. Because the web app and CLI share completion concepts but use different interaction models, changes to modes, styles, or provider handling should be checked in both interfaces where applicable. Add or update Vitest and Playwright tests alongside your change, and describe in your pull request which mode, style, interface, and provider path you exercised.
 
-Suggestions depend on a network call to an AI provider, so the editor needs connectivity and a valid API key to be useful. Automatic fallback only triggers on rate-limit or quota-related Gemini errors. A timeout or other general API error does not by itself switch providers. The CLI is a terminal editor intended for headless and lightweight workflows, not a full replacement for the web interface's ghost-text interaction, settings panel, or theming. The server exposes a health check at `/api/health` and provider status at `/api/status`, alongside the completion endpoint at `/api/complete`. It also enforces request size limits and handles graceful shutdown.
+Suggestions depend on a network call to an AI provider, so the editor needs connectivity and a valid API key to be useful. Automatic fallback only triggers on rate-limit or quota-related Gemini errors. A timeout or other general API error does not by itself switch providers. The CLI is a terminal editor intended for headless and lightweight workflows, not a full replacement for the web interface's ghost-text interaction, settings panel, or theming. The server exposes a health check at `/api/health` and provider status at `/api/status`, alongside the completion endpoint at `/api/complete`. Provider status checks issue one minimal completion request per configured provider because no provider offers an authenticated quota-free key check, and results are cached for 60 seconds so repeated checks do not consume extra quota. The server also enforces request size limits and handles graceful shutdown.
 
 Reusable parts of this repository include the shared package at `packages/shared`, which contains Zod schemas, prompt builders, a logger, and Gemini, SambaNova, OpenRouter, and AtlasCloud client wrappers. For example:
 
@@ -38,7 +38,7 @@ import { logger } from '@shared/logger';
 import { generateTextCompletion } from '@shared/gemini';
 ```
 
-The commit-msg hook in `scripts/commit-msg` enforces a subject line of 80 characters or fewer and, for changes touching more than five files or more than two new tests, requires a body of at least two lines. The `commitlint.config.js` file relaxes the `type-enum` and `subject-case` rules so commit subjects can use natural language, and the README structure is adapted from the original repository template. For example, the commit-msg hook:
+The commit-msg hook in `scripts/commit-msg` enforces a subject line of 80 characters or fewer and, for changes touching more than five files or more than two new tests, requires a body of at least two lines. The pre-commit hook runs lint-staged, and commits must be SSH-signed. See [CONTRIBUTING.md](CONTRIBUTING.md) for the signing setup. The `commitlint.config.js` file relaxes the `type-enum` and `subject-case` rules so commit subjects can use natural language, and the README structure is adapted from the original repository template. For example, the commit-msg hook:
 
 ```sh
 #!/bin/bash

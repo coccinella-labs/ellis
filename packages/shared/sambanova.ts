@@ -61,7 +61,7 @@ export async function generateTextCompletionSambaNova(
       return suggestion;
     }
 
-    logger.info(`Generated SambaNova suggestion: ${suggestion}`);
+    logger.info('Generated SambaNova suggestion');
     return ' ' + suggestion;
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {

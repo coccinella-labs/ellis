@@ -32,10 +32,9 @@ async function getRatelimit() {
         analytics: false,
       });
       return ratelimit;
-    } catch (error) {
+    } catch {
       console.error(
-        'Failed to initialize Upstash ratelimit, using in-memory fallback:',
-        error
+        'Failed to initialize Upstash ratelimit, using in-memory fallback'
       );
     }
   }
@@ -104,7 +103,7 @@ export default async function handler(
     if (error instanceof Error && error.name === 'ZodError') {
       return res.status(400).json({ suggestion: '' });
     }
-    console.error('API error:', error);
+    console.error('API error');
     res.status(500).json({ suggestion: '' });
   }
 }

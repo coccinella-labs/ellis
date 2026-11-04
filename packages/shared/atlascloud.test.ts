@@ -158,34 +158,37 @@ describe('generateTextCompletionAtlasCloud', () => {
   });
 
   it('passes an AbortSignal to the SDK and aborts it on timeout', async () => {
-    vi.useFakeTimers({ shouldAdvanceTime: true });
-    let capturedSignal: AbortSignal | undefined;
-    createMock.mockImplementationOnce(
-      (_body: unknown, options?: { signal?: AbortSignal }) => {
-        capturedSignal = options?.signal;
-        return new Promise((_, reject) => {
-          capturedSignal?.addEventListener('abort', () =>
-            reject(new Error('aborted'))
-          );
-        });
-      }
-    );
+    vi.useFakeTimers();
+    try {
+      let capturedSignal: AbortSignal | undefined;
+      createMock.mockImplementationOnce(
+        (_body: unknown, options?: { signal?: AbortSignal }) => {
+          capturedSignal = options?.signal;
+          return new Promise((_, reject) => {
+            capturedSignal?.addEventListener('abort', () =>
+              reject(new DOMException('Aborted', 'AbortError'))
+            );
+          });
+        }
+      );
 
-    const { generateTextCompletionAtlasCloud } = await import(
-      './atlascloud.js'
-    );
-    const promise = generateTextCompletionAtlasCloud(
-      'hello',
-      'sentence',
-      'casual'
-    );
-    await vi.advanceTimersByTimeAsync(31000);
-    const result = await promise;
+      const { generateTextCompletionAtlasCloud } = await import(
+        './atlascloud.js'
+      );
+      const promise = generateTextCompletionAtlasCloud(
+        'hello',
+        'sentence',
+        'casual'
+      );
+      await vi.advanceTimersByTimeAsync(31000);
+      const result = await promise;
 
-    expect(result).toBe('');
-    expect(capturedSignal).toBeInstanceOf(AbortSignal);
-    expect(capturedSignal?.aborted).toBe(true);
-    vi.useRealTimers();
+      expect(result).toBe('');
+      expect(capturedSignal).toBeInstanceOf(AbortSignal);
+      expect(capturedSignal?.aborted).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 

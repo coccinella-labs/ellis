@@ -67,7 +67,8 @@ Response:
   "providers": {
     "gemini": true,
     "sambanova": true,
-    "openrouter": true
+    "openrouter": true,
+    "atlascloud": false
   }
 }
 ```
@@ -75,11 +76,20 @@ Response:
 In development, `status` can be `ok` even when no provider is ready. In
 production, at least one provider must work for `status` to be `ok`.
 
+Each configured provider is probed with one minimal completion request. The
+providers do not offer an authenticated, quota-free key-check endpoint
+(AtlasCloud's model listing is public and does not validate credentials), so a
+completion is the only supported way to confirm a key works. Results are cached
+for 60 seconds by both the Express server and the serverless handler; repeated
+status requests inside that window reuse the cached result instead of issuing
+new completion requests.
+
 ## Environment
 
 ```sh
 GEMINI_API_KEY=your_gemini_key
 SAMBANOVA_API_KEY=your_sambanova_key
+OPENROUTER_API_KEY=your_openrouter_key
 ATLASCLOUD_API_KEY=your_atlascloud_key
 ```
 

@@ -23,8 +23,8 @@ export async function testApiKey(): Promise<boolean> {
     const result = !!response.text?.trim();
     console.log('Gemini test result:', result);
     return result;
-  } catch (error) {
-    logger.error('Gemini test failed:', error);
+  } catch {
+    logger.error('Gemini test failed');
     return false;
   }
 }

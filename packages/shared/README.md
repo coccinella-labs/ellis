@@ -38,8 +38,11 @@ fallback.
    unset.
 3. **OpenRouter** — `openrouter/free` (free auto-router). Skipped when
    `OPENROUTER_API_KEY` is unset.
-4. **AtlasCloud** — `dots-studio/dots-3-note-prev-free`. Opt-in only; not
-   part of `auto` fallback.
+4. **AtlasCloud** — `dots-studio/dots-3-note-prev-free` (verified against
+   AtlasCloud's live model catalog on 2026-11-04; free, 512K context).
+   Opt-in only; not part of `auto` fallback. The model is the optional fourth
+   argument of `generateTextCompletionAtlasCloud`, so callers can override it
+   without changing the default.
 
 Each provider throws when its API key is missing, so `auto` mode must have
 at least one key configured to return a suggestion.

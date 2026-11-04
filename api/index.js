@@ -157,7 +157,7 @@ async function generateTextCompletionSambaNova(
     if (mode === 'word' && !currentText.endsWith(' ')) {
       return suggestion;
     }
-    logger.info(`Generated SambaNova suggestion: ${suggestion}`);
+    logger.info('Generated SambaNova suggestion');
     return ' ' + suggestion;
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
@@ -498,8 +498,8 @@ async function testApiKey() {
     const result = !!response.text?.trim();
     console.log('Gemini test result:', result);
     return result;
-  } catch (error) {
-    logger.error('Gemini test failed:', error);
+  } catch {
+    logger.error('Gemini test failed');
     return false;
   }
 }
@@ -661,8 +661,8 @@ function registerRoutes(app2) {
       };
       statusCache = { data: payload, expires: Date.now() + 6e4 };
       res.json(payload);
-    } catch (error) {
-      logger.error('Status check failed', error);
+    } catch {
+      logger.error('Status check failed');
       res.status(500).json({ status: 'error' });
     }
   });
@@ -690,7 +690,7 @@ function registerRoutes(app2) {
       if (error instanceof Error && error.name === 'ZodError') {
         return res.status(400).json({ suggestion: '' });
       }
-      logger.error('API error', error);
+      logger.error('API error');
       res.status(500).json({ suggestion: '' });
     }
   });

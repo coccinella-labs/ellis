@@ -5,6 +5,17 @@ import {
   testAtlasCloudApiKey,
 } from '../gemini';
 
+// Provider probes issue a minimal completion request because none of the
+// providers expose an authenticated lightweight key-check endpoint.
+// Cache the result so repeated status requests do not consume extra quota.
+const STATUS_CACHE_TTL_MS = 60_000;
+
+let statusCache: { data: unknown; expires: number } | null = null;
+
+export function clearStatusCache(): void {
+  statusCache = null;
+}
+
 export default async function handler(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   req: any,
@@ -13,6 +24,11 @@ export default async function handler(
 ) {
   if (req.method !== 'GET') {
     res.status(405).json({ error: 'Method not allowed' });
+    return;
+  }
+
+  if (statusCache && statusCache.expires > Date.now()) {
+    res.json(statusCache.data);
     return;
   }
 
@@ -49,7 +65,7 @@ export default async function handler(
           openRouterWorking ||
           atlasCloudWorking;
 
-    res.json({
+    const payload = {
       status: isWorking ? 'ok' : 'error',
       providers: {
         gemini: geminiWorking,
@@ -57,9 +73,12 @@ export default async function handler(
         openrouter: openRouterWorking,
         atlascloud: atlasCloudWorking,
       },
-    });
-  } catch (error) {
-    console.error('Status check error:', error);
+    };
+
+    statusCache = { data: payload, expires: Date.now() + STATUS_CACHE_TTL_MS };
+    res.json(payload);
+  } catch {
+    console.error('Status check error');
     res.status(500).json({ status: 'error' });
   }
 }

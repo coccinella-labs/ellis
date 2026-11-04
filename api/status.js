@@ -149,7 +149,7 @@ async function generateTextCompletionSambaNova(
     if (mode === 'word' && !currentText.endsWith(' ')) {
       return suggestion;
     }
-    logger.info(`Generated SambaNova suggestion: ${suggestion}`);
+    logger.info('Generated SambaNova suggestion');
     return ' ' + suggestion;
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
@@ -314,8 +314,8 @@ async function testApiKey() {
     const result = !!response.text?.trim();
     console.log('Gemini test result:', result);
     return result;
-  } catch (error) {
-    logger.error('Gemini test failed:', error);
+  } catch {
+    logger.error('Gemini test failed');
     return false;
   }
 }
@@ -382,9 +382,18 @@ async function testAtlasCloudApiKey() {
 }
 
 // apps/server/functions/status.ts
+var STATUS_CACHE_TTL_MS = 6e4;
+var statusCache = null;
+function clearStatusCache() {
+  statusCache = null;
+}
 async function handler(req, res) {
   if (req.method !== 'GET') {
     res.status(405).json({ error: 'Method not allowed' });
+    return;
+  }
+  if (statusCache && statusCache.expires > Date.now()) {
+    res.json(statusCache.data);
     return;
   }
   try {
@@ -416,7 +425,7 @@ async function handler(req, res) {
           sambaNovaWorking ||
           openRouterWorking ||
           atlasCloudWorking;
-    res.json({
+    const payload = {
       status: isWorking ? 'ok' : 'error',
       providers: {
         gemini: geminiWorking,
@@ -424,10 +433,12 @@ async function handler(req, res) {
         openrouter: openRouterWorking,
         atlascloud: atlasCloudWorking,
       },
-    });
-  } catch (error) {
-    console.error('Status check error:', error);
+    };
+    statusCache = { data: payload, expires: Date.now() + STATUS_CACHE_TTL_MS };
+    res.json(payload);
+  } catch {
+    console.error('Status check error');
     res.status(500).json({ status: 'error' });
   }
 }
-export { handler as default };
+export { clearStatusCache, handler as default };
