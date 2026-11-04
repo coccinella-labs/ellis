@@ -247,7 +247,7 @@ async function generateTextCompletion(
         style
       );
       if (suggestion) {
-        console.log('Generated OpenRouter suggestion:', suggestion);
+        logger.info('Generated OpenRouter suggestion');
         return suggestion;
       }
     } catch (error) {
@@ -398,7 +398,7 @@ var textCompletionResponseSchema = z.object({
 
 // apps/server/functions/complete.ts
 var ratelimit = null;
-var fallbackStore = null;
+var fallbackStore = /* @__PURE__ */ new Map();
 var WINDOW_MS = 6e4;
 var MAX_REQUESTS = 30;
 async function getRatelimit() {
@@ -423,7 +423,6 @@ async function getRatelimit() {
       );
     }
   }
-  fallbackStore = /* @__PURE__ */ new Map();
   return null;
 }
 function isRateLimitedFallback(ip) {
@@ -464,8 +463,7 @@ async function handler(req, res) {
       geminiModel,
     } = textCompletionRequestSchema.parse(req.body);
     if (!text2 || text2.length < 10) {
-      res.json({ suggestion: '' });
-      return;
+      return res.json({ suggestion: '' });
     }
     const suggestion = await generateTextCompletion(
       text2,

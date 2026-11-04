@@ -143,9 +143,7 @@ async function generateTextCompletionSambaNova(
       ),
     ]);
     const content = response.choices[0]?.message?.content?.trim() || '';
-    const message = response.choices[0]?.message;
-    const reasoning = message?.reasoning?.trim() || '';
-    const suggestion = content || reasoning;
+    const suggestion = content;
     if (!suggestion) {
       console.log('No suggestion extracted from SambaNova response');
       return '';
@@ -153,10 +151,71 @@ async function generateTextCompletionSambaNova(
     if (mode === 'word' && !currentText.endsWith(' ')) {
       return suggestion;
     }
-    logger.info(`Generated SambaNova suggestion: ${suggestion}`);
+    logger.info(`Generated SambaNova suggestion`);
     return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
   } catch {
     logger.error('SambaNova generation failed');
+    return '';
+  }
+}
+
+// packages/shared/openrouter.ts
+import OpenAI2 from 'openai';
+function getOpenRouterClient() {
+  const apiKey = process.env.OPENROUTER_API_KEY || '';
+  if (!apiKey) {
+    throw new Error(
+      'OPENROUTER_API_KEY is not set. OpenRouter requires an API key even for its free models. Get one at https://openrouter.ai/keys.'
+    );
+  }
+  return new OpenAI2({
+    apiKey,
+    baseURL: 'https://openrouter.ai/api/v1',
+    defaultHeaders: {
+      // Optional attribution so the app appears on the OpenRouter leaderboards.
+      'HTTP-Referer':
+        process.env.HTTP_REFERER || 'https://github.com/coccinella-labs/ellis',
+      'X-OpenRouter-Title': 'Ellis',
+    },
+  });
+}
+async function generateTextCompletionOpenRouter(
+  currentText,
+  mode = 'sentence',
+  style = 'casual',
+  model = 'openrouter/free'
+) {
+  const client = getOpenRouterClient();
+  try {
+    const systemPrompt = buildSystemPrompt(mode, style);
+    const messages = [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: currentText },
+    ];
+    const response = await Promise.race([
+      client.chat.completions.create({
+        model,
+        messages,
+        max_tokens: mode === 'word' ? 10 : mode === 'sentence' ? 50 : 150,
+        temperature: 0.7,
+        stream: false,
+      }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('openrouter timeout')), 3e4)
+      ),
+    ]);
+    const content = response.choices[0]?.message?.content?.trim() || '';
+    if (!content) {
+      console.log('No suggestion extracted from OpenRouter response');
+      return '';
+    }
+    if (mode === 'word' && !currentText.endsWith(' ')) {
+      return content;
+    }
+    logger.info(`Generated OpenRouter suggestion (${model})`);
+    return content.startsWith(' ') ? content : ' ' + content;
+  } catch {
+    logger.error('OpenRouter generation failed');
     return '';
   }
 }
@@ -180,11 +239,27 @@ async function generateTextCompletion(
         style
       );
       if (suggestion) {
-        console.log('Generated SambaNova suggestion:', suggestion);
+        logger.info('Generated SambaNova suggestion');
         return suggestion;
       }
     } catch (error) {
       console.error('SambaNova generation error:', error);
+    }
+    return '';
+  }
+  if (provider === 'openrouter') {
+    try {
+      const suggestion = await generateTextCompletionOpenRouter(
+        currentText,
+        mode,
+        style
+      );
+      if (suggestion) {
+        logger.info('Generated OpenRouter suggestion');
+        return suggestion;
+      }
+    } catch (error) {
+      console.error('OpenRouter generation error:', error);
     }
     return '';
   }
@@ -214,8 +289,8 @@ async function generateTextCompletion(
       if (mode === 'word' && !currentText.endsWith(' ')) {
         return suggestion;
       }
-      logger.info(`Generated Gemini suggestion (${model}): ${suggestion}`);
-      return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
+      logger.info(`Generated Gemini suggestion (${model})`);
+      return ' ' + suggestion;
     } catch {
       logger.error('Gemini generation failed');
       return '';
@@ -223,21 +298,8 @@ async function generateTextCompletion(
   }
   const hasGeminiKey = !!process.env.GEMINI_API_KEY;
   if (!hasGeminiKey) {
-    logger.info('No Gemini API key, using SambaNova directly');
-    try {
-      const suggestion = await generateTextCompletionSambaNova(
-        currentText,
-        mode,
-        style
-      );
-      if (suggestion) {
-        logger.info('Generated SambaNova suggestion (direct)');
-        return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
-      }
-    } catch {
-      logger.error('SambaNova generation failed');
-    }
-    return '';
+    logger.info('No Gemini API key, trying SambaNova then OpenRouter');
+    return tryFallbackChain(currentText, mode, style);
   }
   try {
     const systemPrompt = buildSystemPrompt(mode, style);
@@ -264,8 +326,8 @@ async function generateTextCompletion(
     if (mode === 'word' && !currentText.endsWith(' ')) {
       return suggestion;
     }
-    logger.info(`Generated Gemini suggestion (${model}): ${suggestion}`);
-    return suggestion.startsWith(' ') ? suggestion : ' ' + suggestion;
+    logger.info(`Generated Gemini suggestion (${model})`);
+    return ' ' + suggestion;
   } catch (error) {
     logger.error('Gemini generation failed');
     if (
@@ -273,23 +335,42 @@ async function generateTextCompletion(
       error?.message?.includes('quota') ||
       error?.message?.includes('RESOURCE_EXHAUSTED')
     ) {
-      logger.warn('Rate limit hit, falling back to SambaNova...');
-      try {
-        const fallbackSuggestion = await generateTextCompletionSambaNova(
-          currentText,
-          mode,
-          style
-        );
-        if (fallbackSuggestion) {
-          logger.info('Successfully used SambaNova fallback');
-          return fallbackSuggestion;
-        }
-      } catch {
-        logger.error('SambaNova fallback failed');
-      }
+      logger.warn(
+        'Rate limit hit, falling back to SambaNova then OpenRouter...'
+      );
+      return tryFallbackChain(currentText, mode, style);
     }
     return '';
   }
+}
+async function tryFallbackChain(currentText, mode, style) {
+  try {
+    const suggestion = await generateTextCompletionSambaNova(
+      currentText,
+      mode,
+      style
+    );
+    if (suggestion) {
+      logger.info('Successfully used SambaNova fallback');
+      return suggestion;
+    }
+  } catch {
+    logger.error('SambaNova fallback failed');
+  }
+  try {
+    const suggestion = await generateTextCompletionOpenRouter(
+      currentText,
+      mode,
+      style
+    );
+    if (suggestion) {
+      logger.info('Successfully used OpenRouter fallback');
+      return suggestion;
+    }
+  } catch {
+    logger.error('OpenRouter fallback failed');
+  }
+  return '';
 }
 
 // apps/server/gemini.ts
@@ -338,6 +419,26 @@ async function testSambaNovaApiKey() {
     return false;
   }
 }
+async function testOpenRouterApiKey() {
+  try {
+    logger.info('Testing OpenRouter API key...');
+    if (!process.env.OPENROUTER_API_KEY) {
+      logger.warn('No OpenRouter API key set');
+      return false;
+    }
+    const result = await generateTextCompletionOpenRouter(
+      'Hello',
+      'word',
+      'casual'
+    );
+    const success = !!result?.trim();
+    logger.info(`OpenRouter test result: ${success}`);
+    return success;
+  } catch {
+    logger.error('OpenRouter test failed');
+    return false;
+  }
+}
 
 // packages/shared/schema.ts
 import { sql } from 'drizzle-orm';
@@ -361,7 +462,9 @@ var textCompletionRequestSchema = z.object({
   style: z
     .enum(['casual', 'formal', 'creative', 'technical'])
     .default('casual'),
-  provider: z.enum(['auto', 'gemini', 'sambanova']).default('auto'),
+  provider: z
+    .enum(['auto', 'gemini', 'sambanova', 'openrouter'])
+    .default('auto'),
   geminiModel: z.string().default('gemini-3.8-flash'),
 });
 var textCompletionResponseSchema = z.object({
@@ -393,8 +496,10 @@ function registerRoutes(app2) {
     try {
       const hasGeminiKey = !!process.env.GEMINI_API_KEY;
       const hasSambaNovaKey = !!process.env.SAMBANOVA_API_KEY;
+      const hasOpenRouterKey = !!process.env.OPENROUTER_API_KEY;
       let geminiWorking = false;
       let sambaNovaWorking = false;
+      let openRouterWorking = false;
       const skipGemini = process.env.DISABLE_GEMINI === 'true';
       if (hasGeminiKey && !skipGemini) {
         geminiWorking = await testApiKey();
@@ -402,18 +507,22 @@ function registerRoutes(app2) {
       if (hasSambaNovaKey) {
         sambaNovaWorking = await testSambaNovaApiKey();
       }
+      if (hasOpenRouterKey) {
+        openRouterWorking = await testOpenRouterApiKey();
+      }
       const isWorking =
         process.env.NODE_ENV === 'development'
           ? true
-          : geminiWorking || sambaNovaWorking;
+          : geminiWorking || sambaNovaWorking || openRouterWorking;
       logger.info(
-        `Status check result - Gemini: ${geminiWorking}, SambaNova: ${sambaNovaWorking}`
+        `Status check result - Gemini: ${geminiWorking}, SambaNova: ${sambaNovaWorking}, OpenRouter: ${openRouterWorking}`
       );
       const payload = {
         status: isWorking ? 'ok' : 'error',
         providers: {
           gemini: geminiWorking,
           sambanova: sambaNovaWorking,
+          openrouter: openRouterWorking,
         },
       };
       statusCache = { data: payload, expires: Date.now() + 6e4 };
@@ -444,6 +553,9 @@ function registerRoutes(app2) {
       );
       res.json({ suggestion });
     } catch (error) {
+      if (error instanceof Error && error.name === 'ZodError') {
+        return res.status(400).json({ suggestion: '' });
+      }
       logger.error('API error', error);
       res.status(500).json({ suggestion: '' });
     }
@@ -603,39 +715,30 @@ app.use(express2.urlencoded({ extended: false, limit: '1mb' }));
 function sanitizeForLog(input) {
   return input.replace(/[\n\r]/g, '');
 }
-app.use((req, res, next) => {
+function requestLogger(req, res, next) {
   const start = Date.now();
   const path3 = sanitizeForLog(req.path);
-  let capturedJsonResponse = void 0;
   const originalResJson = res.json;
   res.json = function (bodyJson) {
-    capturedJsonResponse = bodyJson;
     return originalResJson.call(res, bodyJson);
   };
   res.on('finish', () => {
     const duration = Date.now() - start;
     if (path3.startsWith('/api')) {
-      let logLine = `${req.method} ${path3} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + '\u2026';
-      }
+      const logLine = `${req.method} ${path3} ${res.statusCode} in ${duration}ms`;
       log(logLine);
     }
   });
   next();
-});
+}
+app.use(requestLogger);
 var configuredApp = registerRoutes(app);
-configuredApp.use(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (err, _req, res, _next) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || 'Internal Server Error';
-    res.status(status).json({ message });
-  }
-);
+function errorHandler(err, _req, res, _next) {
+  const status = err.status || err.statusCode || 500;
+  const message = err.message || 'Internal Server Error';
+  res.status(status).json({ message });
+}
+configuredApp.use(errorHandler);
 if (configuredApp.get('env') === 'development') {
   const server = createServer(configuredApp);
   setupVite(configuredApp, server);
@@ -674,4 +777,9 @@ if (typeof process !== 'undefined' && !process.env.VERCEL) {
   process.on('SIGINT', shutdown);
 }
 var index_default = configuredApp;
-export { index_default as default };
+export {
+  index_default as default,
+  errorHandler,
+  requestLogger,
+  sanitizeForLog,
+};

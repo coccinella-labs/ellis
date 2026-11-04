@@ -55,8 +55,9 @@ export function ProvidersPage({ isOpen, onOpenChange }: ProvidersPageProps) {
               <div className="space-y-2 text-sm">
                 <p>OpenRouter Free</p>
                 <p className="text-muted-foreground">
-                  Auto-selects a free model when no key is configured or all
-                  others are exhausted. Zero cost.
+                  Last resort in auto mode. Requires an `OPENROUTER_API_KEY`,
+                  which is needed even for free models. Zero cost when a free
+                  model is selected.
                 </p>
               </div>
             </div>
